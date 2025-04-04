@@ -1,10 +1,7 @@
 "use client"
-
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
-
-import HomeScreen from "../screens/HomeScreen"
 import AllNewsScreen from "../screens/AllNewsScreen"
 import SearchScreen from "../screens/SearchScreen"
 import SavedScreen from "../screens/SavedScreen"
@@ -14,40 +11,46 @@ const Tab = createBottomTabNavigator()
 export default function TabNavigator() {
   const theme = useTheme()
 
+  // Ensure we have fallback values if theme properties are undefined
+  const fontFamily = theme?.typography?.fontFamily?.regular || "System"
+  const fontSize = theme?.fontSize?.["8"] || 12
+  const primaryColor = theme?.colors?.Primary?.Resting || "#E03A3A"
+  const secondaryColor = theme?.colors?.Text?.Secondary || "#717171"
+  const borderColor = theme?.colors?.Border?.["Border-Primary"] || "#E5E5E5"
+  const borderWidth = theme?.borderWidth?.["10"] || 1
+
   return (
     <Tab.Navigator
+      initialRouteName="AllNews"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName
+          let iconName = "grid"
 
-          if (route.name === "Home") {
-            iconName = "home"
+          if (route.name === "AllNews") {
+            iconName = "grid"
           } else if (route.name === "Search") {
             iconName = "search"
           } else if (route.name === "Saved") {
             iconName = "bookmark"
-          } else if (route.name === "AllNews") {
-            iconName = "grid"
           }
 
           return <Feather name={iconName} size={size} color={color} />
         },
-        tabBarActiveTintColor: theme.colors.Primary.Resting,
-        tabBarInactiveTintColor: theme.colors.Text.Secondary,
+        tabBarActiveTintColor: primaryColor,
+        tabBarInactiveTintColor: secondaryColor,
         tabBarStyle: {
-          borderTopWidth: theme.borderWidth["10"],
-          borderTopColor: theme.colors.Border["Border-Primary"],
+          borderTopWidth: borderWidth,
+          borderTopColor: borderColor,
           height: 60,
           paddingBottom: 8,
         },
         tabBarLabelStyle: {
-          fontSize: theme.fontSize["8"],
-          fontFamily: theme.typography.fontFamily.regular,
+          fontSize: fontSize,
+          fontFamily: fontFamily,
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="AllNews" component={AllNewsScreen} options={{ title: "All News" }} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Saved" component={SavedScreen} />

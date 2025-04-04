@@ -1,31 +1,17 @@
 "use client"
-
-import React from "react"
 import { View, StyleSheet, TouchableOpacity, SafeAreaView, FlatList } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import CardHorizontal from "../components/CardHorizontal"
 import { mockNews } from "../services/newsService"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "../components/Typography"
-import BottomTabs from "../components/BottomTabs"
 
 const CategoryScreen = ({ route, navigation }) => {
   const { category } = route.params
   const theme = useTheme()
-  const [activeBottomTab, setActiveBottomTab] = React.useState("today")
 
   const handleNewsPress = (article) => {
     navigation.navigate("Article", { article })
-  }
-
-  const handleBottomTabPress = (tab) => {
-    if (tab === "today") {
-      navigation.navigate("Home")
-    } else if (tab === "allNews") {
-      navigation.navigate("AllNews")
-    } else if (tab === "search") {
-      navigation.navigate("Search")
-    }
   }
 
   const handleBookmark = (id) => {
@@ -76,9 +62,6 @@ const CategoryScreen = ({ route, navigation }) => {
         )}
         contentContainerStyle={styles.newsList}
       />
-
-      {/* Bottom Tabs */}
-      <BottomTabs activeTab={activeBottomTab} onTabPress={handleBottomTabPress} />
     </SafeAreaView>
   )
 }

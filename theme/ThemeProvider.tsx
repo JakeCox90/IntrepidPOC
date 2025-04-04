@@ -70,8 +70,25 @@ type ThemeType = {
   toggleTheme: () => void
 }
 
+// Ensure all required properties exist in the theme objects
+const ensureThemeProperties = (theme) => {
+  // Make sure typography and fontFamily exist
+  if (!theme.typography) theme.typography = typography
+  if (!theme.typography.fontFamily) theme.typography.fontFamily = typography.fontFamily
+
+  // Make sure other properties exist
+  if (!theme.space) theme.space = space
+  if (!theme.radius) theme.radius = radius
+  if (!theme.borderWidth) theme.borderWidth = borderWidth
+  if (!theme.opacity) theme.opacity = opacity
+  if (!theme.shadows) theme.shadows = shadows
+  if (!theme.zIndex) theme.zIndex = zIndex
+
+  return theme
+}
+
 // Create light theme
-const lightTheme: ThemeType = {
+const lightTheme: ThemeType = ensureThemeProperties({
   colors: colors,
   typography,
   space,
@@ -82,10 +99,10 @@ const lightTheme: ThemeType = {
   zIndex,
   isDark: false,
   toggleTheme: () => {},
-}
+})
 
 // Create dark theme
-const darkTheme: ThemeType = {
+const darkTheme: ThemeType = ensureThemeProperties({
   colors: {
     ...colors,
     Surface: {
@@ -119,7 +136,7 @@ const darkTheme: ThemeType = {
   zIndex,
   isDark: true,
   toggleTheme: () => {},
-}
+})
 
 // Create the theme context
 const ThemeContext = createContext<ThemeType>(lightTheme)
@@ -140,7 +157,9 @@ export const ThemeProvider = ({ children }) => {
     setIsDark(!isDark)
   }
 
-  const theme = isDark ? { ...darkTheme, toggleTheme } : { ...lightTheme, toggleTheme }
+  const theme = isDark
+    ? ensureThemeProperties({ ...darkTheme, toggleTheme })
+    : ensureThemeProperties({ ...lightTheme, toggleTheme })
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
 }

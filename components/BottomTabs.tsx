@@ -5,8 +5,8 @@ import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
 
 interface BottomTabsProps {
-  activeTab: "today" | "allNews" | "search"
-  onTabPress: (tab: "today" | "allNews" | "search") => void
+  activeTab: "allNews" | "search" | "saved"
+  onTabPress: (tab: "allNews" | "search" | "saved") => void
 }
 
 const BottomTabs = ({ activeTab, onTabPress }: BottomTabsProps) => {
@@ -23,20 +23,6 @@ const BottomTabs = ({ activeTab, onTabPress }: BottomTabsProps) => {
         },
       ]}
     >
-      <TouchableOpacity style={styles.tab} onPress={() => onTabPress("today")}>
-        <Feather
-          name="home"
-          size={24}
-          color={activeTab === "today" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
-        />
-        <Typography
-          variant="annotation"
-          color={activeTab === "today" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
-        >
-          Today
-        </Typography>
-      </TouchableOpacity>
-
       <TouchableOpacity style={styles.tab} onPress={() => onTabPress("allNews")}>
         <Feather
           name="grid"
@@ -62,6 +48,20 @@ const BottomTabs = ({ activeTab, onTabPress }: BottomTabsProps) => {
           color={activeTab === "search" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
         >
           Search
+        </Typography>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.tab} onPress={() => onTabPress("saved")}>
+        <Feather
+          name="bookmark"
+          size={24}
+          color={activeTab === "saved" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+        />
+        <Typography
+          variant="annotation"
+          color={activeTab === "saved" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+        >
+          Saved
         </Typography>
       </TouchableOpacity>
     </View>

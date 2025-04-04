@@ -32,7 +32,20 @@ interface TypographyProps extends TextProps {
 
 const Typography = ({ variant, color, style, children, ...props }: TypographyProps) => {
   const theme = useTheme()
-  const typographyStyle = theme.typography.styles[variant]
+
+  // Default styles in case theme is undefined
+  const defaultStyles = {
+    fontSize: 16,
+    lineHeight: 24,
+    fontFamily: "System",
+    fontWeight: "400" as TextStyle["fontWeight"],
+  }
+
+  // Safely get typography style from theme
+  const typographyStyle = theme?.typography?.styles?.[variant] || defaultStyles
+
+  // Safely get text color
+  const textColor = color || theme?.colors?.Text?.Primary || "#000000"
 
   return (
     <Text
@@ -42,7 +55,7 @@ const Typography = ({ variant, color, style, children, ...props }: TypographyPro
           lineHeight: typographyStyle.lineHeight,
           fontFamily: typographyStyle.fontFamily,
           fontWeight: typographyStyle.fontWeight,
-          color: color || theme.colors.Text.Primary,
+          color: textColor,
           ...(typographyStyle.textTransform && { textTransform: typographyStyle.textTransform }),
         },
         style,

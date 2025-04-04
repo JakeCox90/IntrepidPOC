@@ -9,7 +9,6 @@ import Typography from "../components/Typography"
 import Accordion from "../components/Accordion"
 import Comments from "../components/Comments"
 import AudioPlayer from "../components/AudioPlayer"
-import BottomTabs from "../components/BottomTabs"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
@@ -19,7 +18,6 @@ const ArticleScreen = ({ route, navigation }) => {
   const theme = useTheme()
   const [selectedPollOption, setSelectedPollOption] = useState(null)
   const [totalVotes, setTotalVotes] = useState(129)
-  const [activeBottomTab, setActiveBottomTab] = useState("today")
 
   // Poll options
   const pollOptions = [
@@ -123,16 +121,6 @@ const ArticleScreen = ({ route, navigation }) => {
     console.log("Audio playback completed")
   }
 
-  const handleBottomTabPress = (tab) => {
-    if (tab === "today") {
-      navigation.navigate("Home")
-    } else if (tab === "allNews") {
-      navigation.navigate("AllNews")
-    } else if (tab === "search") {
-      navigation.navigate("Search")
-    }
-  }
-
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
       {/* Header */}
@@ -202,11 +190,6 @@ const ArticleScreen = ({ route, navigation }) => {
           <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
         </View>
 
-        {/*
-        >
-          <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
-        </View>
-
         {/* Summary section using Accordion component */}
         <Accordion title="Summary">
           <Typography variant="body-02" color={theme.colors.Text.Secondary}>
@@ -252,9 +235,6 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Bottom spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
-
-      {/* Bottom Tabs */}
-      <BottomTabs activeTab={activeBottomTab} onTabPress={handleBottomTabPress} />
     </SafeAreaView>
   )
 }

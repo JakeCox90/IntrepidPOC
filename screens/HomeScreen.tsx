@@ -1,138 +1,27 @@
 "use client"
-
-import { useState } from "react"
-import { View, FlatList, StyleSheet, SafeAreaView } from "react-native"
+import { View, StyleSheet, SafeAreaView, Text } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
-import Typography from "../components/Typography"
-import CardHorizontal from "../components/CardHorizontal"
-import Tabs from "../components/Tabs"
-import BottomTabs from "../components/BottomTabs"
+import { StatusBar } from "expo-status-bar"
 
-// Updated categories based on The Sun website
-const CATEGORIES = ["All", "UK News", "Sport", "Politics", "Showbiz", "Health", "Tech"]
-
-// Updated news content from The Sun website
-const sunNewsContent = [
-  {
-    id: 1,
-    title: "MASTERBLASTER Tottenham Premier League chief Richard Masters with cheeky message on VAR",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/ZLdnUOH.jpg",
-    timestamp: "2 hours ago",
-    readTime: "3 min read",
-    content:
-      "Premier League chief Richard Masters has sent a cheeky message about VAR after Tottenham's controversial win over Liverpool.",
-  },
-  {
-    id: 2,
-    title: "IN THE CAN Jake Paul rematch and James Canelo over failed fight",
-    category: "Boxing",
-    imageUrl: "https://i.imgur.com/JaCBiCp.jpg",
-    timestamp: "5 hours ago",
-    readTime: "3 min read",
-    content: "Jake Paul has called for a rematch with Canelo Alvarez after their failed fight negotiations.",
-  },
-  {
-    id: 3,
-    title: "READY PLAYER RON Walker's wife Annie poses behind wheel of £70k Mercedes",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/7BjQIEE.jpg",
-    timestamp: "Yesterday",
-    readTime: "3 min read",
-    content:
-      "Annie Walker, wife of football star Ron Walker, has been spotted posing behind the wheel of a £70,000 Mercedes.",
-  },
-  {
-    id: 4,
-    title: "KANE NOT BE SERIOUS Kane tipped to make stunning Liverpool transfer by Premier League legend",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/JfVDTLs.jpg",
-    timestamp: "3 hours ago",
-    readTime: "3 min read",
-    content: "Harry Kane has been tipped to make a stunning transfer to Liverpool by a Premier League legend.",
-  },
-  {
-    id: 5,
-    title: "DONE FER Fernandes left red-faced over antics seconds before Ronaldo's worst penalty",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/QVZLMGj.jpg",
-    timestamp: "1 day ago",
-    readTime: "3 min read",
-    content:
-      "Bruno Fernandes was left red-faced after his antics seconds before Cristiano Ronaldo's worst penalty miss.",
-  },
-]
-
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
   const theme = useTheme()
-  const [news, setNews] = useState(sunNewsContent)
-  const [loading, setLoading] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [activeBottomTab, setActiveBottomTab] = useState("today")
-
-  const handleCategoryPress = (category) => {
-    setSelectedCategory(category)
-    // In a real app, you would fetch news for this category
-  }
-
-  const handleNewsPress = (article) => {
-    navigation.navigate("Article", { article })
-  }
-
-  const handleBottomTabPress = (tab) => {
-    if (tab === "allNews") {
-      navigation.navigate("AllNews")
-    } else if (tab === "search") {
-      navigation.navigate("Search")
-    } else {
-      setActiveBottomTab(tab)
-    }
-  }
-
-  const handleBookmark = (id) => {
-    console.log("Bookmark article:", id)
-    // In a real app, you would save this article to bookmarks
-  }
-
-  const handleShare = (id) => {
-    console.log("Share article:", id)
-    // In a real app, you would open a share dialog
-  }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Primary }]}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.colors.Primary.Resting }]}>
-        <Typography variant="h4" color={theme.colors.Text.Inverse} style={styles.headerTitle}>
-          News
-        </Typography>
+        <Text style={styles.headerTitle}>Today</Text>
       </View>
 
-      {/* Category Tabs */}
-      <Tabs tabs={CATEGORIES} activeTab={selectedCategory} onTabPress={handleCategoryPress} variant="primary" />
-
-      {/* News List */}
-      <FlatList
-        data={news}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <CardHorizontal
-            id={item.id}
-            title={item.title}
-            imageUrl={item.imageUrl}
-            category={item.category}
-            timestamp={item.timestamp}
-            readTime={item.readTime}
-            onPress={() => handleNewsPress(item)}
-            onBookmark={() => handleBookmark(item.id)}
-            onShare={() => handleShare(item.id)}
-          />
-        )}
-        contentContainerStyle={styles.newsList}
-      />
-
-      {/* Bottom Tabs */}
-      <BottomTabs activeTab={activeBottomTab} onTabPress={handleBottomTabPress} />
+      {/* Placeholder content */}
+      <View style={[styles.placeholderContainer, { backgroundColor: theme.colors.Surface.Primary }]}>
+        <Text style={[styles.placeholderText, { color: theme.colors.Text.Secondary }]}>Coming soon...</Text>
+        <Text style={[styles.placeholderSubtext, { color: theme.colors.Text.Secondary }]}>
+          This feature is currently under development
+        </Text>
+      </View>
     </SafeAreaView>
   )
 }
@@ -140,16 +29,33 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#FFFFFF",
   },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 16,
   },
   headerTitle: {
-    fontWeight: "bold",
+    fontSize: 40,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
-  newsList: {
-    paddingHorizontal: 16,
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  placeholderText: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  placeholderSubtext: {
+    fontSize: 16,
+    textAlign: "center",
   },
 })
 
