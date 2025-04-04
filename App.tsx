@@ -32,7 +32,7 @@ export default function App() {
     <SafeAreaProvider>
       <ThemeProvider>
         <NavigationContainer>
-          <StatusBar style="dark" />
+          <StatusBar style="light-content" translucent backgroundColor="transparent" />
           <Stack.Navigator
             initialRouteName="Main"
             screenOptions={{

@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { View, FlatList, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity } from "react-native"
+import { View, FlatList, StyleSheet, Text, ScrollView, TouchableOpacity, StatusBar } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
-import { StatusBar } from "expo-status-bar"
+import Header from "../components/Header"
 
 // Sample news content from The Sun website
 const sunNewsContent = [
@@ -119,13 +119,11 @@ const AllNewsScreen = ({ navigation }) => {
   const subcategories = SUBCATEGORIES[selectedMainCategory] || []
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.Primary.Resting }]}>
-        <Text style={styles.headerTitle}>All News</Text>
-      </View>
+      <Header title="All News" titleStyle="large" />
 
       {/* Main Category Tabs */}
       <View style={[styles.mainCategoryContainer, { backgroundColor: theme.colors.Primary.Resting }]}>
@@ -201,24 +199,14 @@ const AllNewsScreen = ({ navigation }) => {
         )}
         contentContainerStyle={styles.newsList}
       />
-    </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    paddingBottom: 16,
-  },
-  headerTitle: {
-    fontSize: 40,
-    fontWeight: "700",
-    color: "#FFFFFF",
   },
   mainCategoryContainer: {
     paddingVertical: 16,

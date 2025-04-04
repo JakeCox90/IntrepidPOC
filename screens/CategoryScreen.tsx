@@ -1,10 +1,9 @@
 "use client"
-import { View, StyleSheet, TouchableOpacity, SafeAreaView, FlatList } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { View, StyleSheet, FlatList, StatusBar } from "react-native"
 import CardHorizontal from "../components/CardHorizontal"
 import { mockNews } from "../services/newsService"
 import { useTheme } from "../theme/ThemeProvider"
-import Typography from "../components/Typography"
+import Header from "../components/Header"
 
 const CategoryScreen = ({ route, navigation }) => {
   const { category } = route.params
@@ -25,24 +24,16 @@ const CategoryScreen = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Primary }]}>
-      <View
-        style={[
-          styles.header,
-          {
-            borderBottomColor: theme.colors.Border["Border-Primary"],
-            borderBottomWidth: theme.borderWidth["10"],
-          },
-        ]}
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.Text.Primary} />
-        </TouchableOpacity>
-        <Typography variant="h5" color={theme.colors.Text.Primary}>
-          {category.name}
-        </Typography>
-        <View style={{ width: 24 }} />
-      </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+
+      <Header
+        title={category.name}
+        showBackButton
+        onBackPress={() => navigation.goBack()}
+        backgroundColor="#FFFFFF"
+        titleAlignment="center"
+      />
 
       <FlatList
         data={mockNews}
@@ -62,26 +53,17 @@ const CategoryScreen = ({ route, navigation }) => {
         )}
         contentContainerStyle={styles.newsList}
       />
-    </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backButton: {
-    padding: 4,
+    backgroundColor: "#FFFFFF",
   },
   newsList: {
-    paddingHorizontal: 16,
+    padding: 16,
   },
 })
 

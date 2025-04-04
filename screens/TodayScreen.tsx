@@ -1,11 +1,11 @@
 "use client"
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, ScrollView, StatusBar } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Stack from "../components/Stack"
 import CardCatchUp from "../components/CardCatchUp"
 import CardHero from "../components/CardHero"
 import CardArticle from "../components/CardArticle"
-import { Feather } from "@expo/vector-icons"
+import Header from "../components/Header"
 
 // Sample data
 const catchUpItems = [
@@ -124,18 +124,10 @@ const TodayScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Status bar with blue background */}
-      <StatusBar barStyle="light-content" backgroundColor={theme.colors.Primary.Resting} translucent />
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.Primary.Resting }]}>
-        <SafeAreaView style={styles.headerContent}>
-          <Text style={styles.headerTitle}>News</Text>
-          <TouchableOpacity onPress={handleProfilePress}>
-            <Feather name="user" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-        </SafeAreaView>
-      </View>
+      <Header title="News" titleStyle="large" showProfileButton onProfilePress={handleProfilePress} />
 
       <ScrollView style={styles.scrollView}>
         {/* Today's Catch Up Section */}
@@ -217,22 +209,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8F8F8",
-  },
-  header: {
-    paddingTop: StatusBar.currentHeight || 0,
-  },
-  headerContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    fontStyle: "italic",
   },
   scrollView: {
     flex: 1,

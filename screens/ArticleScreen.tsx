@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Dimensions, Image } from "react-native"
-import { Ionicons, Feather } from "@expo/vector-icons"
+import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image, StatusBar } from "react-native"
+import { Feather } from "@expo/vector-icons"
 import { mockNews } from "../services/newsService"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "../components/Typography"
@@ -10,6 +10,7 @@ import Accordion from "../components/Accordion"
 import Comments from "../components/Comments"
 import AudioPlayer from "../components/AudioPlayer"
 import Flag from "../components/Flag"
+import Header from "../components/Header"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
@@ -132,10 +133,20 @@ const ArticleScreen = ({ route, navigation }) => {
     console.log("Audio playback completed")
   }
 
+  const handleSharePress = () => {
+    console.log("Share article")
+  }
+
+  const handleSavePress = () => {
+    console.log("Save article")
+  }
+
   // If article is undefined, show an error message
   if (!article) {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+        <Header title="Article" showBackButton onBackPress={() => navigation.navigate("Today")} />
         <View style={styles.errorContainer}>
           <Typography variant="h5" color={theme.colors.Text.Primary}>
             Article not found
@@ -149,33 +160,25 @@ const ArticleScreen = ({ route, navigation }) => {
             </Typography>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     )
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: theme.colors.Border["Border-Primary"] }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.Primary.Resting} />
-          <Typography variant="body-01" color={theme.colors.Text.Primary}>
-            {article.category || "News"}
-          </Typography>
-        </TouchableOpacity>
-        <View style={styles.headerButtons}>
-          <TouchableOpacity style={styles.headerButton}>
-            <Typography variant="button" color={theme.colors.Primary.Resting}>
-              SHARE
-            </Typography>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton}>
-            <Typography variant="button" color={theme.colors.Primary.Resting}>
-              SAVE
-            </Typography>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <Header
+        title={article.category || "News"}
+        showBackButton
+        onBackPress={() => navigation.goBack()}
+        rightButtons={[
+          { label: "SHARE", onPress: handleSharePress },
+          { label: "SAVE", onPress: handleSavePress },
+        ]}
+        backgroundColor="#FFFFFF"
+      />
 
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
         {/* Tags */}
@@ -203,7 +206,7 @@ const ArticleScreen = ({ route, navigation }) => {
 
         {/* Reading time */}
         <View style={styles.readingTimeContainer}>
-          <Ionicons name="time-outline" size={14} color={theme.colors.Text.Secondary} />
+          <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
           <Typography variant="annotation" color={theme.colors.Text.Secondary} style={styles.readingTime}>
             {article.readTime || "3 min read"}
           </Typography>
@@ -272,35 +275,26 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Bottom spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerButtons: {
-    flexDirection: "row",
-  },
-  headerButton: {
-    marginLeft: 15,
-  },
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  backToHomeButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
   },
   tagsContainer: {
     flexDirection: "row",
@@ -348,26 +342,6 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     marginBottom: 16,
-  },
-  imagePlaceholder: {
-    width: "100%",
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-    borderRadius: 4,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  backToHomeButton: {
-    marginTop: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
   },
   bottomSpacing: {
     height: 20,

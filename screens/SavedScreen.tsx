@@ -1,19 +1,30 @@
-import { View, Text, StyleSheet, SafeAreaView } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+"use client"
+
+import { View, StyleSheet, StatusBar } from "react-native"
+import { Feather } from "@expo/vector-icons"
+import { useTheme } from "../theme/ThemeProvider"
+import Typography from "../components/Typography"
+import Header from "../components/Header"
 
 const SavedScreen = () => {
+  const theme = useTheme()
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Saved Articles</Text>
-      </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+
+      <Header title="Saved Articles" backgroundColor="#FFFFFF" />
 
       <View style={styles.emptyContainer}>
-        <Ionicons name="heart-outline" size={64} color="#CCCCCC" />
-        <Text style={styles.emptyText}>No saved articles</Text>
-        <Text style={styles.emptySubtext}>Articles you save will appear here</Text>
+        <Feather name="bookmark" size={64} color={theme.colors.Text.Secondary} />
+        <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.emptyText}>
+          No saved articles
+        </Typography>
+        <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.emptySubtext}>
+          Articles you save will appear here
+        </Typography>
       </View>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -22,17 +33,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000000",
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
@@ -40,15 +40,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#333333",
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtext: {
-    fontSize: 14,
-    color: "#666666",
+    textAlign: "center",
   },
 })
 
