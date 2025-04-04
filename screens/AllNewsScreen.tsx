@@ -21,38 +21,116 @@ import { fetchNewsByCategory } from "../services/sunNewsService"
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
 
 // Main categories - updated to match The Sun's exact section names
-const MAIN_CATEGORIES = ["News", "Sport", "Showbiz", "TV"]
+const MAIN_CATEGORIES = ["News", "Sport", "TV", "Showbiz", "Fabulous", "Money", "Travel", "Tech", "Motors", "Health"]
 
-// Subcategories for each main category - updated to match The Sun's exact section names
+// Subcategories for each main category - updated to match The Sun's exact section hierarchy
 const SUBCATEGORIES = {
-  News: ["UK News", "World News", "Politics", "Health", "Money", "Tech"],
-  Sport: ["Football", "Boxing", "F1", "Cricket", "Rugby", "Tennis", "Golf"],
-  Showbiz: ["Celebrity", "Music", "Film"],
+  News: ["UK News", "World News", "Politics", "Royal Family", "US News", "Irish News", "Scottish News", "Opinion"],
+  Sport: ["Football", "Boxing", "Racing", "UFC", "F1", "Cricket", "Rugby", "Golf", "Tennis", "NFL", "Dream Team"],
   TV: ["TV News", "Soaps", "Reality TV"],
+  Showbiz: ["Celebrity", "Music", "Film"],
+  Fabulous: ["Fashion", "Beauty", "Food", "Parenting"],
+  Money: ["Property", "Bills", "Banking", "Pensions"],
+  Travel: ["Beach Holidays", "UK Holidays", "City Breaks", "Cruises"],
+  Tech: ["Phones", "Gaming", "Science"],
+  Motors: ["New Cars", "Used Cars"],
+  Health: ["Fitness", "Diet", "Health News"],
 }
+
+// Additional sections that don't fit in the main navigation
+const ADDITIONAL_SECTIONS = [
+  "Puzzles",
+  "Dear Deidre",
+  "Sun Bingo",
+  "Sun Vegas",
+  "Sun Savers",
+  "Sun Casino",
+  "Sun Win",
+  "Sun Selects",
+]
 
 // Map categories to section colors
 const getCategoryColor = (category, theme) => {
-  switch (category) {
-    case "News":
-      return theme.colors.Section.News
-    case "Sport":
-      return theme.colors.Section.Sport
-    case "Showbiz":
-      return theme.colors.Section.Showbiz
-    case "TV":
-      return theme.colors.Section.TV
-    case "Politics":
-      return theme.colors.Section.Politics
-    case "Health":
-      return theme.colors.Section.Health
-    case "Money":
-      return theme.colors.Section.Money
-    case "Tech":
-      return theme.colors.Section.Tech
-    default:
-      return theme.colors.Section.News
-  }
+  if (!category || !theme) return "#E03A3A" // Default to red if missing data
+
+  // Normalize the category name for comparison
+  const normalizedCategory = category.toLowerCase()
+
+  // Main sections
+  if (normalizedCategory === "news") return theme.colors.Section.News
+  if (normalizedCategory === "sport") return theme.colors.Section.Sport
+  if (normalizedCategory === "tv") return theme.colors.Section.TV
+  if (normalizedCategory === "showbiz") return theme.colors.Section.Showbiz
+  if (normalizedCategory === "fabulous") return theme.colors.Section.Fabulous
+  if (normalizedCategory === "money") return theme.colors.Section.Money
+  if (normalizedCategory === "travel") return theme.colors.Section.Travel
+  if (normalizedCategory === "tech") return theme.colors.Section.Tech
+  if (normalizedCategory === "motors") return theme.colors.Section.Motors
+  if (normalizedCategory === "health") return theme.colors.Section.Health
+
+  // News subsections
+  if (normalizedCategory === "uk news") return theme.colors.Section["UK News"]
+  if (normalizedCategory === "world news") return theme.colors.Section["World News"]
+  if (normalizedCategory === "politics") return theme.colors.Section.Politics
+  if (normalizedCategory === "royal family") return theme.colors.Section["Royal Family"]
+  if (normalizedCategory === "us news") return theme.colors.Section["US News"]
+  if (normalizedCategory === "irish news") return theme.colors.Section["Irish News"]
+  if (normalizedCategory === "scottish news") return theme.colors.Section["Scottish News"]
+  if (normalizedCategory === "opinion") return theme.colors.Section.Opinion
+
+  // Sport subsections
+  if (normalizedCategory === "football") return theme.colors.Section.Football
+  if (normalizedCategory === "boxing") return theme.colors.Section.Boxing
+  if (normalizedCategory === "racing") return theme.colors.Section.Racing
+  if (normalizedCategory === "ufc") return theme.colors.Section.UFC
+  if (normalizedCategory === "f1") return theme.colors.Section.F1
+  if (normalizedCategory === "cricket") return theme.colors.Section.Cricket
+  if (normalizedCategory === "rugby") return theme.colors.Section.Rugby
+  if (normalizedCategory === "golf") return theme.colors.Section.Golf
+  if (normalizedCategory === "tennis") return theme.colors.Section.Tennis
+  if (normalizedCategory === "nfl") return theme.colors.Section.NFL
+  if (normalizedCategory === "dream team") return theme.colors.Section["Dream Team"]
+
+  // Other subsections
+  if (normalizedCategory === "soaps") return theme.colors.Section.Soaps
+  if (normalizedCategory === "reality tv") return theme.colors.Section["Reality TV"]
+  if (normalizedCategory === "tv news") return theme.colors.Section["TV News"]
+  if (normalizedCategory === "celebrity") return theme.colors.Section.Celebrity
+  if (normalizedCategory === "music") return theme.colors.Section.Music
+  if (normalizedCategory === "film") return theme.colors.Section.Film
+  if (normalizedCategory === "fashion") return theme.colors.Section.Fashion
+  if (normalizedCategory === "beauty") return theme.colors.Section.Beauty
+  if (normalizedCategory === "food") return theme.colors.Section.Food
+  if (normalizedCategory === "parenting") return theme.colors.Section.Parenting
+  if (normalizedCategory === "property") return theme.colors.Section.Property
+  if (normalizedCategory === "bills") return theme.colors.Section.Bills
+  if (normalizedCategory === "banking") return theme.colors.Section.Banking
+  if (normalizedCategory === "pensions") return theme.colors.Section.Pensions
+  if (normalizedCategory === "beach holidays") return theme.colors.Section["Beach Holidays"]
+  if (normalizedCategory === "uk holidays") return theme.colors.Section["UK Holidays"]
+  if (normalizedCategory === "city breaks") return theme.colors.Section["City Breaks"]
+  if (normalizedCategory === "cruises") return theme.colors.Section.Cruises
+  if (normalizedCategory === "phones") return theme.colors.Section.Phones
+  if (normalizedCategory === "gaming") return theme.colors.Section.Gaming
+  if (normalizedCategory === "science") return theme.colors.Section.Science
+  if (normalizedCategory === "new cars") return theme.colors.Section["New Cars"]
+  if (normalizedCategory === "used cars") return theme.colors.Section["Used Cars"]
+  if (normalizedCategory === "fitness") return theme.colors.Section.Fitness
+  if (normalizedCategory === "diet") return theme.colors.Section.Diet
+  if (normalizedCategory === "health news") return theme.colors.Section["Health News"]
+
+  // Additional sections
+  if (normalizedCategory === "puzzles") return theme.colors.Section.Puzzles
+  if (normalizedCategory === "dear deidre") return theme.colors.Section["Dear Deidre"]
+  if (normalizedCategory === "sun bingo") return theme.colors.Section["Sun Bingo"]
+  if (normalizedCategory === "sun vegas") return theme.colors.Section["Sun Vegas"]
+  if (normalizedCategory === "sun savers") return theme.colors.Section["Sun Savers"]
+  if (normalizedCategory === "sun casino") return theme.colors.Section["Sun Casino"]
+  if (normalizedCategory === "sun win") return theme.colors.Section["Sun Win"]
+  if (normalizedCategory === "sun selects") return theme.colors.Section["Sun Selects"]
+
+  // Default to News if no match
+  return theme.colors.Section.News
 }
 
 const AllNewsScreen = ({ navigation }) => {
@@ -81,9 +159,12 @@ const AllNewsScreen = ({ navigation }) => {
 
         try {
           let data
+          // If a subcategory is selected, fetch by subcategory
           if (selectedSubCategory) {
             data = await fetchNewsByCategory(selectedSubCategory)
-          } else {
+          }
+          // Otherwise fetch by main category
+          else {
             data = await fetchNewsByCategory(selectedMainCategory)
           }
 
@@ -92,7 +173,7 @@ const AllNewsScreen = ({ navigation }) => {
               ...prevState,
               news: data,
               loading: false,
-              error: null,
+              error: data.length === 0 ? "No articles found for this category." : null,
             }))
           }
         } catch (err) {

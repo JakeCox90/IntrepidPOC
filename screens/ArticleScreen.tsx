@@ -80,8 +80,11 @@ const ArticleScreen = ({ route, navigation }) => {
 
   // Get category color based on article category
   const getCategoryColor = (categoryText) => {
-    const normalizedCategory = categoryText?.toUpperCase() || ""
+    if (!categoryText) return theme.colors.Section.News
 
+    const normalizedCategory = categoryText.toUpperCase()
+
+    // Sport categories
     if (
       normalizedCategory.includes("FOOTBALL") ||
       normalizedCategory.includes("BOXING") ||
@@ -93,28 +96,64 @@ const ArticleScreen = ({ route, navigation }) => {
       normalizedCategory.includes("GOLF")
     ) {
       return theme.colors.Section.Sport
-    } else if (normalizedCategory.includes("TV") || normalizedCategory.includes("TELEVISION")) {
+    }
+    // TV categories
+    else if (
+      normalizedCategory.includes("TV") ||
+      normalizedCategory.includes("TELEVISION") ||
+      normalizedCategory.includes("SOAPS") ||
+      normalizedCategory.includes("REALITY")
+    ) {
       return theme.colors.Section.TV
-    } else if (normalizedCategory.includes("SHOWBIZ") || normalizedCategory.includes("CELEBRITY")) {
+    }
+    // Showbiz categories
+    else if (
+      normalizedCategory.includes("SHOWBIZ") ||
+      normalizedCategory.includes("CELEBRITY") ||
+      normalizedCategory.includes("MUSIC") ||
+      normalizedCategory.includes("FILM")
+    ) {
       return theme.colors.Section.Showbiz
-    } else if (normalizedCategory.includes("TECH") || normalizedCategory.includes("TECHNOLOGY")) {
+    }
+    // Tech categories
+    else if (normalizedCategory.includes("TECH") || normalizedCategory.includes("TECHNOLOGY")) {
       return theme.colors.Section.Tech
-    } else if (normalizedCategory.includes("TRAVEL")) {
+    }
+    // Travel categories
+    else if (normalizedCategory.includes("TRAVEL")) {
       return theme.colors.Section.Travel
-    } else if (normalizedCategory.includes("MONEY") || normalizedCategory.includes("FINANCE")) {
+    }
+    // Money categories
+    else if (normalizedCategory.includes("MONEY") || normalizedCategory.includes("FINANCE")) {
       return theme.colors.Section.Money
-    } else if (normalizedCategory.includes("HEALTH")) {
+    }
+    // Health categories
+    else if (normalizedCategory.includes("HEALTH")) {
       return theme.colors.Section.Health
-    } else if (normalizedCategory.includes("POLITICS")) {
+    }
+    // Politics categories
+    else if (normalizedCategory.includes("POLITICS")) {
       return theme.colors.Section.Politics
-    } else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
+    }
+    // Motors categories
+    else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
       return theme.colors.Section.Motors
-    } else if (normalizedCategory.includes("FABULOUS") || normalizedCategory.includes("FASHION")) {
+    }
+    // Fabulous/Fashion categories
+    else if (
+      normalizedCategory.includes("FABULOUS") ||
+      normalizedCategory.includes("FASHION") ||
+      normalizedCategory.includes("BEAUTY")
+    ) {
       return theme.colors.Section.Fabulous
-    } else if (normalizedCategory.includes("FOOD")) {
+    }
+    // Food categories
+    else if (normalizedCategory.includes("FOOD")) {
       return theme.colors.Section.Food
-    } else {
-      return theme.colors.Section.News // Default to News
+    }
+    // Default to News
+    else {
+      return theme.colors.Section.News
     }
   }
 

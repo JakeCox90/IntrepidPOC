@@ -76,7 +76,7 @@ const calculateReadTime = (content: string): string => {
   return `${minutes} min read`
 }
 
-// Mock data based on The Sun content with real article titles and categories
+// Update some of the mock articles to ensure proper category distribution
 const mockSunArticles: Article[] = [
   {
     id: "sun-1",
@@ -341,6 +341,229 @@ The warning comes as the UK prepares for a heatwave, with temperatures expected 
     url: "https://www.thesun.co.uk/health/23567899/summer-swimming-infection-warning/",
     flag: "HEALTH WARNING",
   },
+  // Add more articles with different categories to ensure proper distribution
+  {
+    id: "sun-11",
+    title: "TECH TALK Apple's new iPhone 16 to feature groundbreaking AI capabilities",
+    category: "Tech",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "1 day ago",
+    readTime: "4 min read",
+    content: `Apple's upcoming iPhone 16 will feature groundbreaking AI capabilities that could revolutionize how we use smartphones, industry insiders have revealed.
+
+The new device, expected to launch in September, will reportedly include Apple Intelligence, the company's new AI system that works across apps and features.
+
+Sources familiar with Apple's plans told The Sun that the iPhone 16 Pro models will have enhanced hardware specifically designed to handle complex AI tasks locally on the device, rather than relying on cloud processing.
+
+"This is Apple's biggest push into AI yet," said our source. "They're designing custom silicon that can handle much more sophisticated on-device AI than anything we've seen before."
+
+The new features are said to include advanced photo editing that can completely transform images based on text prompts, real-time translation in FaceTime calls, and a significantly upgraded Siri that can understand context and perform complex tasks across multiple apps.
+
+Apple is also reportedly working on AI features that can analyze a user's health data to provide personalized wellness recommendations, though this may not be ready for the initial release.
+
+The move comes as Apple faces increasing competition from Google and Samsung, both of which have already integrated AI features into their latest smartphones.
+
+Apple has declined to comment on the rumors, but CEO Tim Cook has previously stated that the company is "investing significantly" in AI technology.`,
+    author: "Sean Keach",
+    url: "https://www.thesun.co.uk/tech/23567900/apple-iphone-16-ai-features/",
+    flag: "TECH TALK",
+  },
+  {
+    id: "sun-12",
+    title: "TRAVEL TIPS Hidden European beach destination with £1 beers and £15 hotels that's just 3 hours from UK",
+    category: "Travel",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "2 days ago",
+    readTime: "3 min read",
+    content: `A hidden European beach destination with £1 beers and hotels for as little as £15 a night is just three hours from the UK - and Brits are only just discovering it.
+
+While tourists flock to crowded hotspots like Spain and Greece, the Albanian Riviera remains one of Europe's best-kept secrets, offering stunning beaches and rock-bottom prices.
+
+The coastal stretch between Vlore and Sarande features crystal-clear waters, pristine beaches, and charming villages that rival more famous Mediterranean destinations.
+
+Travel blogger Emma Wilson told The Sun: "I couldn't believe the value for money. I stayed in a beachfront hotel for £25 a night that would have cost at least £150 in Greece or Italy."
+
+Local beers cost around £1, while a three-course meal with wine can be found for under £15 per person in many restaurants.
+
+The area is easily accessible with direct flights from the UK to Tirana taking around three hours, followed by a scenic drive to the coast.
+
+Ksamil, often called the "Ionian Pearl," is particularly popular with those in the know, featuring small islands you can swim to and beaches that rival the Caribbean.
+
+Despite its growing popularity, the Albanian Riviera remains uncrowded compared to other Mediterranean destinations, though tourism experts warn this won't last forever.
+
+"It's where the Adriatic meets the Ionian Sea, creating some of the most beautiful coastline in Europe," Wilson added. "Go now before everyone else discovers it."
+
+The best time to visit is between May and September, with July and August offering the warmest temperatures but slightly larger crowds.
+
+Albania has also simplified its visa requirements, with UK tourists able to stay for up to 90 days without a visa.`,
+    author: "Lisa Minot",
+    url: "https://www.thesun.co.uk/travel/23567901/albania-beach-destination-cheap/",
+    flag: "TRAVEL TIPS",
+  },
+  {
+    id: "sun-13",
+    title: "ROYAL EXCLUSIVE Queen's secret health battle revealed in new biography",
+    category: "Royal Family",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "1 day ago",
+    readTime: "5 min read",
+    content: `A new royal biography has revealed the Queen's secret health battle in her final years, which was kept hidden from the public.
+
+The late monarch, who passed away in September 2022 at the age of 96, had been privately dealing with a painful condition for at least two years before her death, according to royal author Robert Hardman.
+
+In his new book, "Charles III: New King, New Court," Hardman claims that Queen Elizabeth II had been suffering from bone cancer but was determined to continue with her royal duties despite the diagnosis.
+
+"She was battling bone cancer in her final years, which explains her mobility issues that were often attributed simply to age," a palace source told Hardman. "But Her Majesty was determined that it should not interfere with her duties as head of state."
+
+The revelation explains why the Queen began to use a walking stick in October 2021 and why her public appearances became increasingly limited in her final months.
+
+Despite her health struggles, the Queen continued to carry out virtual engagements during the pandemic and made a remarkable appearance on the Buckingham Palace balcony during her Platinum Jubilee celebrations in June 2022, just three months before her death.
+
+The book also reveals that the Queen had made all the arrangements for her funeral years in advance, including selecting the music and readings, and had been involved in planning the smooth transition to King Charles III's reign.
+
+Buckingham Palace has not officially commented on the claims in the new biography.`,
+    author: "Matt Wilkinson",
+    url: "https://www.thesun.co.uk/royal/23567902/queen-secret-health-battle/",
+    flag: "ROYAL EXCLUSIVE",
+  },
+  {
+    id: "sun-14",
+    title: "FASHION FIND I'm a fashion expert - these £30 M&S jeans look designer but cost a fraction of the price",
+    category: "Fashion",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "3 hours ago",
+    readTime: "2 min read",
+    content: `Fashion experts are raving about a pair of £30 Marks & Spencer jeans that they say look designer but cost a fraction of the price.
+
+The high street retailer's 'Mom Jeans with Stretch' have gone viral on social media, with fashion influencers claiming they rival premium denim brands costing five times as much.
+
+Style expert Emma Johnson told The Sun: "These M&S jeans are the best high street denim I've found this year. The cut is incredibly flattering, with a high waist that holds you in and a relaxed leg that gives that coveted vintage look."
+
+The jeans, which come in six different washes and are available in sizes 6-24, feature added stretch for comfort while maintaining the structured look of traditional denim.
+
+"What makes these stand out is the quality of the denim," Johnson explained. "It has that substantial feel you usually only get with premium brands, but at £30, they're an absolute steal."
+
+The jeans have also received over 1,000 five-star reviews on the M&S website, with customers praising their fit and quality.
+
+One reviewer wrote: "I've spent years buying expensive designer jeans, but these are now my go-to pair. The fit is perfect and they wash really well without losing their shape."
+
+M&S has reported that sales of the jeans have increased by 156% since they started trending on TikTok last month.`,
+    author: "Abby McHale",
+    url: "https://www.thesun.co.uk/fabulous/fashion/23567903/marks-spencer-jeans-designer-look/",
+    flag: "FASHION FIND",
+  },
+  {
+    id: "sun-15",
+    title: "FOOD FOR THOUGHT I'm a chef - here's how to make the perfect roast potatoes every time",
+    category: "Food",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "5 hours ago",
+    readTime: "3 min read",
+    content: `A top chef has revealed his foolproof method for making perfect roast potatoes every time - and the common mistakes most home cooks make.
+
+James Martin, who has been a fixture on British cooking shows for over two decades, says the secret to crispy-on-the-outside, fluffy-on-the-inside roasties is all in the preparation.
+
+"The biggest mistake people make is not par-boiling the potatoes for long enough," Martin told The Sun. "You want them to be almost falling apart before they go in the oven."
+
+The chef recommends boiling peeled and chopped Maris Piper potatoes for at least 10 minutes, then draining them and giving the pan a good shake to rough up the edges.
+
+"Those rough edges are what create the crispy exterior when roasted," he explained. "The more texture on the outside, the crispier they'll be."
+
+For the fat, Martin is adamant that goose fat produces the best results, though he acknowledges that vegetable oil is a good alternative for vegetarians.
+
+"Whatever fat you use, it needs to be smoking hot before the potatoes go in," he said. "And don't overcrowd the roasting tray - the potatoes need space around them to get crispy all over."
+
+Martin also advises adding a few sprigs of rosemary and whole garlic cloves to the roasting tray for extra flavor, but only in the last 20 minutes to prevent burning.
+
+"And never cover them when they come out of the oven," he warned. "That creates steam which will make them soggy. Just let them rest for a few minutes before serving."`,
+    author: "Hayley Minn",
+    url: "https://www.thesun.co.uk/food/23567904/chef-perfect-roast-potatoes/",
+    flag: "FOOD FOR THOUGHT",
+  },
+  {
+    id: "sun-16",
+    title: "PUZZLING TIMES Complete today's crossword and you could win £100",
+    category: "Puzzles",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "Today",
+    readTime: "1 min read",
+    content: `Complete today's crossword puzzle for a chance to win £100 in our daily prize draw.
+
+Our crossword is updated daily at midnight, giving you a fresh challenge every 24 hours.
+
+Today's puzzle features clues about current events, classic literature, and general knowledge.
+
+Once you've completed the crossword, submit your details through our online form to be entered into the prize draw.
+
+Winners are selected at random and notified by email within 48 hours.
+
+Good luck!`,
+    author: "The Sun Puzzles Team",
+    url: "https://www.thesun.co.uk/puzzles/23567905/daily-crossword-competition/",
+    flag: "PUZZLING TIMES",
+  },
+  {
+    id: "sun-17",
+    title: "DEAR DEIDRE My husband is having an affair with my best friend - should I confront them?",
+    category: "Dear Deidre",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "Yesterday",
+    readTime: "4 min read",
+    content: `DEAR DEIDRE: I've discovered my husband is having an affair with my best friend, and I'm torn between confronting them or walking away without a word.
+
+Last week, I borrowed my husband's laptop and found intimate messages between them going back six months.
+
+They've been meeting at hotels when I'm at work, and the messages show they've been laughing about deceiving me.
+
+I'm 42, my husband is 45, and we've been married for 15 years with two teenage children. My friend is 39 and has been part of my life since university.
+
+I feel completely betrayed by the two people I trusted most. I haven't told anyone yet and have been pretending everything is normal while I decide what to do.
+
+Part of me wants to confront them both and watch them squirm, but another part just wants to pack my bags and disappear from their lives without explanation.
+
+What should I do?
+
+DEIDRE SAYS: This double betrayal is devastating, and it's understandable you're experiencing such conflicting emotions.
+
+While disappearing might seem appealing right now, it's unlikely to give you the closure you need, and it could complicate matters with your children.
+
+Confrontation is necessary, but it should be done when you're feeling more emotionally prepared. Consider speaking to each of them separately rather than together.
+
+Before any confrontation, I'd suggest talking to a counsellor to help process your feelings and plan your approach. Contact Relate (relate.org.uk) for support.
+
+Also, gather important financial documents and consider consulting a solicitor to understand your options, regardless of whether you decide to work on the marriage or end it.
+
+Remember, their betrayal reflects their character flaws, not your worth. You deserve honesty and respect.`,
+    author: "Deidre Sanders",
+    url: "https://www.thesun.co.uk/dear-deidre/23567906/husband-affair-best-friend/",
+    flag: "DEAR DEIDRE",
+  },
+  {
+    id: "sun-18",
+    title: "SUN BINGO Get a £50 bingo bonus and 50 free spins when you join Sun Bingo today",
+    category: "Sun Bingo",
+    imageUrl: "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+    timestamp: "4 hours ago",
+    readTime: "2 min read",
+    content: `New Sun Bingo players can claim an exciting welcome offer of a £50 bingo bonus plus 50 free spins when they sign up today.
+
+This exclusive offer is available to new customers who register with Sun Bingo and deposit £10 into their account.
+
+After making your qualifying deposit, you'll receive a £50 bingo bonus to use on any of our popular bingo rooms, including exclusive themed rooms you won't find anywhere else.
+
+Additionally, you'll get 50 free spins to use on selected slot games, giving you even more chances to win.
+
+Sun Bingo offers a wide variety of bingo games, including 90-ball, 80-ball, 75-ball, and special themed rooms with unique features and jackpots.
+
+Our community is known for its friendly chat hosts and regular players who create a welcoming atmosphere for newcomers.
+
+Don't miss out on this limited-time offer – join Sun Bingo today and start your bingo adventure with a boosted balance!
+
+18+. New customers only. Deposit £10 to get a £50 bingo bonus plus 50 free spins. Wagering requirements and full T&Cs apply.`,
+    author: "Sun Bingo",
+    url: "https://www.thesun.co.uk/sun-bingo/23567907/welcome-offer-bonus-free-spins/",
+    flag: "SUN BINGO",
+  },
 ]
 
 // Process the mock data to extract flags and clean titles
@@ -366,7 +589,7 @@ export const fetchSunNews = async (): Promise<Article[]> => {
   })
 }
 
-// Function to fetch news by category
+// Update the fetchNewsByCategory function to properly filter by category
 export const fetchNewsByCategory = async (category: string): Promise<Article[]> => {
   // Simulate network request
   return new Promise((resolve) => {
@@ -374,13 +597,171 @@ export const fetchNewsByCategory = async (category: string): Promise<Article[]> 
       if (category.toLowerCase() === "all") {
         resolve(processedMockArticles)
       } else {
-        // Filter by category (case insensitive)
-        const filteredNews = processedMockArticles.filter((item) =>
-          item.category.toLowerCase().includes(category.toLowerCase()),
-        )
+        // Improved category filtering logic
+        const filteredNews = processedMockArticles.filter((item) => {
+          const itemCategory = item.category.toLowerCase()
+          const searchCategory = category.toLowerCase()
 
-        // If no news in that category, return all news
-        resolve(filteredNews.length > 0 ? filteredNews : processedMockArticles)
+          // Main category matching
+          if (searchCategory === "news") {
+            return [
+              "news",
+              "uk news",
+              "world news",
+              "politics",
+              "irish news",
+              "scottish news",
+              "us news",
+              "royal family",
+            ].includes(itemCategory)
+          }
+
+          if (searchCategory === "sport") {
+            return [
+              "sport",
+              "football",
+              "boxing",
+              "racing",
+              "ufc",
+              "f1",
+              "cricket",
+              "rugby",
+              "golf",
+              "tennis",
+              "nfl",
+              "dream team",
+            ].includes(itemCategory)
+          }
+
+          if (searchCategory === "tv") {
+            return ["tv", "tv news", "soaps", "reality tv"].includes(itemCategory)
+          }
+
+          if (searchCategory === "showbiz") {
+            return ["showbiz", "celebrity", "music", "film"].includes(itemCategory)
+          }
+
+          if (searchCategory === "fabulous") {
+            return ["fabulous", "fashion", "beauty", "food", "parenting"].includes(itemCategory)
+          }
+
+          if (searchCategory === "money") {
+            return ["money", "property", "bills", "banking", "pensions"].includes(itemCategory)
+          }
+
+          if (searchCategory === "travel") {
+            return ["travel", "beach holidays", "uk holidays", "city breaks", "cruises"].includes(itemCategory)
+          }
+
+          if (searchCategory === "tech") {
+            return ["tech", "phones", "gaming", "science"].includes(itemCategory)
+          }
+
+          if (searchCategory === "motors") {
+            return ["motors", "new cars", "used cars"].includes(itemCategory)
+          }
+
+          if (searchCategory === "health") {
+            return ["health", "fitness", "diet", "health news"].includes(itemCategory)
+          }
+
+          // Subcategory matching for News
+          if (
+            [
+              "uk news",
+              "world news",
+              "politics",
+              "royal family",
+              "us news",
+              "irish news",
+              "scottish news",
+              "opinion",
+            ].includes(searchCategory)
+          ) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Sport
+          if (
+            [
+              "football",
+              "boxing",
+              "racing",
+              "ufc",
+              "f1",
+              "cricket",
+              "rugby",
+              "golf",
+              "tennis",
+              "nfl",
+              "dream team",
+            ].includes(searchCategory)
+          ) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for TV
+          if (["tv news", "soaps", "reality tv"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Showbiz
+          if (["celebrity", "music", "film"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Fabulous
+          if (["fashion", "beauty", "food", "parenting"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Money
+          if (["property", "bills", "banking", "pensions"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Travel
+          if (["beach holidays", "uk holidays", "city breaks", "cruises"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Tech
+          if (["phones", "gaming", "science"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Motors
+          if (["new cars", "used cars"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Subcategory matching for Health
+          if (["fitness", "diet", "health news"].includes(searchCategory)) {
+            return itemCategory === searchCategory
+          }
+
+          // Additional sections
+          if (
+            [
+              "puzzles",
+              "dear deidre",
+              "sun bingo",
+              "sun vegas",
+              "sun savers",
+              "sun casino",
+              "sun win",
+              "sun selects",
+            ].includes(searchCategory)
+          ) {
+            return itemCategory === searchCategory
+          }
+
+          // Exact subcategory matching as fallback
+          return itemCategory === searchCategory
+        })
+
+        // If no news in that category, return empty array instead of all news
+        resolve(filteredNews.length > 0 ? filteredNews : [])
       }
     }, 800)
   })

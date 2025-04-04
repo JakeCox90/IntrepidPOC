@@ -29,63 +29,125 @@ const CardHorizontal = ({
 }: CardHorizontalProps) => {
   const theme = useTheme()
 
-  // Get category color based on category text
-  const getCategoryColor = (categoryText: string) => {
-    const normalizedCategory = categoryText?.toUpperCase() || ""
+  // Update the getCategoryColor function to ensure proper color mapping
+  const getCategoryColor = (categoryText: string): string => {
+    if (!categoryText) return theme.colors.Section.News
 
-    // Map to exact section names from The Sun website
+    const normalizedCategory = categoryText.toUpperCase()
+
+    // Main sections
     if (
+      normalizedCategory.includes("NEWS") ||
+      normalizedCategory.includes("UK NEWS") ||
+      normalizedCategory.includes("WORLD NEWS") ||
+      normalizedCategory.includes("US NEWS") ||
+      normalizedCategory.includes("IRISH NEWS") ||
+      normalizedCategory.includes("SCOTTISH NEWS") ||
+      normalizedCategory.includes("POLITICS") ||
+      normalizedCategory.includes("OPINION") ||
+      normalizedCategory.includes("ROYAL")
+    ) {
+      return theme.colors.Section.News
+    }
+
+    if (
+      normalizedCategory.includes("SPORT") ||
       normalizedCategory.includes("FOOTBALL") ||
       normalizedCategory.includes("BOXING") ||
-      normalizedCategory.includes("SPORT") ||
-      normalizedCategory.includes("RUGBY") ||
-      normalizedCategory.includes("CRICKET") ||
+      normalizedCategory.includes("RACING") ||
+      normalizedCategory.includes("UFC") ||
       normalizedCategory.includes("F1") ||
+      normalizedCategory.includes("CRICKET") ||
+      normalizedCategory.includes("RUGBY") ||
+      normalizedCategory.includes("GOLF") ||
       normalizedCategory.includes("TENNIS") ||
-      normalizedCategory.includes("GOLF")
+      normalizedCategory.includes("NFL") ||
+      normalizedCategory.includes("DREAM TEAM")
     ) {
       return theme.colors.Section.Sport
-    } else if (normalizedCategory.includes("TV") || normalizedCategory.includes("TELEVISION")) {
+    }
+
+    if (
+      normalizedCategory.includes("TV") ||
+      normalizedCategory.includes("TELEVISION") ||
+      normalizedCategory.includes("SOAPS") ||
+      normalizedCategory.includes("REALITY") ||
+      normalizedCategory.includes("PUZZLES")
+    ) {
       return theme.colors.Section.TV
-    } else if (normalizedCategory.includes("SHOWBIZ") || normalizedCategory.includes("CELEBRITY")) {
+    }
+
+    if (
+      normalizedCategory.includes("SHOWBIZ") ||
+      normalizedCategory.includes("CELEBRITY") ||
+      normalizedCategory.includes("MUSIC") ||
+      normalizedCategory.includes("FILM") ||
+      normalizedCategory.includes("DEAR DEIDRE")
+    ) {
       return theme.colors.Section.Showbiz
-    } else if (normalizedCategory.includes("TECH") || normalizedCategory.includes("TECHNOLOGY")) {
-      return theme.colors.Section.Tech
-    } else if (normalizedCategory.includes("TRAVEL")) {
-      return theme.colors.Section.Travel
-    } else if (normalizedCategory.includes("MONEY") || normalizedCategory.includes("FINANCE")) {
-      return theme.colors.Section.Money
-    } else if (normalizedCategory.includes("HEALTH")) {
-      return theme.colors.Section.Health
-    } else if (normalizedCategory.includes("POLITICS")) {
-      return theme.colors.Section.Politics
-    } else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
-      return theme.colors.Section.Motors
-    } else if (
+    }
+
+    if (
       normalizedCategory.includes("FABULOUS") ||
       normalizedCategory.includes("FASHION") ||
-      normalizedCategory.includes("BEAUTY")
+      normalizedCategory.includes("BEAUTY") ||
+      normalizedCategory.includes("FOOD") ||
+      normalizedCategory.includes("PARENTING")
     ) {
       return theme.colors.Section.Fabulous
-    } else if (normalizedCategory.includes("FOOD")) {
-      return theme.colors.Section.Food
-    } else if (normalizedCategory.includes("PROPERTY")) {
-      return theme.colors.Section.Property
-    } else if (normalizedCategory.includes("PUZZLES")) {
-      return theme.colors.Section.Puzzles
-    } else if (normalizedCategory.includes("DEAR DEIDRE")) {
-      return theme.colors.Section["Dear Deidre"]
-    } else if (normalizedCategory.includes("OPINION")) {
-      return theme.colors.Section.Opinion
-    } else if (normalizedCategory.includes("US NEWS")) {
-      return theme.colors.Section["US News"]
-    } else if (normalizedCategory.includes("WORLD NEWS")) {
-      return theme.colors.Section["World News"]
-    } else if (normalizedCategory.includes("UK NEWS")) {
-      return theme.colors.Section["UK News"]
-    } else {
-      return theme.colors.Section.News // Default to News
     }
+
+    if (
+      normalizedCategory.includes("MONEY") ||
+      normalizedCategory.includes("BANKING") ||
+      normalizedCategory.includes("BILLS") ||
+      normalizedCategory.includes("PENSIONS") ||
+      normalizedCategory.includes("PROPERTY")
+    ) {
+      return theme.colors.Section.Money
+    }
+
+    if (
+      normalizedCategory.includes("TRAVEL") ||
+      normalizedCategory.includes("HOLIDAY") ||
+      normalizedCategory.includes("BEACH") ||
+      normalizedCategory.includes("CRUISE") ||
+      normalizedCategory.includes("SUN BINGO")
+    ) {
+      return theme.colors.Section.Travel
+    }
+
+    if (
+      normalizedCategory.includes("TECH") ||
+      normalizedCategory.includes("PHONE") ||
+      normalizedCategory.includes("GAMING") ||
+      normalizedCategory.includes("SCIENCE") ||
+      normalizedCategory.includes("HEALTH") ||
+      normalizedCategory.includes("FITNESS") ||
+      normalizedCategory.includes("DIET")
+    ) {
+      return theme.colors.Section.Tech
+    }
+
+    if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
+      return theme.colors.Section.Motors
+    }
+
+    if (
+      normalizedCategory.includes("SUN VEGAS") ||
+      normalizedCategory.includes("SUN SAVERS") ||
+      normalizedCategory.includes("SUN CASINO") ||
+      normalizedCategory.includes("SUN WIN")
+    ) {
+      return "#FFD700" // Gold
+    }
+
+    if (normalizedCategory.includes("SUN SELECTS")) {
+      return theme.colors.Section.News
+    }
+
+    // Default to News if no match
+    return theme.colors.Section.News
   }
 
   // Safely handle title parsing
