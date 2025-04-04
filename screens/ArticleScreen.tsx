@@ -21,6 +21,49 @@ const ArticleScreen = ({ route, navigation }) => {
   const [selectedPollOption, setSelectedPollOption] = useState(null)
   const [totalVotes, setTotalVotes] = useState(129)
 
+  // Get category color based on article category
+  const getCategoryColor = (categoryText) => {
+    const normalizedCategory = categoryText?.toUpperCase() || ""
+
+    if (
+      normalizedCategory.includes("FOOTBALL") ||
+      normalizedCategory.includes("BOXING") ||
+      normalizedCategory.includes("SPORT") ||
+      normalizedCategory.includes("RUGBY") ||
+      normalizedCategory.includes("CRICKET") ||
+      normalizedCategory.includes("F1") ||
+      normalizedCategory.includes("TENNIS") ||
+      normalizedCategory.includes("GOLF")
+    ) {
+      return theme.colors.Section.Sport
+    } else if (normalizedCategory.includes("TV") || normalizedCategory.includes("TELEVISION")) {
+      return theme.colors.Section.TV
+    } else if (normalizedCategory.includes("SHOWBIZ") || normalizedCategory.includes("CELEBRITY")) {
+      return theme.colors.Section.Showbiz
+    } else if (normalizedCategory.includes("TECH") || normalizedCategory.includes("TECHNOLOGY")) {
+      return theme.colors.Section.Tech
+    } else if (normalizedCategory.includes("TRAVEL")) {
+      return theme.colors.Section.Travel
+    } else if (normalizedCategory.includes("MONEY") || normalizedCategory.includes("FINANCE")) {
+      return theme.colors.Section.Money
+    } else if (normalizedCategory.includes("HEALTH")) {
+      return theme.colors.Section.Health
+    } else if (normalizedCategory.includes("POLITICS")) {
+      return theme.colors.Section.Politics
+    } else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
+      return theme.colors.Section.Motors
+    } else if (normalizedCategory.includes("FABULOUS")) {
+      return theme.colors.Section.Fabulous
+    } else if (normalizedCategory.includes("FOOD")) {
+      return theme.colors.Section.Food
+    } else {
+      return theme.colors.Section.News // Default to News
+    }
+  }
+
+  // Get the appropriate section color for this article
+  const sectionColor = article?.category ? getCategoryColor(article.category) : theme.colors.Section.News
+
   // Safely get article content or provide default
   const articleContent = article?.content || "No content available"
 
@@ -146,17 +189,17 @@ const ArticleScreen = ({ route, navigation }) => {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-        <Header title="Article" showBackButton onBackPress={() => navigation.navigate("Today")} />
+        <Header title="Article" showBackButton onBackPress={() => navigation.goBack()} />
         <View style={styles.errorContainer}>
           <Typography variant="h5" color={theme.colors.Text.Primary}>
             Article not found
           </Typography>
           <TouchableOpacity
             style={[styles.backToHomeButton, { backgroundColor: theme.colors.Primary.Resting }]}
-            onPress={() => navigation.navigate("Today")}
+            onPress={() => navigation.goBack()}
           >
             <Typography variant="button" color={theme.colors.Text.Inverse}>
-              Back to Today
+              Go Back
             </Typography>
           </TouchableOpacity>
         </View>
@@ -177,21 +220,18 @@ const ArticleScreen = ({ route, navigation }) => {
           { label: "SHARE", onPress: handleSharePress },
           { label: "SAVE", onPress: handleSavePress },
         ]}
-        backgroundColor="#FFFFFF"
+        backgroundColor={sectionColor}
+        textColor="#FFFFFF"
+        flag={article.flag ? { text: article.flag, category: article.category } : null}
       />
 
-      <ScrollView style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
+      <ScrollView
+        style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
+        contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
+      >
         {/* Tags */}
         <View style={styles.tagsContainer}>
-          {article.flag ? (
-            <Flag text={article.flag} style={styles.flag} />
-          ) : (
-            <View style={[styles.tag, { backgroundColor: theme.colors.Primary.Resting }]}>
-              <Typography variant="annotation" color={theme.colors.Text.Inverse}>
-                {(article.category || "NEWS").toUpperCase()}
-              </Typography>
-            </View>
-          )}
+          {!article.flag && <Flag text={article.category || "NEWS"} category={article.category} style={styles.flag} />}
         </View>
 
         {/* Title */}
@@ -207,7 +247,7 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Reading time */}
         <View style={styles.readingTimeContainer}>
           <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-          <Typography variant="annotation" color={theme.colors.Text.Secondary} style={styles.readingTime}>
+          <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
             {article.readTime || "3 min read"}
           </Typography>
         </View>
@@ -217,7 +257,7 @@ const ArticleScreen = ({ route, navigation }) => {
           <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
             Elizabeth Rosenberg
           </Typography>
-          <Typography variant="annotation" color={theme.colors.Text.Secondary}>
+          <Typography variant="body-02" color={theme.colors.Text.Secondary}>
             Published 15th January 2023, 10:21am
           </Typography>
         </View>
@@ -284,6 +324,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
@@ -298,14 +345,7 @@ const styles = StyleSheet.create({
   },
   tagsContainer: {
     flexDirection: "row",
-    marginTop: 16,
     marginBottom: 8,
-  },
-  tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginRight: 8,
   },
   flag: {
     marginRight: 8,

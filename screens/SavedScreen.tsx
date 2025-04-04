@@ -9,6 +9,17 @@ import Header from "../components/Header"
 const SavedScreen = () => {
   const theme = useTheme()
 
+  // Add this function to SavedScreen.tsx
+  const handleArticlePress = (article) => {
+    navigation.navigate("SavedArticle", {
+      article: {
+        ...article,
+        content:
+          "This is a placeholder content for the article. The actual content will be fetched from The Sun website in a production environment.",
+      },
+    })
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />

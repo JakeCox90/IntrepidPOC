@@ -49,7 +49,7 @@ const SearchScreen = ({ navigation }) => {
   }
 
   const handleArticlePress = (article) => {
-    navigation.navigate("Article", {
+    navigation.navigate("SearchArticle", {
       article: {
         ...article,
         content:

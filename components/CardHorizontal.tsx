@@ -1,7 +1,8 @@
 "use client"
-import { View, Image, StyleSheet, TouchableOpacity, Text } from "react-native"
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
+import Typography from "./Typography"
 
 interface CardHorizontalProps {
   id?: number | string
@@ -27,6 +28,65 @@ const CardHorizontal = ({
   onShare,
 }: CardHorizontalProps) => {
   const theme = useTheme()
+
+  // Get category color based on category text
+  const getCategoryColor = (categoryText: string) => {
+    const normalizedCategory = categoryText?.toUpperCase() || ""
+
+    // Map to exact section names from The Sun website
+    if (
+      normalizedCategory.includes("FOOTBALL") ||
+      normalizedCategory.includes("BOXING") ||
+      normalizedCategory.includes("SPORT") ||
+      normalizedCategory.includes("RUGBY") ||
+      normalizedCategory.includes("CRICKET") ||
+      normalizedCategory.includes("F1") ||
+      normalizedCategory.includes("TENNIS") ||
+      normalizedCategory.includes("GOLF")
+    ) {
+      return theme.colors.Section.Sport
+    } else if (normalizedCategory.includes("TV") || normalizedCategory.includes("TELEVISION")) {
+      return theme.colors.Section.TV
+    } else if (normalizedCategory.includes("SHOWBIZ") || normalizedCategory.includes("CELEBRITY")) {
+      return theme.colors.Section.Showbiz
+    } else if (normalizedCategory.includes("TECH") || normalizedCategory.includes("TECHNOLOGY")) {
+      return theme.colors.Section.Tech
+    } else if (normalizedCategory.includes("TRAVEL")) {
+      return theme.colors.Section.Travel
+    } else if (normalizedCategory.includes("MONEY") || normalizedCategory.includes("FINANCE")) {
+      return theme.colors.Section.Money
+    } else if (normalizedCategory.includes("HEALTH")) {
+      return theme.colors.Section.Health
+    } else if (normalizedCategory.includes("POLITICS")) {
+      return theme.colors.Section.Politics
+    } else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
+      return theme.colors.Section.Motors
+    } else if (
+      normalizedCategory.includes("FABULOUS") ||
+      normalizedCategory.includes("FASHION") ||
+      normalizedCategory.includes("BEAUTY")
+    ) {
+      return theme.colors.Section.Fabulous
+    } else if (normalizedCategory.includes("FOOD")) {
+      return theme.colors.Section.Food
+    } else if (normalizedCategory.includes("PROPERTY")) {
+      return theme.colors.Section.Property
+    } else if (normalizedCategory.includes("PUZZLES")) {
+      return theme.colors.Section.Puzzles
+    } else if (normalizedCategory.includes("DEAR DEIDRE")) {
+      return theme.colors.Section["Dear Deidre"]
+    } else if (normalizedCategory.includes("OPINION")) {
+      return theme.colors.Section.Opinion
+    } else if (normalizedCategory.includes("US NEWS")) {
+      return theme.colors.Section["US News"]
+    } else if (normalizedCategory.includes("WORLD NEWS")) {
+      return theme.colors.Section["World News"]
+    } else if (normalizedCategory.includes("UK NEWS")) {
+      return theme.colors.Section["UK News"]
+    } else {
+      return theme.colors.Section.News // Default to News
+    }
+  }
 
   // Safely handle title parsing
   const titleText = title || ""
@@ -54,6 +114,7 @@ const CardHorizontal = ({
 
   // Safely handle category
   const categoryText = category || ""
+  const categoryColor = getCategoryColor(categoryText)
 
   return (
     <TouchableOpacity
@@ -84,11 +145,19 @@ const CardHorizontal = ({
         )}
 
         <View style={styles.textContent}>
-          <Text style={[styles.category, { color: theme.colors.Text.Secondary }]}>{categoryText.toUpperCase()}</Text>
+          <Typography variant="overline" color={categoryColor} style={styles.category}>
+            {categoryText.toUpperCase()}
+          </Typography>
 
           <View style={styles.titleContainer}>
-            {prefix ? <Text style={[styles.prefix, { color: theme.colors.Primary.Resting }]}>{prefix}</Text> : null}
-            <Text style={[styles.title, { color: theme.colors.Text.Primary }]}>{prefix ? mainTitle : titleText}</Text>
+            {prefix ? (
+              <Typography variant="subtitle-01" color={categoryColor} style={styles.prefix}>
+                {prefix}
+              </Typography>
+            ) : null}
+            <Typography variant="subtitle-01" color={theme.colors.Text.Primary} style={styles.title}>
+              {prefix ? mainTitle : titleText}
+            </Typography>
           </View>
         </View>
       </View>
@@ -96,7 +165,9 @@ const CardHorizontal = ({
       <View style={styles.footer}>
         <View style={styles.readTimeContainer}>
           <Feather name="book-open" size={16} color={theme.colors.Text.Secondary} />
-          <Text style={[styles.readTime, { color: theme.colors.Text.Secondary }]}>{readTime || "3 min read"}</Text>
+          <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.readTime}>
+            {readTime || "3 min read"}
+          </Typography>
         </View>
 
         <View style={styles.actions}>
@@ -142,8 +213,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   category: {
-    fontSize: 14,
-    fontWeight: "500",
     marginBottom: 8,
   },
   titleContainer: {

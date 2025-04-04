@@ -1,10 +1,21 @@
 "use client"
 
 import { useState } from "react"
-import { View, FlatList, StyleSheet, Text, ScrollView, TouchableOpacity, StatusBar } from "react-native"
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar as RNStatusBar,
+  Platform,
+} from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
-import Header from "../components/Header"
+import Typography from "../components/Typography"
+
+// Get status bar height
+const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
 
 // Sample news content from The Sun website
 const sunNewsContent = [
@@ -60,15 +71,39 @@ const sunNewsContent = [
   },
 ]
 
-// Main categories
-const MAIN_CATEGORIES = ["News", "Sport", "Politics", "Showbiz"]
+// Main categories - updated to match The Sun's exact section names
+const MAIN_CATEGORIES = ["News", "Sport", "Showbiz", "TV"]
 
-// Subcategories for each main category
+// Subcategories for each main category - updated to match The Sun's exact section names
 const SUBCATEGORIES = {
-  News: ["UK News", "World News", "Health", "Money"],
-  Sport: ["Football", "Rugby", "Cricket", "Boxing", "F1", "Tennis", "Golf"],
-  Politics: ["UK Politics", "US Politics", "Brexit"],
-  Showbiz: ["TV", "Film", "Music", "Celebrity"],
+  News: ["UK News", "World News", "Politics", "Health", "Money", "Tech"],
+  Sport: ["Football", "Boxing", "F1", "Cricket", "Rugby", "Tennis", "Golf"],
+  Showbiz: ["Celebrity", "Music", "Film"],
+  TV: ["TV News", "Soaps", "Reality TV"],
+}
+
+// Map categories to section colors
+const getCategoryColor = (category, theme) => {
+  switch (category) {
+    case "News":
+      return theme.colors.Section.News
+    case "Sport":
+      return theme.colors.Section.Sport
+    case "Showbiz":
+      return theme.colors.Section.Showbiz
+    case "TV":
+      return theme.colors.Section.TV
+    case "Politics":
+      return theme.colors.Section.Politics
+    case "Health":
+      return theme.colors.Section.Health
+    case "Money":
+      return theme.colors.Section.Money
+    case "Tech":
+      return theme.colors.Section.Tech
+    default:
+      return theme.colors.Section.News
+  }
 }
 
 const AllNewsScreen = ({ navigation }) => {
@@ -76,6 +111,9 @@ const AllNewsScreen = ({ navigation }) => {
   const [news, setNews] = useState(sunNewsContent)
   const [selectedMainCategory, setSelectedMainCategory] = useState("Sport")
   const [selectedSubCategory, setSelectedSubCategory] = useState("Football")
+
+  // Get current section color
+  const currentSectionColor = getCategoryColor(selectedMainCategory, theme)
 
   const handleMainCategoryPress = (category) => {
     if (!category) return
@@ -119,14 +157,19 @@ const AllNewsScreen = ({ navigation }) => {
   const subcategories = SUBCATEGORIES[selectedMainCategory] || []
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+    <View style={styles.safeArea}>
+      {/* Status bar with section color background */}
+      <View style={[styles.statusBar, { backgroundColor: currentSectionColor }]} />
 
       {/* Header */}
-      <Header title="All News" titleStyle="large" />
+      <View style={[styles.header, { backgroundColor: currentSectionColor }]}>
+        <Typography variant="h3" color={theme.colors.Text.Inverse} style={styles.headerTitle}>
+          All News
+        </Typography>
+      </View>
 
       {/* Main Category Tabs */}
-      <View style={[styles.mainCategoryContainer, { backgroundColor: theme.colors.Primary.Resting }]}>
+      <View style={[styles.mainCategoryContainer, { backgroundColor: currentSectionColor }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -138,16 +181,12 @@ const AllNewsScreen = ({ navigation }) => {
               style={[styles.mainCategoryTab, selectedMainCategory === category && styles.selectedMainCategoryTab]}
               onPress={() => handleMainCategoryPress(category)}
             >
-              <Text
-                style={[
-                  styles.mainCategoryText,
-                  selectedMainCategory === category
-                    ? styles.selectedMainCategoryText
-                    : { color: "rgba(255, 255, 255, 0.7)" },
-                ]}
+              <Typography
+                variant="overline"
+                color={selectedMainCategory === category ? "#FFFFFF" : "rgba(255, 255, 255, 0.7)"}
               >
                 {category}
-              </Text>
+              </Typography>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -163,19 +202,22 @@ const AllNewsScreen = ({ navigation }) => {
           {subcategories.map((category) => (
             <TouchableOpacity
               key={category}
-              style={[styles.subCategoryTab, selectedSubCategory === category && styles.selectedSubCategoryTab]}
+              style={[
+                styles.subCategoryTab,
+                selectedSubCategory === category && [
+                  styles.selectedSubCategoryTab,
+                  { borderBottomColor: currentSectionColor },
+                ],
+              ]}
               onPress={() => handleSubCategoryPress(category)}
             >
-              <Text
-                style={[
-                  styles.subCategoryText,
-                  selectedSubCategory === category
-                    ? { color: theme.colors.Text.Primary, fontWeight: "600" }
-                    : { color: theme.colors.Text.Secondary },
-                ]}
+              <Typography
+                variant="body-02"
+                color={selectedSubCategory === category ? currentSectionColor : theme.colors.Text.Secondary}
+                style={selectedSubCategory === category ? { fontWeight: "600" } : {}}
               >
                 {category}
-              </Text>
+              </Typography>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -204,9 +246,20 @@ const AllNewsScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  statusBar: {
+    height: STATUSBAR_HEIGHT,
+  },
+  header: {
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    paddingTop: 16,
+  },
+  headerTitle: {
+    fontWeight: "700",
   },
   mainCategoryContainer: {
     paddingVertical: 16,
@@ -222,15 +275,6 @@ const styles = StyleSheet.create({
   selectedMainCategoryTab: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 20,
-  },
-  mainCategoryText: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#FFFFFF",
-  },
-  selectedMainCategoryText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
   },
   subCategoryContainer: {
     backgroundColor: "#FFFFFF",
@@ -248,11 +292,6 @@ const styles = StyleSheet.create({
   },
   selectedSubCategoryTab: {
     borderBottomWidth: 2,
-    borderBottomColor: "#E03A3A",
-  },
-  subCategoryText: {
-    fontSize: 16,
-    fontWeight: "500",
   },
   newsList: {
     padding: 16,

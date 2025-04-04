@@ -6,11 +6,14 @@ import { useTheme } from "../theme/ThemeProvider"
 import Header from "../components/Header"
 
 const CategoryScreen = ({ route, navigation }) => {
-  const { category } = route.params
+  const { category, source } = route.params
   const theme = useTheme()
 
   const handleNewsPress = (article) => {
-    navigation.navigate("Article", { article })
+    // Determine which article screen to navigate to based on source
+    const articleRoute = source ? `${source}Article` : "TodayArticle"
+
+    navigation.navigate(articleRoute, { article })
   }
 
   const handleBookmark = (id) => {

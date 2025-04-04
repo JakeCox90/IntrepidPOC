@@ -58,8 +58,30 @@ export const colors = {
     "Skeleton-02": palette.blackTint[30],
     Error: palette.red[40],
   },
+  // Updated section colors to match The Sun website exactly
   Section: {
-    Breaking: palette.yellow[60],
+    News: "#E03A3A", // The Sun's red color for News section
+    Sport: "#2C82D1", // Blue for Sport section
+    TV: "#8D3AAE", // Purple for TV section
+    Showbiz: "#D6008F", // Pink for Showbiz section
+    Tech: "#0F9B8E", // Teal for Tech section
+    Travel: "#FF7D00", // Orange for Travel section
+    Money: "#007D3C", // Green for Money section
+    Health: "#4DB2EC", // Light blue for Health section
+    Politics: "#1A4E8F", // Dark blue for Politics section
+    Motors: "#D92121", // Red for Motors section
+    Fabulous: "#FF0080", // Hot pink for Fabulous section
+    Food: "#E67E22", // Orange for Food section
+    // Additional sections from The Sun website
+    Fashion: "#FF0080", // Same as Fabulous
+    Beauty: "#FF0080", // Same as Fabulous
+    Opinion: "#1A4E8F", // Same as Politics
+    Property: "#007D3C", // Same as Money
+    Puzzles: "#8D3AAE", // Same as TV
+    "Dear Deidre": "#D6008F", // Same as Showbiz
+    "US News": "#E03A3A", // Same as News
+    "World News": "#E03A3A", // Same as News
+    "UK News": "#E03A3A", // Same as News
   },
 }
 

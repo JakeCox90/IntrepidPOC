@@ -101,7 +101,7 @@ const TodayScreen = ({ navigation }) => {
 
   const handleArticlePress = (article) => {
     // Navigate to article screen with the article data
-    navigation.navigate("Article", {
+    navigation.navigate("TodayArticle", {
       article: {
         ...article,
         content:
