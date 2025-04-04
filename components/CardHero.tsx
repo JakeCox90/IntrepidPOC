@@ -1,8 +1,10 @@
 "use client"
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native"
+import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Flag from "./Flag"
 import { Feather } from "@expo/vector-icons"
+import Typography from "./Typography"
+import LazyImage from "./LazyImage"
 
 interface CardHeroProps {
   title: string
@@ -33,7 +35,7 @@ const CardHero = ({
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
-      <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+      <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
 
       <View style={styles.content}>
         {flag && (
@@ -43,21 +45,32 @@ const CardHero = ({
         )}
 
         {category && (
-          <Text style={[styles.category, { color: theme.colors.Primary.Resting }]}>{category.toUpperCase()}</Text>
+          <Typography variant="overline" color={theme.colors.Primary.Resting} style={styles.category}>
+            {category.toUpperCase()}
+          </Typography>
         )}
 
-        <Text style={[styles.title, { color: theme.colors.Text.Primary }]}>{title}</Text>
+        <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.title}>
+          {title}
+        </Typography>
 
         {subtitle && (
-          <Text style={[styles.subtitle, { color: theme.colors.Text.Secondary }]} numberOfLines={2}>
+          <Typography
+            variant="subtitle-01"
+            color={theme.colors.Text.Secondary}
+            numberOfLines={2}
+            style={styles.subtitle}
+          >
             {subtitle}
-          </Text>
+          </Typography>
         )}
 
         <View style={styles.footer}>
           <View style={styles.readTimeContainer}>
             <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-            <Text style={[styles.readTime, { color: theme.colors.Text.Secondary }]}>{readTime}</Text>
+            <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.readTime}>
+              {readTime}
+            </Typography>
           </View>
 
           {onBookmark && onShare && (
@@ -95,19 +108,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   category: {
-    fontSize: 14,
-    fontWeight: "600",
     marginBottom: 4,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "700",
-    lineHeight: 26,
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
-    lineHeight: 22,
     marginBottom: 12,
   },
   footer: {
@@ -121,7 +127,6 @@ const styles = StyleSheet.create({
   },
   readTime: {
     marginLeft: 6,
-    fontSize: 14,
   },
   actions: {
     flexDirection: "row",

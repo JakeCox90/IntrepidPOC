@@ -1,6 +1,8 @@
 "use client"
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from "react-native"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
+import LazyImage from "./LazyImage"
+import Typography from "./Typography"
 
 interface CardCatchUpProps {
   title: string
@@ -15,15 +17,22 @@ const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpP
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
-      <ImageBackground source={{ uri: imageUrl }} style={styles.imageBackground} imageStyle={styles.image}>
+      <View style={styles.imageContainer}>
+        <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
         <View style={styles.overlay}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle} numberOfLines={2}>
+          <Typography variant="subtitle-01" color="#FFFFFF" style={styles.title}>
+            {title}
+          </Typography>
+          <Typography variant="body-02" color="#FFFFFF" style={styles.subtitle} numberOfLines={2}>
             {subtitle}
-          </Text>
-          {count && <Text style={styles.count}>{count} stories</Text>}
+          </Typography>
+          {count !== undefined && (
+            <Typography variant="annotation" color="#FFFFFF" style={styles.count}>
+              {count} stories
+            </Typography>
+          )}
         </View>
-      </ImageBackground>
+      </View>
     </TouchableOpacity>
   )
 }
@@ -36,33 +45,32 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: 12,
   },
-  imageBackground: {
+  imageContainer: {
     width: "100%",
     height: "100%",
-    justifyContent: "flex-end",
+    position: "relative",
   },
   image: {
+    width: "100%",
+    height: "100%",
     borderRadius: 12,
   },
   overlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 16,
   },
   title: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
     marginBottom: 4,
   },
   subtitle: {
-    color: "#FFFFFF",
-    fontSize: 14,
     opacity: 0.9,
     marginBottom: 8,
   },
   count: {
-    color: "#FFFFFF",
-    fontSize: 12,
     fontWeight: "600",
   },
 })

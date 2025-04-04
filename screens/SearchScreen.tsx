@@ -1,61 +1,54 @@
 "use client"
 
 import { useState } from "react"
-import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar } from "react-native"
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  StatusBar,
+  ActivityIndicator,
+  Text,
+} from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Typography from "../components/Typography"
 import { useTheme } from "../theme/ThemeProvider"
 import Header from "../components/Header"
 import CardHorizontal from "../components/CardHorizontal"
-
-// Mock search results
-const mockSearchResults = [
-  {
-    id: 1,
-    title: "Premier League chief Richard Masters with cheeky message on VAR",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/ZLdnUOH.jpg",
-    readTime: "3 min read",
-  },
-  {
-    id: 2,
-    title: "Jake Paul reveals Tommy Fury rematch and slams Canelo over failed fight",
-    category: "Boxing",
-    imageUrl: "https://i.imgur.com/JaCBiCp.jpg",
-    readTime: "3 min read",
-  },
-]
+import { searchNews, type Article } from "../services/sunNewsService"
 
 const SearchScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState([])
+  const [searchResults, setSearchResults] = useState<Article[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const theme = useTheme()
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchQuery.trim()) {
-      setIsSearching(true)
-      // Simulate API call
-      setTimeout(() => {
-        setSearchResults(mockSearchResults)
+      try {
+        setIsSearching(true)
+        setError(null)
+        const results = await searchNews(searchQuery)
+        setSearchResults(results)
+      } catch (err) {
+        setError("Failed to search articles")
+        console.error(err)
+      } finally {
         setIsSearching(false)
-      }, 1000)
+      }
     }
   }
 
   const handleClearSearch = () => {
     setSearchQuery("")
     setSearchResults([])
+    setError(null)
   }
 
   const handleArticlePress = (article) => {
-    navigation.navigate("SearchArticle", {
-      article: {
-        ...article,
-        content:
-          "This is a placeholder content for the article. The actual content will be fetched from The Sun website in a production environment.",
-      },
-    })
+    navigation.navigate("SearchArticle", { article })
   }
 
   const handleBookmark = (id) => {
@@ -114,7 +107,17 @@ const SearchScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {searchResults.length > 0 ? (
+      {isSearching ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.Primary.Resting} />
+          <Text style={[styles.loadingText, { color: theme.colors.Text.Secondary }]}>Searching...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={[styles.errorText, { color: theme.colors.Error.Resting }]}>{error}</Text>
+          <Text style={[styles.errorSubtext, { color: theme.colors.Text.Secondary }]}>Please try again.</Text>
+        </View>
+      ) : searchResults.length > 0 ? (
         <FlatList
           data={searchResults}
           keyExtractor={(item) => item.id.toString()}
@@ -207,6 +210,31 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     width: "48%",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  errorSubtext: {
+    fontSize: 16,
+    textAlign: "center",
   },
 })
 

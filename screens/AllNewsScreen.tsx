@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import {
   View,
   FlatList,
@@ -10,66 +10,15 @@ import {
   StatusBar as RNStatusBar,
   Platform,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
+import SkeletonCardArticle from "../components/SkeletonCardArticle"
 import Typography from "../components/Typography"
+import { fetchNewsByCategory } from "../services/sunNewsService"
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
-
-// Sample news content from The Sun website
-const sunNewsContent = [
-  {
-    id: 1,
-    title: "IN THE CAN Jake Paul reveals Tommy Fury rematch and slams Canelo over failed fight",
-    category: "Boxing",
-    imageUrl: "https://i.imgur.com/JaCBiCp.jpg",
-    timestamp: "5 hours ago",
-    readTime: "3 min read",
-    content:
-      "Jake Paul has revealed he is in talks for a rematch with Tommy Fury and slammed Canelo Alvarez for not agreeing to fight him.\n\nThe YouTuber-turned-boxer lost to Fury by split decision in February 2023, his first defeat in the ring.\n\nPaul has since bounced back with victories over UFC legend Nate Diaz and veteran boxer Andre August, and is now eyeing a second shot at Fury.",
-  },
-  {
-    id: 2,
-    title: "MASTERBLASTER Tottenham Premier League chief Richard Masters with cheeky message on VAR",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/ZLdnUOH.jpg",
-    timestamp: "2 hours ago",
-    readTime: "3 min read",
-    content:
-      "Premier League chief Richard Masters has sent a cheeky message about VAR after Tottenham's controversial win over Liverpool.\n\nThe Reds were denied a legitimate goal when Luis Diaz was wrongly flagged offside, with VAR failing to overturn the decision.\n\nLiverpool went on to lose the match 2-1, with Jurgen Klopp left fuming at the officials.",
-  },
-  {
-    id: 3,
-    title: "READY PLAYER RON Walker's wife Annie poses behind wheel of £70k Mercedes",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/7BjQIEE.jpg",
-    timestamp: "Yesterday",
-    readTime: "3 min read",
-    content:
-      "Annie Walker, wife of football star Ron Walker, has been spotted posing behind the wheel of a £70,000 Mercedes.\n\nThe model and influencer shared photos of her new luxury vehicle on Instagram, captioning the post 'New wheels day! Thanks to my amazing husband for the surprise.'\n\nThe couple, who married last summer, are known for their lavish lifestyle and social media presence.",
-  },
-  {
-    id: 4,
-    title: "KANE NOT BE SERIOUS Kane tipped to make stunning Liverpool transfer by Premier League legend",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/JfVDTLs.jpg",
-    timestamp: "3 hours ago",
-    readTime: "3 min read",
-    content:
-      "Harry Kane has been tipped to make a stunning transfer to Liverpool by a Premier League legend.\n\nThe England captain only joined Bayern Munich last summer in a £100million move from Tottenham, but has been linked with a return to the Premier League.\n\nDespite scoring 36 goals in 36 games for the German giants, Kane is yet to win a trophy in his professional career.",
-  },
-  {
-    id: 5,
-    title: "DONE FER Fernandes left red-faced over antics seconds before Ronaldo's worst penalty",
-    category: "Football",
-    imageUrl: "https://i.imgur.com/QVZLMGj.jpg",
-    timestamp: "1 day ago",
-    readTime: "3 min read",
-    content:
-      "Bruno Fernandes was left red-faced after his antics seconds before Cristiano Ronaldo's penalty miss against Slovenia.\n\nThe Portugal captain was seen gesturing to the crowd to make noise and putting pressure on the goalkeeper before Ronaldo stepped up.\n\nBut his teammate then saw his spot-kick saved by Jan Oblak, forcing the Euro 2024 last-16 tie to go to extra time.",
-  },
-]
 
 // Main categories - updated to match The Sun's exact section names
 const MAIN_CATEGORIES = ["News", "Sport", "Showbiz", "TV"]
@@ -108,39 +57,86 @@ const getCategoryColor = (category, theme) => {
 
 const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme()
-  const [news, setNews] = useState(sunNewsContent)
-  const [selectedMainCategory, setSelectedMainCategory] = useState("Sport")
-  const [selectedSubCategory, setSelectedSubCategory] = useState("Football")
+  const [state, setState] = useState({
+    news: [],
+    loading: true,
+    error: null,
+    selectedMainCategory: "News",
+    selectedSubCategory: "UK News",
+  })
+
+  const { news, loading, error, selectedMainCategory, selectedSubCategory } = state
 
   // Get current section color
   const currentSectionColor = getCategoryColor(selectedMainCategory, theme)
 
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true
+
+      const loadNews = async () => {
+        if (!isMounted) return
+
+        setState((prevState) => ({ ...prevState, loading: true }))
+
+        try {
+          let data
+          if (selectedSubCategory) {
+            data = await fetchNewsByCategory(selectedSubCategory)
+          } else {
+            data = await fetchNewsByCategory(selectedMainCategory)
+          }
+
+          if (isMounted) {
+            setState((prevState) => ({
+              ...prevState,
+              news: data,
+              loading: false,
+              error: null,
+            }))
+          }
+        } catch (err) {
+          console.error(err)
+          if (isMounted) {
+            setState((prevState) => ({
+              ...prevState,
+              error: "Failed to load news",
+              loading: false,
+            }))
+          }
+        }
+      }
+
+      loadNews()
+
+      return () => {
+        isMounted = false
+      }
+    }, [selectedMainCategory, selectedSubCategory]),
+  )
+
   const handleMainCategoryPress = (category) => {
     if (!category) return
-    setSelectedMainCategory(category)
-    // Safely get subcategories
-    const subcategories = SUBCATEGORIES[category] || []
-    if (subcategories.length > 0) {
-      setSelectedSubCategory(subcategories[0])
-    }
+
+    setState((prevState) => ({
+      ...prevState,
+      selectedMainCategory: category,
+      selectedSubCategory: SUBCATEGORIES[category]?.[0] || null,
+    }))
   }
 
   const handleSubCategoryPress = (category) => {
     if (!category) return
-    setSelectedSubCategory(category)
+
+    setState((prevState) => ({
+      ...prevState,
+      selectedSubCategory: category,
+    }))
   }
 
   const handleNewsPress = (article) => {
     if (!article) return
-    // Make sure article has content before navigating
-    const fullArticle = article.content
-      ? article
-      : {
-          ...article,
-          content:
-            "This is a placeholder content for the article. The actual content will be fetched from The Sun website in a production environment.",
-        }
-    navigation.navigate("Article", { article: fullArticle })
+    navigation.navigate("AllNewsArticle", { article })
   }
 
   const handleBookmark = (id) => {
@@ -155,6 +151,13 @@ const AllNewsScreen = ({ navigation }) => {
 
   // Safely get subcategories
   const subcategories = SUBCATEGORIES[selectedMainCategory] || []
+
+  // Render skeleton items
+  const renderSkeletonItems = () => {
+    return Array(5)
+      .fill(0)
+      .map((_, index) => <SkeletonCardArticle key={`skeleton-${index}`} />)
+  }
 
   return (
     <View style={styles.safeArea}>
@@ -223,24 +226,49 @@ const AllNewsScreen = ({ navigation }) => {
         </ScrollView>
       </View>
 
-      {/* News List */}
-      <FlatList
-        data={news}
-        keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
-        renderItem={({ item }) => (
-          <CardHorizontal
-            id={item.id}
-            title={item.title}
-            imageUrl={item.imageUrl}
-            category={item.category}
-            readTime={item.readTime}
-            onPress={() => handleNewsPress(item)}
-            onBookmark={() => handleBookmark(item.id)}
-            onShare={() => handleShare(item.id)}
+      {/* News List with Skeleton Loading */}
+      <View style={styles.newsListContainer}>
+        {loading ? (
+          // Skeleton loading state
+          <View style={styles.newsList}>{renderSkeletonItems()}</View>
+        ) : error ? (
+          // Error state
+          <View style={styles.errorContainer}>
+            <Typography variant="subtitle-01" color={theme.colors.Error.Resting} style={styles.errorText}>
+              {error}
+            </Typography>
+            <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.errorSubtext}>
+              Please check your connection and try again.
+            </Typography>
+          </View>
+        ) : (
+          // Actual content
+          <FlatList
+            data={news}
+            keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+            renderItem={({ item }) => (
+              <CardHorizontal
+                id={item.id}
+                title={item.title}
+                imageUrl={item.imageUrl}
+                category={item.category}
+                readTime={item.readTime}
+                onPress={() => handleNewsPress(item)}
+                onBookmark={() => handleBookmark(item.id)}
+                onShare={() => handleShare(item.id)}
+              />
+            )}
+            contentContainerStyle={styles.newsList}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.emptyText}>
+                  No articles found for this category.
+                </Typography>
+              </View>
+            }
           />
         )}
-        contentContainerStyle={styles.newsList}
-      />
+      </View>
     </View>
   )
 }
@@ -293,8 +321,30 @@ const styles = StyleSheet.create({
   selectedSubCategoryTab: {
     borderBottomWidth: 2,
   },
+  newsListContainer: {
+    flex: 1,
+  },
   newsList: {
     padding: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    marginBottom: 8,
+  },
+  errorSubtext: {
+    textAlign: "center",
+  },
+  emptyContainer: {
+    padding: 20,
+    alignItems: "center",
+  },
+  emptyText: {
+    textAlign: "center",
   },
 })
 

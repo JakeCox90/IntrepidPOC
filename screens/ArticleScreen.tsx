@@ -1,25 +1,82 @@
 "use client"
 
-import { useState } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image, StatusBar } from "react-native"
+import { useState, useCallback } from "react"
+import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { Feather } from "@expo/vector-icons"
-import { mockNews } from "../services/newsService"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "../components/Typography"
-import Accordion from "../components/Accordion"
 import Comments from "../components/Comments"
-import AudioPlayer from "../components/AudioPlayer"
 import Flag from "../components/Flag"
 import Header from "../components/Header"
+import LazyImage from "./LazyImage"
+import SkeletonArticle from "../components/SkeletonArticle"
+import { fetchArticleById } from "../services/sunNewsService"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
 
 const ArticleScreen = ({ route, navigation }) => {
-  const { article } = route.params || {}
+  const { article: routeArticle } = route.params || {}
+  const [state, setState] = useState({
+    article: routeArticle || null,
+    loading: !routeArticle || !routeArticle.content,
+    error: null,
+  })
+
+  const { article, loading, error } = state
   const theme = useTheme()
-  const [selectedPollOption, setSelectedPollOption] = useState(null)
-  const [totalVotes, setTotalVotes] = useState(129)
+
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true
+
+      // If we don't have a full article from the route params, fetch it
+      if (!routeArticle || !routeArticle.content) {
+        const fetchArticle = async () => {
+          if (!isMounted) return
+
+          setState((prevState) => ({ ...prevState, loading: true }))
+
+          try {
+            if (routeArticle?.id) {
+              const fullArticle = await fetchArticleById(routeArticle.id)
+              if (isMounted) {
+                setState({
+                  article: fullArticle,
+                  loading: false,
+                  error: null,
+                })
+              }
+            } else {
+              if (isMounted) {
+                setState((prevState) => ({
+                  ...prevState,
+                  error: "No article ID provided",
+                  loading: false,
+                }))
+              }
+            }
+          } catch (err) {
+            console.error(err)
+            if (isMounted) {
+              setState((prevState) => ({
+                ...prevState,
+                error: "Failed to load article",
+                loading: false,
+              }))
+            }
+          }
+        }
+
+        fetchArticle()
+      }
+
+      return () => {
+        isMounted = false
+      }
+    }, [routeArticle]),
+  )
 
   // Get category color based on article category
   const getCategoryColor = (categoryText) => {
@@ -52,7 +109,7 @@ const ArticleScreen = ({ route, navigation }) => {
       return theme.colors.Section.Politics
     } else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
       return theme.colors.Section.Motors
-    } else if (normalizedCategory.includes("FABULOUS")) {
+    } else if (normalizedCategory.includes("FABULOUS") || normalizedCategory.includes("FASHION")) {
       return theme.colors.Section.Fabulous
     } else if (normalizedCategory.includes("FOOD")) {
       return theme.colors.Section.Food
@@ -63,22 +120,6 @@ const ArticleScreen = ({ route, navigation }) => {
 
   // Get the appropriate section color for this article
   const sectionColor = article?.category ? getCategoryColor(article.category) : theme.colors.Section.News
-
-  // Safely get article content or provide default
-  const articleContent = article?.content || "No content available"
-
-  // Safely split content into paragraphs
-  const contentParagraphs = articleContent.split("\n\n") || [""]
-  const subtitle = contentParagraphs[0] || ""
-  const remainingParagraphs = contentParagraphs.slice(1) || []
-
-  // Poll options
-  const pollOptions = [
-    { id: 1, text: "Public safety", votes: 45 },
-    { id: 2, text: "Immigrant rights", votes: 32 },
-    { id: 3, text: "Border security", votes: 38 },
-    { id: 4, text: "Balanced approach", votes: 14 },
-  ]
 
   // Mock comments data with replies
   const comments = [
@@ -113,31 +154,7 @@ const ArticleScreen = ({ route, navigation }) => {
       likes: 8,
       replies: [],
     },
-    {
-      id: 3,
-      author: "Sharon McDonald",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
-      time: "10 mins ago",
-      likes: 10,
-      replies: [],
-    },
   ]
-
-  // Get related articles (excluding current article)
-  const relatedArticles = article?.id
-    ? mockNews.filter((item) => item.id !== article.id).slice(0, 5)
-    : mockNews.slice(0, 5)
-
-  const handleVote = (optionId) => {
-    if (!selectedPollOption) {
-      setSelectedPollOption(optionId)
-      setTotalVotes(totalVotes + 1)
-    }
-  }
-
-  const getVotePercentage = (votes) => {
-    return Math.round((votes / totalVotes) * 100)
-  }
 
   const handleSubmitComment = (text) => {
     console.log("New comment:", text)
@@ -164,18 +181,6 @@ const ArticleScreen = ({ route, navigation }) => {
     // In a real app, you would navigate to a comments screen or load more comments
   }
 
-  const handleAudioPlay = () => {
-    console.log("Audio started playing")
-  }
-
-  const handleAudioPause = () => {
-    console.log("Audio paused")
-  }
-
-  const handleAudioComplete = () => {
-    console.log("Audio playback completed")
-  }
-
   const handleSharePress = () => {
     console.log("Share article")
   }
@@ -184,15 +189,34 @@ const ArticleScreen = ({ route, navigation }) => {
     console.log("Save article")
   }
 
-  // If article is undefined, show an error message
-  if (!article) {
+  // Render skeleton loading state
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+        <Header
+          title={article?.category || "Article"}
+          showBackButton
+          onBackPress={() => navigation.goBack()}
+          backgroundColor={sectionColor}
+          textColor="#FFFFFF"
+        />
+        <ScrollView style={styles.scrollView}>
+          <SkeletonArticle />
+        </ScrollView>
+      </View>
+    )
+  }
+
+  // If error or article is undefined, show an error message
+  if (error || !article) {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
         <Header title="Article" showBackButton onBackPress={() => navigation.goBack()} />
         <View style={styles.errorContainer}>
           <Typography variant="h5" color={theme.colors.Text.Primary}>
-            Article not found
+            {error || "Article not found"}
           </Typography>
           <TouchableOpacity
             style={[styles.backToHomeButton, { backgroundColor: theme.colors.Primary.Resting }]}
@@ -206,6 +230,14 @@ const ArticleScreen = ({ route, navigation }) => {
       </View>
     )
   }
+
+  // Safely get article content or provide default
+  const articleContent = article?.content || "No content available"
+
+  // Safely split content into paragraphs
+  const contentParagraphs = articleContent.split("\n\n") || [""]
+  const subtitle = contentParagraphs[0] || ""
+  const remainingParagraphs = contentParagraphs.slice(1) || []
 
   return (
     <View style={styles.container}>
@@ -255,10 +287,10 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Author info */}
         <View style={styles.authorContainer}>
           <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-            Elizabeth Rosenberg
+            {article.author || "The Sun"}
           </Typography>
           <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-            Published 15th January 2023, 10:21am
+            Published {article.timestamp || "Recently"}
           </Typography>
         </View>
 
@@ -267,29 +299,14 @@ const ArticleScreen = ({ route, navigation }) => {
           style={[styles.articleImage, { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] }]}
         >
           {article.imageUrl ? (
-            <Image source={{ uri: article.imageUrl }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+            <LazyImage
+              source={{ uri: article.imageUrl }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode="cover"
+            />
           ) : (
             <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
           )}
-        </View>
-
-        {/* Summary section using Accordion component */}
-        <Accordion title="Summary">
-          <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Maecenas vel tincidunt nunc, eget
-            tincidunt nisl. Donec at justo eget magna pulvinar feugiat.
-          </Typography>
-        </Accordion>
-
-        {/* Audio Player */}
-        <View style={styles.audioPlayerContainer}>
-          <AudioPlayer
-            title="Danish PM tells Trump 'Greenland is not for sale'"
-            duration={321} // 5m 21s
-            onPlay={handleAudioPlay}
-            onPause={handleAudioPause}
-            onComplete={handleAudioComplete}
-          />
         </View>
 
         {/* Article content */}
@@ -373,9 +390,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
     borderRadius: 4,
-  },
-  audioPlayerContainer: {
-    marginBottom: 16,
   },
   articleContent: {
     marginBottom: 24,

@@ -1,113 +1,86 @@
 "use client"
-import { View, Text, StyleSheet, ScrollView, StatusBar } from "react-native"
+import React, { useState, useCallback } from "react"
+import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import Stack from "../components/Stack"
 import CardCatchUp from "../components/CardCatchUp"
 import CardHero from "../components/CardHero"
 import CardArticle from "../components/CardArticle"
+import SkeletonCardHero from "../components/SkeletonCardHero"
+import SkeletonCardArticle from "../components/SkeletonCardArticle"
+import SkeletonCardCatchUp from "../components/SkeletonCardCatchUp"
 import Header from "../components/Header"
-
-// Sample data
-const catchUpItems = [
-  {
-    id: 1,
-    title: "Daily Digest",
-    subtitle: "All of the recent updates from the news today",
-    imageUrl: "https://i.imgur.com/ZLdnUOH.jpg",
-    count: 12,
-  },
-  {
-    id: 2,
-    title: "Politics",
-    subtitle: "Latest updates from Westminster and beyond",
-    imageUrl: "https://i.imgur.com/JfVDTLs.jpg",
-    count: 8,
-  },
-  {
-    id: 3,
-    title: "Sport",
-    subtitle: "Football, cricket, F1 and more",
-    imageUrl: "https://i.imgur.com/7BjQIEE.jpg",
-    count: 15,
-  },
-]
-
-const topStories = [
-  {
-    id: 1,
-    title:
-      "COLEEN ON ME Rooney leads Wags rallying around Kilner at lunch days after husband Kyle spent night with two girls",
-    imageUrl: "https://i.imgur.com/JaCBiCp.jpg",
-    flag: "EXCLUSIVE",
-    readTime: "3 min read",
-  },
-  {
-    id: 2,
-    title: "Urgent search for young boy, 12, missing for four days after he suddenly disappeared",
-    imageUrl: "https://i.imgur.com/QVZLMGj.jpg",
-    flag: "FIND JOE",
-    readTime: "3 min read",
-  },
-  {
-    id: 3,
-    title: "Warning over holiday scam targeting tourists with fake beach rentals",
-    imageUrl: "https://i.imgur.com/7BjQIEE.jpg",
-    flag: "SEA-RIO",
-    readTime: "3 min read",
-  },
-]
-
-const allStories = [
-  {
-    id: 1,
-    title: "How SAS-style arctic forces who train UNDER ice will defend greenland",
-    imageUrl: "https://i.imgur.com/ZLdnUOH.jpg",
-    category: "WORLD NEWS",
-    flag: "ICE WARS",
-    readTime: "3 min read",
-  },
-  {
-    id: 2,
-    title: "Step up bid to unlock £250bn frozen Russian assets to help Ukraine, PM told",
-    imageUrl: "https://i.imgur.com/JaCBiCp.jpg",
-    category: "WORLD NEWS",
-    flag: "KYIVS BANK",
-    readTime: "3 min read",
-  },
-  {
-    id: 3,
-    title: "Students 'hot mugshot' goes viral as 'she's guilty of stealing hearts'",
-    imageUrl: "https://i.imgur.com/QVZLMGj.jpg",
-    category: "WORLD NEWS",
-    flag: "PRETTY CRIMINAL",
-    readTime: "3 min read",
-  },
-  {
-    id: 4,
-    title: "Trump says Ukraine can 'forget about NATO' before meeting Zelensky",
-    imageUrl: "https://i.imgur.com/JfVDTLs.jpg",
-    category: "NEWS",
-    flag: "PEACE DEAL",
-    readTime: "3 min read",
-  },
-]
+import Typography from "../components/Typography"
+import { fetchSunNews } from "../services/sunNewsService"
 
 const TodayScreen = ({ navigation }) => {
   const theme = useTheme()
+  const [state, setState] = useState({
+    loading: true,
+    articles: [],
+    error: null,
+  })
+
+  // Use useFocusEffect instead of useEffect to avoid potential memory leaks
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true
+
+      const loadArticles = async () => {
+        if (!isMounted) return
+
+        setState((prevState) => ({ ...prevState, loading: true }))
+
+        try {
+          const data = await fetchSunNews()
+          if (isMounted) {
+            setState({
+              loading: false,
+              articles: data,
+              error: null,
+            })
+          }
+        } catch (err) {
+          console.error(err)
+          if (isMounted) {
+            setState({
+              loading: false,
+              articles: [],
+              error: "Failed to load articles",
+            })
+          }
+        }
+      }
+
+      loadArticles()
+
+      return () => {
+        isMounted = false
+      }
+    }, []),
+  )
+
+  const { loading, articles, error } = state
 
   const handleCatchUpPress = (item) => {
-    console.log("Catch Up pressed:", item.title)
+    if (item.id === "daily-digest") {
+      navigation.navigate("AllNews")
+    } else if (item.id === "sport") {
+      navigation.navigate("AllNewsCategory", {
+        category: { name: "Sport" },
+        source: "Today",
+      })
+    } else if (item.id === "showbiz") {
+      navigation.navigate("AllNewsCategory", {
+        category: { name: "Showbiz" },
+        source: "Today",
+      })
+    }
   }
 
   const handleArticlePress = (article) => {
-    // Navigate to article screen with the article data
-    navigation.navigate("TodayArticle", {
-      article: {
-        ...article,
-        content:
-          "This is a placeholder content for the article. The actual content will be fetched from The Sun website in a production environment.",
-      },
-    })
+    navigation.navigate("TodayArticle", { article })
   }
 
   const handleBookmark = (id) => {
@@ -122,80 +95,187 @@ const TodayScreen = ({ navigation }) => {
     console.log("Profile pressed")
   }
 
+  // Create catch-up items based on categories
+  const catchUpItems = React.useMemo(() => {
+    if (articles.length === 0) return []
+
+    return [
+      {
+        id: "daily-digest",
+        title: "Daily Digest",
+        subtitle: "All of the recent updates from the news today",
+        imageUrl: articles[0]?.imageUrl || "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+        count: articles.length,
+      },
+      {
+        id: "sport",
+        title: "Sport",
+        subtitle: "Football, cricket, F1 and more",
+        imageUrl:
+          articles.find((a) => a.category.toLowerCase().includes("sport"))?.imageUrl ||
+          "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+        count: articles.filter((a) => a.category.toLowerCase().includes("sport")).length,
+      },
+      {
+        id: "showbiz",
+        title: "Showbiz",
+        subtitle: "Celebrity news and entertainment",
+        imageUrl:
+          articles.find((a) => a.category.toLowerCase().includes("showbiz") || a.category.toLowerCase().includes("tv"))
+            ?.imageUrl || "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+        count: articles.filter(
+          (a) => a.category.toLowerCase().includes("showbiz") || a.category.toLowerCase().includes("tv"),
+        ).length,
+      },
+    ]
+  }, [articles])
+
+  // Get top stories and all stories
+  const topStories = React.useMemo(() => articles.slice(0, 3), [articles])
+  const allStories = React.useMemo(() => articles.slice(3, 10), [articles])
+
+  // Render error state
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centerContainer]}>
+        <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+        <Header title="News" backgroundColor={theme.colors.Primary.Resting} textColor={theme.colors.Text.Inverse} />
+        <Typography variant="subtitle-01" color={theme.colors.Error.Resting} style={{ marginBottom: 16 }}>
+          {error}
+        </Typography>
+        <Typography variant="body-01" color={theme.colors.Text.Secondary}>
+          Please check your connection and try again.
+        </Typography>
+      </View>
+    )
+  }
+
+  // Render skeleton or content
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
       {/* Header */}
-      <Header title="News" titleStyle="large" showProfileButton onProfilePress={handleProfilePress} />
+      <Header
+        title="News"
+        titleStyle="large"
+        backgroundColor={theme.colors.Primary.Resting}
+        textColor={theme.colors.Text.Inverse}
+        showProfileButton
+        onProfilePress={handleProfilePress}
+      />
 
       <ScrollView style={styles.scrollView}>
         {/* Today's Catch Up Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.Text.Primary }]}>Today's Catch Up</Text>
+          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+            Today&apos;s Catch Up
+          </Typography>
+
           <Stack>
-            {catchUpItems.map((item) => (
-              <CardCatchUp
-                key={item.id}
-                title={item.title}
-                subtitle={item.subtitle}
-                imageUrl={item.imageUrl}
-                count={item.count}
-                onPress={() => handleCatchUpPress(item)}
-              />
-            ))}
+            {loading ? (
+              // Skeleton loading state
+              <>
+                <SkeletonCardCatchUp />
+                <SkeletonCardCatchUp />
+                <SkeletonCardCatchUp />
+              </>
+            ) : (
+              // Actual content
+              catchUpItems.map((item) => (
+                <CardCatchUp
+                  key={item.id}
+                  title={item.title}
+                  subtitle={item.subtitle}
+                  imageUrl={item.imageUrl}
+                  count={item.count}
+                  onPress={() => handleCatchUpPress(item)}
+                />
+              ))
+            )}
           </Stack>
         </View>
 
         {/* Top Stories Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.Text.Primary }]}>Top Stories</Text>
+          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+            Top Stories
+          </Typography>
 
-          {/* Hero Card */}
-          <CardHero
-            title={topStories[0].title}
-            imageUrl={topStories[0].imageUrl}
-            flag={topStories[0].flag}
-            readTime={topStories[0].readTime}
-            onPress={() => handleArticlePress(topStories[0])}
-            onBookmark={() => handleBookmark(topStories[0].id)}
-            onShare={() => handleShare(topStories[0].id)}
-          />
+          {loading ? (
+            // Skeleton loading state for top stories
+            <>
+              <SkeletonCardHero />
+              <SkeletonCardArticle />
+              <SkeletonCardArticle />
+            </>
+          ) : (
+            // Actual content
+            <>
+              {/* Hero Card */}
+              {topStories.length > 0 && (
+                <CardHero
+                  title={topStories[0].title}
+                  imageUrl={topStories[0].imageUrl}
+                  flag={topStories[0].flag}
+                  category={topStories[0].category}
+                  readTime={topStories[0].readTime}
+                  onPress={() => handleArticlePress(topStories[0])}
+                  onBookmark={() => handleBookmark(topStories[0].id)}
+                  onShare={() => handleShare(topStories[0].id)}
+                />
+              )}
 
-          {/* Other Top Stories */}
-          {topStories.slice(1).map((story) => (
-            <CardArticle
-              key={story.id}
-              id={story.id}
-              title={story.title}
-              imageUrl={story.imageUrl}
-              flag={story.flag}
-              readTime={story.readTime}
-              onPress={() => handleArticlePress(story)}
-              onBookmark={() => handleBookmark(story.id)}
-              onShare={() => handleShare(story.id)}
-            />
-          ))}
+              {/* Other Top Stories */}
+              {topStories.slice(1).map((story) => (
+                <CardArticle
+                  key={story.id}
+                  id={story.id}
+                  title={story.title}
+                  imageUrl={story.imageUrl}
+                  category={story.category}
+                  flag={story.flag}
+                  readTime={story.readTime}
+                  onPress={() => handleArticlePress(story)}
+                  onBookmark={() => handleBookmark(story.id)}
+                  onShare={() => handleShare(story.id)}
+                />
+              ))}
+            </>
+          )}
         </View>
 
         {/* All Stories Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.Text.Primary }]}>All Stories</Text>
+          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+            All Stories
+          </Typography>
 
-          {allStories.map((story) => (
-            <CardArticle
-              key={story.id}
-              id={story.id}
-              title={story.title}
-              imageUrl={story.imageUrl}
-              category={story.category}
-              flag={story.flag}
-              readTime={story.readTime}
-              onPress={() => handleArticlePress(story)}
-              onBookmark={() => handleBookmark(story.id)}
-              onShare={() => handleShare(story.id)}
-            />
-          ))}
+          {loading ? (
+            // Skeleton loading state for all stories
+            <>
+              <SkeletonCardArticle />
+              <SkeletonCardArticle />
+              <SkeletonCardArticle />
+              <SkeletonCardArticle />
+            </>
+          ) : (
+            // Actual content
+            allStories.map((story) => (
+              <CardArticle
+                key={story.id}
+                id={story.id}
+                title={story.title}
+                imageUrl={story.imageUrl}
+                category={story.category}
+                flag={story.flag}
+                readTime={story.readTime}
+                onPress={() => handleArticlePress(story)}
+                onBookmark={() => handleBookmark(story.id)}
+                onShare={() => handleShare(story.id)}
+              />
+            ))
+          )}
         </View>
 
         {/* Bottom padding */}
@@ -210,6 +290,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8F8F8",
   },
+  centerContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   scrollView: {
     flex: 1,
   },
@@ -218,8 +302,6 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
     marginBottom: 16,
   },
   bottomPadding: {

@@ -1,8 +1,10 @@
 "use client"
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Flag from "./Flag"
 import { Feather } from "@expo/vector-icons"
+import Typography from "./Typography"
+import LazyImage from "./LazyImage"
 
 interface CardArticleProps {
   id?: number | string
@@ -44,21 +46,25 @@ const CardArticle = ({
           )}
 
           {category && (
-            <Text style={[styles.category, { color: theme.colors.Text.Secondary }]}>{category.toUpperCase()}</Text>
+            <Typography variant="overline" color={theme.colors.Text.Secondary} style={styles.category}>
+              {category.toUpperCase()}
+            </Typography>
           )}
 
-          <Text style={[styles.title, { color: theme.colors.Text.Primary }]} numberOfLines={3}>
+          <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={3} style={styles.title}>
             {title}
-          </Text>
+          </Typography>
         </View>
 
-        <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+        <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
       </View>
 
       <View style={styles.footer}>
         <View style={styles.readTimeContainer}>
           <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-          <Text style={[styles.readTime, { color: theme.colors.Text.Secondary }]}>{readTime}</Text>
+          <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.readTime}>
+            {readTime}
+          </Typography>
         </View>
 
         {onBookmark && onShare && (
@@ -93,13 +99,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   category: {
-    fontSize: 14,
-    fontWeight: "600",
     marginBottom: 4,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "700",
     lineHeight: 22,
   },
   image: {
@@ -118,7 +120,6 @@ const styles = StyleSheet.create({
   },
   readTime: {
     marginLeft: 6,
-    fontSize: 14,
   },
   actions: {
     flexDirection: "row",
