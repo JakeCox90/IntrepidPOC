@@ -3,6 +3,7 @@ import { View, Image, StyleSheet, TouchableOpacity } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
+import { getCategoryColor } from "../utils/categoryColors"
 
 interface CardHorizontalProps {
   id?: number | string
@@ -29,126 +30,8 @@ const CardHorizontal = ({
 }: CardHorizontalProps) => {
   const theme = useTheme()
 
-  // Update the getCategoryColor function to ensure proper color mapping
-  const getCategoryColor = (categoryText: string): string => {
-    if (!categoryText) return theme.colors.Section.News
-
-    const normalizedCategory = categoryText.toUpperCase()
-
-    // Main sections
-    if (
-      normalizedCategory.includes("NEWS") ||
-      normalizedCategory.includes("UK NEWS") ||
-      normalizedCategory.includes("WORLD NEWS") ||
-      normalizedCategory.includes("US NEWS") ||
-      normalizedCategory.includes("IRISH NEWS") ||
-      normalizedCategory.includes("SCOTTISH NEWS") ||
-      normalizedCategory.includes("POLITICS") ||
-      normalizedCategory.includes("OPINION") ||
-      normalizedCategory.includes("ROYAL")
-    ) {
-      return theme.colors.Section.News
-    }
-
-    if (
-      normalizedCategory.includes("SPORT") ||
-      normalizedCategory.includes("FOOTBALL") ||
-      normalizedCategory.includes("BOXING") ||
-      normalizedCategory.includes("RACING") ||
-      normalizedCategory.includes("UFC") ||
-      normalizedCategory.includes("F1") ||
-      normalizedCategory.includes("CRICKET") ||
-      normalizedCategory.includes("RUGBY") ||
-      normalizedCategory.includes("GOLF") ||
-      normalizedCategory.includes("TENNIS") ||
-      normalizedCategory.includes("NFL") ||
-      normalizedCategory.includes("DREAM TEAM")
-    ) {
-      return theme.colors.Section.Sport
-    }
-
-    if (
-      normalizedCategory.includes("TV") ||
-      normalizedCategory.includes("TELEVISION") ||
-      normalizedCategory.includes("SOAPS") ||
-      normalizedCategory.includes("REALITY") ||
-      normalizedCategory.includes("PUZZLES")
-    ) {
-      return theme.colors.Section.TV
-    }
-
-    if (
-      normalizedCategory.includes("SHOWBIZ") ||
-      normalizedCategory.includes("CELEBRITY") ||
-      normalizedCategory.includes("MUSIC") ||
-      normalizedCategory.includes("FILM") ||
-      normalizedCategory.includes("DEAR DEIDRE")
-    ) {
-      return theme.colors.Section.Showbiz
-    }
-
-    if (
-      normalizedCategory.includes("FABULOUS") ||
-      normalizedCategory.includes("FASHION") ||
-      normalizedCategory.includes("BEAUTY") ||
-      normalizedCategory.includes("FOOD") ||
-      normalizedCategory.includes("PARENTING")
-    ) {
-      return theme.colors.Section.Fabulous
-    }
-
-    if (
-      normalizedCategory.includes("MONEY") ||
-      normalizedCategory.includes("BANKING") ||
-      normalizedCategory.includes("BILLS") ||
-      normalizedCategory.includes("PENSIONS") ||
-      normalizedCategory.includes("PROPERTY")
-    ) {
-      return theme.colors.Section.Money
-    }
-
-    if (
-      normalizedCategory.includes("TRAVEL") ||
-      normalizedCategory.includes("HOLIDAY") ||
-      normalizedCategory.includes("BEACH") ||
-      normalizedCategory.includes("CRUISE") ||
-      normalizedCategory.includes("SUN BINGO")
-    ) {
-      return theme.colors.Section.Travel
-    }
-
-    if (
-      normalizedCategory.includes("TECH") ||
-      normalizedCategory.includes("PHONE") ||
-      normalizedCategory.includes("GAMING") ||
-      normalizedCategory.includes("SCIENCE") ||
-      normalizedCategory.includes("HEALTH") ||
-      normalizedCategory.includes("FITNESS") ||
-      normalizedCategory.includes("DIET")
-    ) {
-      return theme.colors.Section.Tech
-    }
-
-    if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
-      return theme.colors.Section.Motors
-    }
-
-    if (
-      normalizedCategory.includes("SUN VEGAS") ||
-      normalizedCategory.includes("SUN SAVERS") ||
-      normalizedCategory.includes("SUN CASINO") ||
-      normalizedCategory.includes("SUN WIN")
-    ) {
-      return "#FFD700" // Gold
-    }
-
-    if (normalizedCategory.includes("SUN SELECTS")) {
-      return theme.colors.Section.News
-    }
-
-    // Default to News if no match
-    return theme.colors.Section.News
-  }
+  const categoryText = category || ""
+  const categoryColor = getCategoryColor(categoryText, theme)
 
   // Safely handle title parsing
   const titleText = title || ""
@@ -173,10 +56,6 @@ const CardHorizontal = ({
       mainTitle = titleParts.slice(possiblePrefixWords.length).join(" ")
     }
   }
-
-  // Safely handle category
-  const categoryText = category || ""
-  const categoryColor = getCategoryColor(categoryText)
 
   return (
     <TouchableOpacity

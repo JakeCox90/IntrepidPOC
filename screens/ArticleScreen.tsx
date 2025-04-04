@@ -12,6 +12,7 @@ import Header from "../components/Header"
 import LazyImage from "./LazyImage"
 import SkeletonArticle from "../components/SkeletonArticle"
 import { fetchArticleById } from "../services/sunNewsService"
+import { getCategoryColor } from "../utils/categoryColors"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
@@ -78,87 +79,8 @@ const ArticleScreen = ({ route, navigation }) => {
     }, [routeArticle]),
   )
 
-  // Get category color based on article category
-  const getCategoryColor = (categoryText) => {
-    if (!categoryText) return theme.colors.Section.News
-
-    const normalizedCategory = categoryText.toUpperCase()
-
-    // Sport categories
-    if (
-      normalizedCategory.includes("FOOTBALL") ||
-      normalizedCategory.includes("BOXING") ||
-      normalizedCategory.includes("SPORT") ||
-      normalizedCategory.includes("RUGBY") ||
-      normalizedCategory.includes("CRICKET") ||
-      normalizedCategory.includes("F1") ||
-      normalizedCategory.includes("TENNIS") ||
-      normalizedCategory.includes("GOLF")
-    ) {
-      return theme.colors.Section.Sport
-    }
-    // TV categories
-    else if (
-      normalizedCategory.includes("TV") ||
-      normalizedCategory.includes("TELEVISION") ||
-      normalizedCategory.includes("SOAPS") ||
-      normalizedCategory.includes("REALITY")
-    ) {
-      return theme.colors.Section.TV
-    }
-    // Showbiz categories
-    else if (
-      normalizedCategory.includes("SHOWBIZ") ||
-      normalizedCategory.includes("CELEBRITY") ||
-      normalizedCategory.includes("MUSIC") ||
-      normalizedCategory.includes("FILM")
-    ) {
-      return theme.colors.Section.Showbiz
-    }
-    // Tech categories
-    else if (normalizedCategory.includes("TECH") || normalizedCategory.includes("TECHNOLOGY")) {
-      return theme.colors.Section.Tech
-    }
-    // Travel categories
-    else if (normalizedCategory.includes("TRAVEL")) {
-      return theme.colors.Section.Travel
-    }
-    // Money categories
-    else if (normalizedCategory.includes("MONEY") || normalizedCategory.includes("FINANCE")) {
-      return theme.colors.Section.Money
-    }
-    // Health categories
-    else if (normalizedCategory.includes("HEALTH")) {
-      return theme.colors.Section.Health
-    }
-    // Politics categories
-    else if (normalizedCategory.includes("POLITICS")) {
-      return theme.colors.Section.Politics
-    }
-    // Motors categories
-    else if (normalizedCategory.includes("MOTORS") || normalizedCategory.includes("CAR")) {
-      return theme.colors.Section.Motors
-    }
-    // Fabulous/Fashion categories
-    else if (
-      normalizedCategory.includes("FABULOUS") ||
-      normalizedCategory.includes("FASHION") ||
-      normalizedCategory.includes("BEAUTY")
-    ) {
-      return theme.colors.Section.Fabulous
-    }
-    // Food categories
-    else if (normalizedCategory.includes("FOOD")) {
-      return theme.colors.Section.Food
-    }
-    // Default to News
-    else {
-      return theme.colors.Section.News
-    }
-  }
-
   // Get the appropriate section color for this article
-  const sectionColor = article?.category ? getCategoryColor(article.category) : theme.colors.Section.News
+  const sectionColor = article?.category ? getCategoryColor(article.category, theme) : theme.colors.Section.News
 
   // Mock comments data with replies
   const comments = [

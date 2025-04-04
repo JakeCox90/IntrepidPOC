@@ -5,7 +5,7 @@ import { useColorScheme } from "react-native"
 import { colors, space, radius, typography, shadows, zIndex, borderWidth, opacity } from "../design-system/foundations"
 
 // Define the theme type
-type ThemeType = {
+export type ThemeType = {
   colors: {
     Primary: {
       Resting: string

@@ -1,21 +1,15 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar as RNStatusBar,
-  Platform,
-} from "react-native"
+import { useState, useCallback, useRef, useEffect } from "react"
+import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, Animated, Easing } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
 import SkeletonCardArticle from "../components/SkeletonCardArticle"
 import Typography from "../components/Typography"
+import TabsWithIndicator from "../components/TabsWithIndicator"
 import { fetchNewsByCategory } from "../services/sunNewsService"
+import { getCategoryColor } from "../utils/categoryColors"
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
@@ -37,102 +31,6 @@ const SUBCATEGORIES = {
   Health: ["Fitness", "Diet", "Health News"],
 }
 
-// Additional sections that don't fit in the main navigation
-const ADDITIONAL_SECTIONS = [
-  "Puzzles",
-  "Dear Deidre",
-  "Sun Bingo",
-  "Sun Vegas",
-  "Sun Savers",
-  "Sun Casino",
-  "Sun Win",
-  "Sun Selects",
-]
-
-// Map categories to section colors
-const getCategoryColor = (category, theme) => {
-  if (!category || !theme) return "#E03A3A" // Default to red if missing data
-
-  // Normalize the category name for comparison
-  const normalizedCategory = category.toLowerCase()
-
-  // Main sections
-  if (normalizedCategory === "news") return theme.colors.Section.News
-  if (normalizedCategory === "sport") return theme.colors.Section.Sport
-  if (normalizedCategory === "tv") return theme.colors.Section.TV
-  if (normalizedCategory === "showbiz") return theme.colors.Section.Showbiz
-  if (normalizedCategory === "fabulous") return theme.colors.Section.Fabulous
-  if (normalizedCategory === "money") return theme.colors.Section.Money
-  if (normalizedCategory === "travel") return theme.colors.Section.Travel
-  if (normalizedCategory === "tech") return theme.colors.Section.Tech
-  if (normalizedCategory === "motors") return theme.colors.Section.Motors
-  if (normalizedCategory === "health") return theme.colors.Section.Health
-
-  // News subsections
-  if (normalizedCategory === "uk news") return theme.colors.Section["UK News"]
-  if (normalizedCategory === "world news") return theme.colors.Section["World News"]
-  if (normalizedCategory === "politics") return theme.colors.Section.Politics
-  if (normalizedCategory === "royal family") return theme.colors.Section["Royal Family"]
-  if (normalizedCategory === "us news") return theme.colors.Section["US News"]
-  if (normalizedCategory === "irish news") return theme.colors.Section["Irish News"]
-  if (normalizedCategory === "scottish news") return theme.colors.Section["Scottish News"]
-  if (normalizedCategory === "opinion") return theme.colors.Section.Opinion
-
-  // Sport subsections
-  if (normalizedCategory === "football") return theme.colors.Section.Football
-  if (normalizedCategory === "boxing") return theme.colors.Section.Boxing
-  if (normalizedCategory === "racing") return theme.colors.Section.Racing
-  if (normalizedCategory === "ufc") return theme.colors.Section.UFC
-  if (normalizedCategory === "f1") return theme.colors.Section.F1
-  if (normalizedCategory === "cricket") return theme.colors.Section.Cricket
-  if (normalizedCategory === "rugby") return theme.colors.Section.Rugby
-  if (normalizedCategory === "golf") return theme.colors.Section.Golf
-  if (normalizedCategory === "tennis") return theme.colors.Section.Tennis
-  if (normalizedCategory === "nfl") return theme.colors.Section.NFL
-  if (normalizedCategory === "dream team") return theme.colors.Section["Dream Team"]
-
-  // Other subsections
-  if (normalizedCategory === "soaps") return theme.colors.Section.Soaps
-  if (normalizedCategory === "reality tv") return theme.colors.Section["Reality TV"]
-  if (normalizedCategory === "tv news") return theme.colors.Section["TV News"]
-  if (normalizedCategory === "celebrity") return theme.colors.Section.Celebrity
-  if (normalizedCategory === "music") return theme.colors.Section.Music
-  if (normalizedCategory === "film") return theme.colors.Section.Film
-  if (normalizedCategory === "fashion") return theme.colors.Section.Fashion
-  if (normalizedCategory === "beauty") return theme.colors.Section.Beauty
-  if (normalizedCategory === "food") return theme.colors.Section.Food
-  if (normalizedCategory === "parenting") return theme.colors.Section.Parenting
-  if (normalizedCategory === "property") return theme.colors.Section.Property
-  if (normalizedCategory === "bills") return theme.colors.Section.Bills
-  if (normalizedCategory === "banking") return theme.colors.Section.Banking
-  if (normalizedCategory === "pensions") return theme.colors.Section.Pensions
-  if (normalizedCategory === "beach holidays") return theme.colors.Section["Beach Holidays"]
-  if (normalizedCategory === "uk holidays") return theme.colors.Section["UK Holidays"]
-  if (normalizedCategory === "city breaks") return theme.colors.Section["City Breaks"]
-  if (normalizedCategory === "cruises") return theme.colors.Section.Cruises
-  if (normalizedCategory === "phones") return theme.colors.Section.Phones
-  if (normalizedCategory === "gaming") return theme.colors.Section.Gaming
-  if (normalizedCategory === "science") return theme.colors.Section.Science
-  if (normalizedCategory === "new cars") return theme.colors.Section["New Cars"]
-  if (normalizedCategory === "used cars") return theme.colors.Section["Used Cars"]
-  if (normalizedCategory === "fitness") return theme.colors.Section.Fitness
-  if (normalizedCategory === "diet") return theme.colors.Section.Diet
-  if (normalizedCategory === "health news") return theme.colors.Section["Health News"]
-
-  // Additional sections
-  if (normalizedCategory === "puzzles") return theme.colors.Section.Puzzles
-  if (normalizedCategory === "dear deidre") return theme.colors.Section["Dear Deidre"]
-  if (normalizedCategory === "sun bingo") return theme.colors.Section["Sun Bingo"]
-  if (normalizedCategory === "sun vegas") return theme.colors.Section["Sun Vegas"]
-  if (normalizedCategory === "sun savers") return theme.colors.Section["Sun Savers"]
-  if (normalizedCategory === "sun casino") return theme.colors.Section["Sun Casino"]
-  if (normalizedCategory === "sun win") return theme.colors.Section["Sun Win"]
-  if (normalizedCategory === "sun selects") return theme.colors.Section["Sun Selects"]
-
-  // Default to News if no match
-  return theme.colors.Section.News
-}
-
 const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme()
   const [state, setState] = useState({
@@ -143,10 +41,56 @@ const AllNewsScreen = ({ navigation }) => {
     selectedSubCategory: "UK News",
   })
 
+  // Animation values
+  const colorAnimation = useRef(new Animated.Value(0)).current
+  const contentAnimation = useRef(new Animated.Value(1)).current
+  const previousColor = useRef(getCategoryColor("News", theme))
+  const currentColor = useRef(getCategoryColor("News", theme))
+
   const { news, loading, error, selectedMainCategory, selectedSubCategory } = state
 
-  // Get current section color
-  const currentSectionColor = getCategoryColor(selectedMainCategory, theme)
+  // Update current color when category changes
+  useEffect(() => {
+    previousColor.current = currentColor.current
+    currentColor.current = getCategoryColor(selectedMainCategory, theme)
+
+    // Reset animation value
+    colorAnimation.setValue(0)
+
+    // Start color transition animation
+    Animated.timing(colorAnimation, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: false,
+      easing: Easing.out(Easing.ease),
+    }).start()
+  }, [selectedMainCategory, colorAnimation, theme])
+
+  // Interpolate between previous and current color
+  const animatedHeaderColor = colorAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [previousColor.current, currentColor.current],
+  })
+
+  // Animate content transition
+  const animateContentTransition = () => {
+    // Fade out
+    Animated.timing(contentAnimation, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.ease),
+    }).start(() => {
+      // Fade in after data is loaded
+      Animated.timing(contentAnimation, {
+        toValue: 1,
+        duration: 300,
+        delay: 50,
+        useNativeDriver: true,
+        easing: Easing.in(Easing.ease),
+      }).start()
+    })
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -156,6 +100,7 @@ const AllNewsScreen = ({ navigation }) => {
         if (!isMounted) return
 
         setState((prevState) => ({ ...prevState, loading: true }))
+        animateContentTransition()
 
         try {
           let data
@@ -213,6 +158,9 @@ const AllNewsScreen = ({ navigation }) => {
       ...prevState,
       selectedSubCategory: category,
     }))
+
+    // Animate content transition when subcategory changes
+    animateContentTransition()
   }
 
   const handleNewsPress = (article) => {
@@ -242,73 +190,54 @@ const AllNewsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.safeArea}>
-      {/* Status bar with section color background */}
-      <View style={[styles.statusBar, { backgroundColor: currentSectionColor }]} />
+      {/* Status bar with animated section color background */}
+      <Animated.View style={[styles.statusBar, { backgroundColor: animatedHeaderColor }]} />
 
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: currentSectionColor }]}>
+      {/* Header with animated background */}
+      <Animated.View style={[styles.header, { backgroundColor: animatedHeaderColor }]}>
         <Typography variant="h3" color={theme.colors.Text.Inverse} style={styles.headerTitle}>
           All News
         </Typography>
-      </View>
+      </Animated.View>
 
-      {/* Main Category Tabs */}
-      <View style={[styles.mainCategoryContainer, { backgroundColor: currentSectionColor }]}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.mainCategoryScrollContent}
-        >
-          {MAIN_CATEGORIES.map((category) => (
-            <TouchableOpacity
-              key={category}
-              style={[styles.mainCategoryTab, selectedMainCategory === category && styles.selectedMainCategoryTab]}
-              onPress={() => handleMainCategoryPress(category)}
-            >
-              <Typography
-                variant="overline"
-                color={selectedMainCategory === category ? "#FFFFFF" : "rgba(255, 255, 255, 0.7)"}
-              >
-                {category}
-              </Typography>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      {/* Main Category Tabs with animated background */}
+      <TabsWithIndicator
+        tabs={MAIN_CATEGORIES}
+        activeTab={selectedMainCategory}
+        onTabPress={handleMainCategoryPress}
+        variant="primary"
+        backgroundColor={animatedHeaderColor}
+        textVariant="overline"
+      />
 
       {/* Sub Category Tabs */}
-      <View style={styles.subCategoryContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.subCategoryScrollContent}
-        >
-          {subcategories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              style={[
-                styles.subCategoryTab,
-                selectedSubCategory === category && [
-                  styles.selectedSubCategoryTab,
-                  { borderBottomColor: currentSectionColor },
-                ],
-              ]}
-              onPress={() => handleSubCategoryPress(category)}
-            >
-              <Typography
-                variant="body-02"
-                color={selectedSubCategory === category ? currentSectionColor : theme.colors.Text.Secondary}
-                style={selectedSubCategory === category ? { fontWeight: "600" } : {}}
-              >
-                {category}
-              </Typography>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      <TabsWithIndicator
+        tabs={subcategories}
+        activeTab={selectedSubCategory}
+        onTabPress={handleSubCategoryPress}
+        variant="secondary"
+        indicatorColor={currentColor.current}
+        activeTextColor={currentColor.current}
+        textVariant="body-02"
+      />
 
-      {/* News List with Skeleton Loading */}
-      <View style={styles.newsListContainer}>
+      {/* News List with Animated Transition */}
+      <Animated.View
+        style={[
+          styles.newsListContainer,
+          {
+            opacity: contentAnimation,
+            transform: [
+              {
+                translateY: contentAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [10, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         {loading ? (
           // Skeleton loading state
           <View style={styles.newsList}>{renderSkeletonItems()}</View>
@@ -349,7 +278,7 @@ const AllNewsScreen = ({ navigation }) => {
             }
           />
         )}
-      </View>
+      </Animated.View>
     </View>
   )
 }
@@ -369,38 +298,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontWeight: "700",
-  },
-  mainCategoryContainer: {
-    paddingVertical: 16,
-  },
-  mainCategoryScrollContent: {
-    paddingHorizontal: 16,
-  },
-  mainCategoryTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
-  },
-  selectedMainCategoryTab: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: 20,
-  },
-  subCategoryContainer: {
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
-  },
-  subCategoryScrollContent: {
-    paddingHorizontal: 16,
-  },
-  subCategoryTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
-  },
-  selectedSubCategoryTab: {
-    borderBottomWidth: 2,
   },
   newsListContainer: {
     flex: 1,
