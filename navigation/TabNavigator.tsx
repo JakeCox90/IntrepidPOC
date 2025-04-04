@@ -1,14 +1,19 @@
+"use client"
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { Ionicons } from "@expo/vector-icons"
+import { Feather } from "@expo/vector-icons"
+import { useTheme } from "../theme/ThemeProvider"
 
 import HomeScreen from "../screens/HomeScreen"
+import AllNewsScreen from "../screens/AllNewsScreen"
 import SearchScreen from "../screens/SearchScreen"
 import SavedScreen from "../screens/SavedScreen"
-import ProfileScreen from "../screens/ProfileScreen"
 
 const Tab = createBottomTabNavigator()
 
 export default function TabNavigator() {
+  const theme = useTheme()
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -17,34 +22,35 @@ export default function TabNavigator() {
           let iconName
 
           if (route.name === "Home") {
-            iconName = focused ? "home" : "home-outline"
+            iconName = "home"
           } else if (route.name === "Search") {
-            iconName = focused ? "search" : "search-outline"
+            iconName = "search"
           } else if (route.name === "Saved") {
-            iconName = focused ? "heart" : "heart-outline"
-          } else if (route.name === "Profile") {
-            iconName = focused ? "person" : "person-outline"
+            iconName = "bookmark"
+          } else if (route.name === "AllNews") {
+            iconName = "grid"
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />
+          return <Feather name={iconName} size={size} color={color} />
         },
-        tabBarActiveTintColor: "#E03A3A",
-        tabBarInactiveTintColor: "#666666",
+        tabBarActiveTintColor: theme.colors.Primary.Resting,
+        tabBarInactiveTintColor: theme.colors.Text.Secondary,
         tabBarStyle: {
-          borderTopWidth: 1,
-          borderTopColor: "#EEEEEE",
-          height: 55,
-          paddingBottom: 5,
+          borderTopWidth: theme.borderWidth["10"],
+          borderTopColor: theme.colors.Border["Border-Primary"],
+          height: 60,
+          paddingBottom: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: theme.fontSize["8"],
+          fontFamily: theme.typography.fontFamily.regular,
         },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="AllNews" component={AllNewsScreen} options={{ title: "All News" }} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Saved" component={SavedScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   )
 }

@@ -8,10 +8,11 @@ import CardHorizontal from "../components/CardHorizontal"
 import Tabs from "../components/Tabs"
 import BottomTabs from "../components/BottomTabs"
 
-// Updated categories based on The Sun website
+// Categories based on The Sun website
 const CATEGORIES = ["All", "UK News", "Sport", "Politics", "Showbiz", "Health", "Tech"]
+const SPORT_CATEGORIES = ["Football", "Rugby", "Cricket", "Boxing", "F1", "Tennis", "Golf"]
 
-// Updated news content from The Sun website
+// Sample news content from The Sun website
 const sunNewsContent = [
   {
     id: 1,
@@ -63,16 +64,21 @@ const sunNewsContent = [
   },
 ]
 
-const HomeScreen = ({ navigation }) => {
+const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme()
   const [news, setNews] = useState(sunNewsContent)
-  const [loading, setLoading] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [activeBottomTab, setActiveBottomTab] = useState("today")
+  const [selectedMainCategory, setSelectedMainCategory] = useState("Sport")
+  const [selectedSubCategory, setSelectedSubCategory] = useState("Football")
+  const [activeBottomTab, setActiveBottomTab] = useState("allNews")
 
-  const handleCategoryPress = (category) => {
-    setSelectedCategory(category)
-    // In a real app, you would fetch news for this category
+  const handleMainCategoryPress = (category) => {
+    setSelectedMainCategory(category)
+    // In a real app, you would fetch subcategories for this main category
+  }
+
+  const handleSubCategoryPress = (category) => {
+    setSelectedSubCategory(category)
+    // In a real app, you would fetch news for this subcategory
   }
 
   const handleNewsPress = (article) => {
@@ -80,8 +86,8 @@ const HomeScreen = ({ navigation }) => {
   }
 
   const handleBottomTabPress = (tab) => {
-    if (tab === "allNews") {
-      navigation.navigate("AllNews")
+    if (tab === "today") {
+      navigation.navigate("Home")
     } else if (tab === "search") {
       navigation.navigate("Search")
     } else {
@@ -104,12 +110,20 @@ const HomeScreen = ({ navigation }) => {
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.colors.Primary.Resting }]}>
         <Typography variant="h4" color={theme.colors.Text.Inverse} style={styles.headerTitle}>
-          News
+          All News
         </Typography>
       </View>
 
-      {/* Category Tabs */}
-      <Tabs tabs={CATEGORIES} activeTab={selectedCategory} onTabPress={handleCategoryPress} variant="primary" />
+      {/* Main Category Tabs */}
+      <Tabs tabs={CATEGORIES} activeTab={selectedMainCategory} onTabPress={handleMainCategoryPress} variant="primary" />
+
+      {/* Sub Category Tabs */}
+      <Tabs
+        tabs={SPORT_CATEGORIES}
+        activeTab={selectedSubCategory}
+        onTabPress={handleSubCategoryPress}
+        variant="secondary"
+      />
 
       {/* News List */}
       <FlatList
@@ -153,5 +167,5 @@ const styles = StyleSheet.create({
   },
 })
 
-export default HomeScreen
+export default AllNewsScreen
 

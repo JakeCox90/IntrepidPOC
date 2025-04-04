@@ -8,6 +8,8 @@ import { ActivityIndicator, View } from "react-native"
 import TabNavigator from "./navigation/TabNavigator"
 import ArticleScreen from "./screens/ArticleScreen"
 import CategoryScreen from "./screens/CategoryScreen"
+import AllNewsScreen from "./screens/AllNewsScreen"
+import SearchScreen from "./screens/SearchScreen"
 import { ThemeProvider } from "./theme/ThemeProvider"
 
 const Stack = createNativeStackNavigator()
@@ -42,6 +44,8 @@ export default function App() {
             <Stack.Screen name="Main" component={TabNavigator} />
             <Stack.Screen name="Article" component={ArticleScreen} />
             <Stack.Screen name="Category" component={CategoryScreen} />
+            <Stack.Screen name="AllNews" component={AllNewsScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </ThemeProvider>

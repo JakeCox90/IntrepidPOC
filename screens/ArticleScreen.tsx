@@ -9,6 +9,7 @@ import Typography from "../components/Typography"
 import Accordion from "../components/Accordion"
 import Comments from "../components/Comments"
 import AudioPlayer from "../components/AudioPlayer"
+import BottomTabs from "../components/BottomTabs"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
@@ -18,6 +19,7 @@ const ArticleScreen = ({ route, navigation }) => {
   const theme = useTheme()
   const [selectedPollOption, setSelectedPollOption] = useState(null)
   const [totalVotes, setTotalVotes] = useState(129)
+  const [activeBottomTab, setActiveBottomTab] = useState("today")
 
   // Poll options
   const pollOptions = [
@@ -121,6 +123,16 @@ const ArticleScreen = ({ route, navigation }) => {
     console.log("Audio playback completed")
   }
 
+  const handleBottomTabPress = (tab) => {
+    if (tab === "today") {
+      navigation.navigate("Home")
+    } else if (tab === "allNews") {
+      navigation.navigate("AllNews")
+    } else if (tab === "search") {
+      navigation.navigate("Search")
+    }
+  }
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
       {/* Header */}
@@ -168,7 +180,7 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Reading time */}
         <View style={styles.readingTimeContainer}>
           <Ionicons name="time-outline" size={14} color={theme.colors.Text.Secondary} />
-          <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
+          <Typography variant="annotation" color={theme.colors.Text.Secondary} style={styles.readingTime}>
             3 min read
           </Typography>
         </View>
@@ -178,7 +190,7 @@ const ArticleScreen = ({ route, navigation }) => {
           <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
             Elizabeth Rosenberg
           </Typography>
-          <Typography variant="subtitle-02" color={theme.colors.Text.Secondary}>
+          <Typography variant="annotation" color={theme.colors.Text.Secondary}>
             Published 15th January 2023, 10:21am
           </Typography>
         </View>
@@ -186,6 +198,11 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Article Image */}
         <View
           style={[styles.articleImage, { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] }]}
+        >
+          <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+        </View>
+
+        {/*
         >
           <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
         </View>
@@ -235,6 +252,9 @@ const ArticleScreen = ({ route, navigation }) => {
         {/* Bottom spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
+
+      {/* Bottom Tabs */}
+      <BottomTabs activeTab={activeBottomTab} onTabPress={handleBottomTabPress} />
     </SafeAreaView>
   )
 }
