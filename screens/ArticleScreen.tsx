@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Dimensions } from "react-native"
+import { View, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Dimensions, Image } from "react-native"
 import { Ionicons, Feather } from "@expo/vector-icons"
 import { mockNews } from "../services/newsService"
 import { useTheme } from "../theme/ThemeProvider"
@@ -9,15 +9,24 @@ import Typography from "../components/Typography"
 import Accordion from "../components/Accordion"
 import Comments from "../components/Comments"
 import AudioPlayer from "../components/AudioPlayer"
+import Flag from "../components/Flag"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
 
 const ArticleScreen = ({ route, navigation }) => {
-  const { article } = route.params
+  const { article } = route.params || {}
   const theme = useTheme()
   const [selectedPollOption, setSelectedPollOption] = useState(null)
   const [totalVotes, setTotalVotes] = useState(129)
+
+  // Safely get article content or provide default
+  const articleContent = article?.content || "No content available"
+
+  // Safely split content into paragraphs
+  const contentParagraphs = articleContent.split("\n\n") || [""]
+  const subtitle = contentParagraphs[0] || ""
+  const remainingParagraphs = contentParagraphs.slice(1) || []
 
   // Poll options
   const pollOptions = [
@@ -71,7 +80,9 @@ const ArticleScreen = ({ route, navigation }) => {
   ]
 
   // Get related articles (excluding current article)
-  const relatedArticles = mockNews.filter((item) => item.id !== article.id).slice(0, 5)
+  const relatedArticles = article?.id
+    ? mockNews.filter((item) => item.id !== article.id).slice(0, 5)
+    : mockNews.slice(0, 5)
 
   const handleVote = (optionId) => {
     if (!selectedPollOption) {
@@ -121,6 +132,27 @@ const ArticleScreen = ({ route, navigation }) => {
     console.log("Audio playback completed")
   }
 
+  // If article is undefined, show an error message
+  if (!article) {
+    return (
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
+        <View style={styles.errorContainer}>
+          <Typography variant="h5" color={theme.colors.Text.Primary}>
+            Article not found
+          </Typography>
+          <TouchableOpacity
+            style={[styles.backToHomeButton, { backgroundColor: theme.colors.Primary.Resting }]}
+            onPress={() => navigation.navigate("Today")}
+          >
+            <Typography variant="button" color={theme.colors.Text.Inverse}>
+              Back to Today
+            </Typography>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    )
+  }
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
       {/* Header */}
@@ -128,7 +160,7 @@ const ArticleScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={24} color={theme.colors.Primary.Resting} />
           <Typography variant="body-01" color={theme.colors.Text.Primary}>
-            {article.category}
+            {article.category || "News"}
           </Typography>
         </TouchableOpacity>
         <View style={styles.headerButtons}>
@@ -148,28 +180,32 @@ const ArticleScreen = ({ route, navigation }) => {
       <ScrollView style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
         {/* Tags */}
         <View style={styles.tagsContainer}>
-          <View style={[styles.tag, { backgroundColor: theme.colors.Primary.Resting }]}>
-            <Typography variant="annotation" color={theme.colors.Text.Inverse}>
-              {article.category.toUpperCase()}
-            </Typography>
-          </View>
+          {article.flag ? (
+            <Flag text={article.flag} style={styles.flag} />
+          ) : (
+            <View style={[styles.tag, { backgroundColor: theme.colors.Primary.Resting }]}>
+              <Typography variant="annotation" color={theme.colors.Text.Inverse}>
+                {(article.category || "NEWS").toUpperCase()}
+              </Typography>
+            </View>
+          )}
         </View>
 
         {/* Title */}
         <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
-          {article.title}
+          {article.title || "No title available"}
         </Typography>
 
         {/* Subtitle */}
         <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
-          {article.content.split("\n\n")[0]}
+          {subtitle}
         </Typography>
 
         {/* Reading time */}
         <View style={styles.readingTimeContainer}>
           <Ionicons name="time-outline" size={14} color={theme.colors.Text.Secondary} />
           <Typography variant="annotation" color={theme.colors.Text.Secondary} style={styles.readingTime}>
-            3 min read
+            {article.readTime || "3 min read"}
           </Typography>
         </View>
 
@@ -187,7 +223,11 @@ const ArticleScreen = ({ route, navigation }) => {
         <View
           style={[styles.articleImage, { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] }]}
         >
-          <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+          {article.imageUrl ? (
+            <Image source={{ uri: article.imageUrl }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+          ) : (
+            <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+          )}
         </View>
 
         {/* Summary section using Accordion component */}
@@ -211,14 +251,11 @@ const ArticleScreen = ({ route, navigation }) => {
 
         {/* Article content */}
         <View style={styles.articleContent}>
-          {article.content
-            .split("\n\n")
-            .slice(1)
-            .map((paragraph, index) => (
-              <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
-                {paragraph}
-              </Typography>
-            ))}
+          {remainingParagraphs.map((paragraph, index) => (
+            <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
+              {paragraph}
+            </Typography>
+          ))}
         </View>
 
         {/* Comments Section using Comments component */}
@@ -276,6 +313,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 8,
   },
+  flag: {
+    marginRight: 8,
+  },
   title: {
     marginBottom: 8,
   },
@@ -317,55 +357,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 4,
   },
-  pollContainer: {
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  pollTitle: {
-    marginBottom: 8,
-  },
-  pollQuestion: {
-    marginBottom: 16,
-  },
-  pollOption: {
-    marginBottom: 12,
-  },
-  pollOptionContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  pollRadioContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  pollRadio: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    marginRight: 10,
+  errorContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
-  pollRadioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  pollProgressContainer: {
-    height: 4,
-    borderRadius: 2,
-    overflow: "hidden",
-  },
-  pollProgress: {
-    height: "100%",
-  },
-  totalVotes: {
-    marginTop: 8,
-    textAlign: "right",
+  backToHomeButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
   },
   bottomSpacing: {
     height: 20,

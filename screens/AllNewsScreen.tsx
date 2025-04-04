@@ -15,6 +15,8 @@ const sunNewsContent = [
     imageUrl: "https://i.imgur.com/JaCBiCp.jpg",
     timestamp: "5 hours ago",
     readTime: "3 min read",
+    content:
+      "Jake Paul has revealed he is in talks for a rematch with Tommy Fury and slammed Canelo Alvarez for not agreeing to fight him.\n\nThe YouTuber-turned-boxer lost to Fury by split decision in February 2023, his first defeat in the ring.\n\nPaul has since bounced back with victories over UFC legend Nate Diaz and veteran boxer Andre August, and is now eyeing a second shot at Fury.",
   },
   {
     id: 2,
@@ -23,6 +25,8 @@ const sunNewsContent = [
     imageUrl: "https://i.imgur.com/ZLdnUOH.jpg",
     timestamp: "2 hours ago",
     readTime: "3 min read",
+    content:
+      "Premier League chief Richard Masters has sent a cheeky message about VAR after Tottenham's controversial win over Liverpool.\n\nThe Reds were denied a legitimate goal when Luis Diaz was wrongly flagged offside, with VAR failing to overturn the decision.\n\nLiverpool went on to lose the match 2-1, with Jurgen Klopp left fuming at the officials.",
   },
   {
     id: 3,
@@ -31,6 +35,8 @@ const sunNewsContent = [
     imageUrl: "https://i.imgur.com/7BjQIEE.jpg",
     timestamp: "Yesterday",
     readTime: "3 min read",
+    content:
+      "Annie Walker, wife of football star Ron Walker, has been spotted posing behind the wheel of a £70,000 Mercedes.\n\nThe model and influencer shared photos of her new luxury vehicle on Instagram, captioning the post 'New wheels day! Thanks to my amazing husband for the surprise.'\n\nThe couple, who married last summer, are known for their lavish lifestyle and social media presence.",
   },
   {
     id: 4,
@@ -39,6 +45,8 @@ const sunNewsContent = [
     imageUrl: "https://i.imgur.com/JfVDTLs.jpg",
     timestamp: "3 hours ago",
     readTime: "3 min read",
+    content:
+      "Harry Kane has been tipped to make a stunning transfer to Liverpool by a Premier League legend.\n\nThe England captain only joined Bayern Munich last summer in a £100million move from Tottenham, but has been linked with a return to the Premier League.\n\nDespite scoring 36 goals in 36 games for the German giants, Kane is yet to win a trophy in his professional career.",
   },
   {
     id: 5,
@@ -47,6 +55,8 @@ const sunNewsContent = [
     imageUrl: "https://i.imgur.com/QVZLMGj.jpg",
     timestamp: "1 day ago",
     readTime: "3 min read",
+    content:
+      "Bruno Fernandes was left red-faced after his antics seconds before Cristiano Ronaldo's penalty miss against Slovenia.\n\nThe Portugal captain was seen gesturing to the crowd to make noise and putting pressure on the goalkeeper before Ronaldo stepped up.\n\nBut his teammate then saw his spot-kick saved by Jan Oblak, forcing the Euro 2024 last-16 tie to go to extra time.",
   },
 ]
 
@@ -84,7 +94,15 @@ const AllNewsScreen = ({ navigation }) => {
 
   const handleNewsPress = (article) => {
     if (!article) return
-    navigation.navigate("Article", { article })
+    // Make sure article has content before navigating
+    const fullArticle = article.content
+      ? article
+      : {
+          ...article,
+          content:
+            "This is a placeholder content for the article. The actual content will be fetched from The Sun website in a production environment.",
+        }
+    navigation.navigate("Article", { article: fullArticle })
   }
 
   const handleBookmark = (id) => {

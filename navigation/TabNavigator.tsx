@@ -2,6 +2,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
+
+import TodayScreen from "../screens/TodayScreen"
 import AllNewsScreen from "../screens/AllNewsScreen"
 import SearchScreen from "../screens/SearchScreen"
 import SavedScreen from "../screens/SavedScreen"
@@ -21,13 +23,15 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="AllNews"
+      initialRouteName="Today"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName = "grid"
+          let iconName = "home"
 
-          if (route.name === "AllNews") {
+          if (route.name === "Today") {
+            iconName = "home"
+          } else if (route.name === "AllNews") {
             iconName = "grid"
           } else if (route.name === "Search") {
             iconName = "search"
@@ -51,6 +55,7 @@ export default function TabNavigator() {
         },
       })}
     >
+      <Tab.Screen name="Today" component={TodayScreen} />
       <Tab.Screen name="AllNews" component={AllNewsScreen} options={{ title: "All News" }} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Saved" component={SavedScreen} />
