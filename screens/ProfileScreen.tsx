@@ -1,42 +1,187 @@
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native"
+"use client"
+
+import { useState } from "react"
+import { View, StyleSheet, TouchableOpacity, ScrollView, Switch } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 import { Ionicons } from "@expo/vector-icons"
+import { useTheme } from "../theme/ThemeProvider"
+import Typography from "../components/Typography"
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false)
+  const theme = useTheme()
+
+  const toggleDarkMode = (value) => {
+    setDarkModeEnabled(value)
+    if (theme.toggleTheme) {
+      theme.toggleTheme()
+    }
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
+        <Typography variant="h5" color={theme.colors.text.primary}>
+          Profile
+        </Typography>
       </View>
 
-      <View style={styles.userSection}>
-        <View style={styles.userAvatar}>
-          <Text style={styles.userInitials}>JD</Text>
+      <ScrollView style={styles.content}>
+        {/* User Info */}
+        <View style={[styles.userSection, { borderBottomColor: theme.colors.border }]}>
+          <View style={[styles.userAvatar, { backgroundColor: theme.colors.primary }]}>
+            <Typography variant="h4" color={theme.colors.text.inverse}>
+              JD
+            </Typography>
+          </View>
+          <View style={styles.userInfo}>
+            <Typography variant="subtitle-01" color={theme.colors.text.primary}>
+              John Doe
+            </Typography>
+            <Typography variant="body-02" color={theme.colors.text.tertiary}>
+              john.doe@example.com
+            </Typography>
+          </View>
         </View>
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>John Doe</Text>
-          <Text style={styles.userEmail}>john.doe@example.com</Text>
+
+        {/* Account Section */}
+        <View style={styles.section}>
+          <Typography variant="overline" color={theme.colors.text.tertiary} style={styles.sectionTitle}>
+            ACCOUNT
+          </Typography>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons name="person-outline" size={24} color={theme.colors.text.secondary} style={styles.menuIcon} />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Edit Profile
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons
+              name="lock-closed-outline"
+              size={24}
+              color={theme.colors.text.secondary}
+              style={styles.menuIcon}
+            />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Change Password
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons name="card-outline" size={24} color={theme.colors.text.secondary} style={styles.menuIcon} />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Subscription
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
+        {/* Preferences Section */}
+        <View style={styles.section}>
+          <Typography variant="overline" color={theme.colors.text.tertiary} style={styles.sectionTitle}>
+            PREFERENCES
+          </Typography>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <Ionicons name="person-outline" size={24} color="#333333" style={styles.menuIcon} />
-          <Text style={styles.menuText}>Edit Profile</Text>
-          <Ionicons name="chevron-forward" size={20} color="#CCCCCC" />
+          <View style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons
+              name="notifications-outline"
+              size={24}
+              color={theme.colors.text.secondary}
+              style={styles.menuIcon}
+            />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Notifications
+            </Typography>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
+              trackColor={{ false: "#DDDDDD", true: theme.colors.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <View style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons name="moon-outline" size={24} color={theme.colors.text.secondary} style={styles.menuIcon} />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Dark Mode
+            </Typography>
+            <Switch
+              value={darkModeEnabled}
+              onValueChange={toggleDarkMode}
+              trackColor={{ false: "#DDDDDD", true: theme.colors.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons name="language-outline" size={24} color={theme.colors.text.secondary} style={styles.menuIcon} />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Language
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Support Section */}
+        <View style={styles.section}>
+          <Typography variant="overline" color={theme.colors.text.tertiary} style={styles.sectionTitle}>
+            SUPPORT
+          </Typography>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons
+              name="help-circle-outline"
+              size={24}
+              color={theme.colors.text.secondary}
+              style={styles.menuIcon}
+            />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Help Center
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons name="chatbubble-outline" size={24} color={theme.colors.text.secondary} style={styles.menuIcon} />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Contact Us
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
+            <Ionicons
+              name="document-text-outline"
+              size={24}
+              color={theme.colors.text.secondary}
+              style={styles.menuIcon}
+            />
+            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+              Privacy Policy
+            </Typography>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Sign Out Button */}
+        <TouchableOpacity
+          style={[styles.signOutButton, { backgroundColor: theme.isDark ? theme.colors.surface : "#F5F5F5" }]}
+        >
+          <Typography variant="button" color={theme.colors.primary}>
+            Sign Out
+          </Typography>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <Ionicons name="lock-closed-outline" size={24} color="#333333" style={styles.menuIcon} />
-          <Text style={styles.menuText}>Change Password</Text>
-          <Ionicons name="chevron-forward" size={20} color="#CCCCCC" />
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity style={styles.signOutButton}>
-        <Text style={styles.signOutText}>Sign Out</Text>
-      </TouchableOpacity>
+        {/* App Version */}
+        <Typography variant="annotation" color={theme.colors.text.tertiary} style={styles.versionText}>
+          Version 1.0.0
+        </Typography>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -44,60 +189,36 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000000",
+  content: {
+    flex: 1,
   },
   userSection: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
   },
   userAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#E03A3A",
     justifyContent: "center",
     alignItems: "center",
   },
-  userInitials: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
   userInfo: {
     marginLeft: 16,
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#000000",
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: "#666666",
   },
   section: {
     paddingTop: 24,
     paddingHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#666666",
     marginBottom: 16,
   },
   menuItem: {
@@ -105,27 +226,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
   },
   menuIcon: {
     marginRight: 16,
   },
   menuText: {
     flex: 1,
-    fontSize: 16,
-    color: "#333333",
   },
   signOutButton: {
     margin: 24,
-    backgroundColor: "#F5F5F5",
     borderRadius: 8,
     padding: 16,
     alignItems: "center",
   },
-  signOutText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#E03A3A",
+  versionText: {
+    textAlign: "center",
+    marginBottom: 24,
   },
 })
 

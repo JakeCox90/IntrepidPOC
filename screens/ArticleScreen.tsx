@@ -1,76 +1,236 @@
 "use client"
 
 import { useState } from "react"
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from "react-native"
+import { View, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Dimensions } from "react-native"
 import { Ionicons, Feather } from "@expo/vector-icons"
+import { mockNews } from "../services/newsService"
+import { useTheme } from "../theme/ThemeProvider"
+import Typography from "../components/Typography"
+import Accordion from "../components/Accordion"
+import Comments from "../components/Comments"
+import AudioPlayer from "../components/AudioPlayer"
+
+const { width } = Dimensions.get("window")
+const imageHeight = (width * 2) / 3 // 3:2 ratio
 
 const ArticleScreen = ({ route, navigation }) => {
   const { article } = route.params
-  const [summaryExpanded, setSummaryExpanded] = useState(false)
+  const theme = useTheme()
+  const [selectedPollOption, setSelectedPollOption] = useState(null)
+  const [totalVotes, setTotalVotes] = useState(129)
+
+  // Poll options
+  const pollOptions = [
+    { id: 1, text: "Public safety", votes: 45 },
+    { id: 2, text: "Immigrant rights", votes: 32 },
+    { id: 3, text: "Border security", votes: 38 },
+    { id: 4, text: "Balanced approach", votes: 14 },
+  ]
+
+  // Mock comments data with replies
+  const comments = [
+    {
+      id: 1,
+      author: "Sharon McDonald",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
+      time: "10 mins ago",
+      likes: 1,
+      replies: [
+        {
+          id: 101,
+          author: "John Smith",
+          text: "I agree with your point!",
+          time: "5 mins ago",
+          likes: 0,
+        },
+        {
+          id: 102,
+          author: "Jane Doe",
+          text: "Interesting perspective.",
+          time: "2 mins ago",
+          likes: 0,
+        },
+      ],
+    },
+    {
+      id: 2,
+      author: "Sharon McDonald",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
+      time: "10 mins ago",
+      likes: 8,
+      replies: [],
+    },
+    {
+      id: 3,
+      author: "Sharon McDonald",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
+      time: "10 mins ago",
+      likes: 10,
+      replies: [],
+    },
+  ]
+
+  // Get related articles (excluding current article)
+  const relatedArticles = mockNews.filter((item) => item.id !== article.id).slice(0, 5)
+
+  const handleVote = (optionId) => {
+    if (!selectedPollOption) {
+      setSelectedPollOption(optionId)
+      setTotalVotes(totalVotes + 1)
+    }
+  }
+
+  const getVotePercentage = (votes) => {
+    return Math.round((votes / totalVotes) * 100)
+  }
+
+  const handleSubmitComment = (text) => {
+    console.log("New comment:", text)
+    // In a real app, you would add the comment to the comments array
+  }
+
+  const handleLikeComment = (commentId, isLiked) => {
+    console.log("Comment liked:", commentId, "Liked status:", isLiked)
+    // In a real app, you would update the likes count on the server
+  }
+
+  const handleReplyComment = (commentId) => {
+    console.log("Reply to comment:", commentId)
+    // In a real app, you would show a reply input or navigate to a reply screen
+  }
+
+  const handleViewReplies = (commentId) => {
+    console.log("View replies for comment:", commentId)
+    // In a real app, you would expand the replies or navigate to a replies screen
+  }
+
+  const handleShowAllComments = () => {
+    console.log("Show all comments")
+    // In a real app, you would navigate to a comments screen or load more comments
+  }
+
+  const handleAudioPlay = () => {
+    console.log("Audio started playing")
+  }
+
+  const handleAudioPause = () => {
+    console.log("Audio paused")
+  }
+
+  const handleAudioComplete = () => {
+    console.log("Audio playback completed")
+  }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: theme.colors.Border["Border-Primary"] }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#007AFF" />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.Primary.Resting} />
+          <Typography variant="body-01" color={theme.colors.Text.Primary}>
+            {article.category}
+          </Typography>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Article</Text>
-        <View style={{ width: 24 }} />
+        <View style={styles.headerButtons}>
+          <TouchableOpacity style={styles.headerButton}>
+            <Typography variant="button" color={theme.colors.Primary.Resting}>
+              SHARE
+            </Typography>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerButton}>
+            <Typography variant="button" color={theme.colors.Primary.Resting}>
+              SAVE
+            </Typography>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
         {/* Tags */}
         <View style={styles.tagsContainer}>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>{article.category.toUpperCase()}</Text>
+          <View style={[styles.tag, { backgroundColor: theme.colors.Primary.Resting }]}>
+            <Typography variant="annotation" color={theme.colors.Text.Inverse}>
+              {article.category.toUpperCase()}
+            </Typography>
           </View>
         </View>
 
         {/* Title */}
-        <Text style={styles.title}>{article.title}</Text>
+        <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
+          {article.title}
+        </Typography>
+
+        {/* Subtitle */}
+        <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
+          {article.content.split("\n\n")[0]}
+        </Typography>
 
         {/* Reading time */}
         <View style={styles.readingTimeContainer}>
-          <Ionicons name="time-outline" size={14} color="#666" />
-          <Text style={styles.readingTime}>3 min read</Text>
+          <Ionicons name="time-outline" size={14} color={theme.colors.Text.Secondary} />
+          <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
+            3 min read
+          </Typography>
         </View>
 
         {/* Author info */}
         <View style={styles.authorContainer}>
-          <Text style={styles.authorName}>Elizabeth Rosenberg</Text>
-          <Text style={styles.publishDate}>{article.timestamp}</Text>
+          <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
+            Elizabeth Rosenberg
+          </Typography>
+          <Typography variant="subtitle-02" color={theme.colors.Text.Secondary}>
+            Published 15th January 2023, 10:21am
+          </Typography>
         </View>
 
-        {/* Image placeholder */}
-        <View style={styles.imagePlaceholder}>
-          <Feather name="image" size={24} color="#999" />
+        {/* Article Image */}
+        <View
+          style={[styles.articleImage, { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] }]}
+        >
+          <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
         </View>
 
-        {/* Summary section */}
-        <View style={styles.summaryContainer}>
-          <TouchableOpacity style={styles.summaryHeader} onPress={() => setSummaryExpanded(!summaryExpanded)}>
-            <Text style={styles.summaryTitle}>Summary</Text>
-            <Ionicons name={summaryExpanded ? "remove" : "add"} size={20} color="#007AFF" />
-          </TouchableOpacity>
+        {/* Summary section using Accordion component */}
+        <Accordion title="Summary">
+          <Typography variant="body-02" color={theme.colors.Text.Secondary}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Maecenas vel tincidunt nunc, eget
+            tincidunt nisl. Donec at justo eget magna pulvinar feugiat.
+          </Typography>
+        </Accordion>
 
-          {summaryExpanded && (
-            <View style={styles.summaryContent}>
-              <Text style={styles.summaryText}>Key points from the article will appear here when expanded.</Text>
-            </View>
-          )}
+        {/* Audio Player */}
+        <View style={styles.audioPlayerContainer}>
+          <AudioPlayer
+            title="Danish PM tells Trump 'Greenland is not for sale'"
+            duration={321} // 5m 21s
+            onPlay={handleAudioPlay}
+            onPause={handleAudioPause}
+            onComplete={handleAudioComplete}
+          />
         </View>
-
-        {/* Listen button */}
-        <TouchableOpacity style={styles.listenButton}>
-          <Ionicons name="play" size={18} color="#000" />
-          <Text style={styles.listenButtonText}>Listen to this article</Text>
-        </TouchableOpacity>
 
         {/* Article content */}
         <View style={styles.articleContent}>
-          <Text style={styles.paragraph}>{article.content}</Text>
+          {article.content
+            .split("\n\n")
+            .slice(1)
+            .map((paragraph, index) => (
+              <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
+                {paragraph}
+              </Typography>
+            ))}
         </View>
+
+        {/* Comments Section using Comments component */}
+        <Comments
+          comments={comments}
+          totalComments={8}
+          onShowAllPress={handleShowAllComments}
+          onSubmitComment={handleSubmitComment}
+          onLikeComment={handleLikeComment}
+          onReplyComment={handleReplyComment}
+          onViewReplies={handleViewReplies}
+        />
 
         {/* Bottom spacing */}
         <View style={styles.bottomSpacing} />
@@ -82,7 +242,6 @@ const ArticleScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",
@@ -91,19 +250,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   backButton: {
-    padding: 5,
+    flexDirection: "row",
+    alignItems: "center",
   },
-  headerTitle: {
-    fontSize: 16,
-    color: "#000",
-    fontWeight: "400",
+  headerButtons: {
+    flexDirection: "row",
+  },
+  headerButton: {
+    marginLeft: 15,
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     paddingHorizontal: 16,
   },
   tagsContainer: {
@@ -112,23 +271,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   tag: {
-    backgroundColor: "#E6F0FF",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
     marginRight: 8,
   },
-  tagText: {
-    color: "#007AFF",
-    fontSize: 12,
-    fontWeight: "600",
-  },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    lineHeight: 28,
     marginBottom: 8,
-    color: "#000",
+  },
+  subtitle: {
+    marginBottom: 12,
   },
   readingTimeContainer: {
     flexDirection: "row",
@@ -136,78 +288,84 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   readingTime: {
-    fontSize: 12,
-    color: "#666",
     marginLeft: 4,
   },
   authorContainer: {
     marginBottom: 16,
   },
-  authorName: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-  },
-  publishDate: {
-    fontSize: 12,
-    color: "#666",
-  },
-  imagePlaceholder: {
+  articleImage: {
     width: "100%",
-    height: 200,
-    backgroundColor: "#f0f0f0",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
     borderRadius: 4,
   },
-  summaryContainer: {
-    borderWidth: 1,
-    borderColor: "#eee",
+  audioPlayerContainer: {
+    marginBottom: 16,
+  },
+  articleContent: {
+    marginBottom: 24,
+  },
+  paragraph: {
+    marginBottom: 16,
+  },
+  imagePlaceholder: {
+    width: "100%",
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    borderRadius: 4,
+  },
+  pollContainer: {
+    padding: 16,
     borderRadius: 8,
     marginBottom: 16,
   },
-  summaryHeader: {
+  pollTitle: {
+    marginBottom: 8,
+  },
+  pollQuestion: {
+    marginBottom: 16,
+  },
+  pollOption: {
+    marginBottom: 12,
+  },
+  pollOptionContent: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 12,
+    marginBottom: 4,
   },
-  summaryTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#000",
-  },
-  summaryContent: {
-    padding: 12,
-    paddingTop: 0,
-  },
-  summaryText: {
-    fontSize: 14,
-    color: "#444",
-    lineHeight: 20,
-  },
-  listenButton: {
+  pollRadioContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
   },
-  listenButtonText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#000",
+  pollRadio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  articleContent: {
-    marginBottom: 16,
+  pollRadioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
-  paragraph: {
-    fontSize: 16,
-    color: "#333",
-    lineHeight: 24,
-    marginBottom: 16,
+  pollProgressContainer: {
+    height: 4,
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  pollProgress: {
+    height: "100%",
+  },
+  totalVotes: {
+    marginTop: 8,
+    textAlign: "right",
   },
   bottomSpacing: {
     height: 20,

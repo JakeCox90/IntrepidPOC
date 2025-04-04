@@ -18,30 +18,30 @@ const Header = ({ title, showBackButton = false }: HeaderProps) => {
       style={[
         styles.container,
         {
-          backgroundColor: theme.colors.background,
-          paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.md,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border,
+          backgroundColor: theme.colors.Surface.Primary,
+          paddingHorizontal: theme.space["40"],
+          paddingVertical: theme.space["40"],
+          borderBottomWidth: theme.borderWidth["10"],
+          borderBottomColor: theme.colors.Border["Border-Primary"],
         },
       ]}
     >
       <View style={styles.content}>
         {showBackButton && (
           <TouchableOpacity
-            style={[styles.backButton, { marginRight: theme.spacing.sm }]}
+            style={[styles.backButton, { marginRight: theme.space["20"] }]}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.Text.Primary} />
           </TouchableOpacity>
         )}
         <Text
           style={[
             styles.title,
             {
-              color: theme.colors.primary,
+              color: theme.colors.Primary.Resting,
               fontFamily: theme.typography.fontFamily.bold,
-              fontSize: theme.typography.fontSize.xl,
+              fontSize: theme.fontSize["3"],
             },
           ]}
         >
