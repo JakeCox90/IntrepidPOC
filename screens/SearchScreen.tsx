@@ -1,21 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  StatusBar,
-  ActivityIndicator,
-  Text,
-} from "react-native"
+import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar, Text } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Typography from "../components/Typography"
 import { useTheme } from "../theme/ThemeProvider"
 import Header from "../components/Header"
 import CardHorizontal from "../components/CardHorizontal"
+import SkeletonLoader from "../components/SkeletonLoader"
 import { searchNews, type Article } from "../services/sunNewsService"
 
 const SearchScreen = ({ navigation }) => {
@@ -108,16 +100,18 @@ const SearchScreen = ({ navigation }) => {
       </View>
 
       {isSearching ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.Primary.Resting} />
-          <Text style={[styles.loadingText, { color: theme.colors.Text.Secondary }]}>Searching...</Text>
+        // Use SkeletonLoader for loading state
+        <View style={styles.searchResults}>
+          <SkeletonLoader type="search" count={3} />
         </View>
       ) : error ? (
+        // Error state
         <View style={styles.errorContainer}>
           <Text style={[styles.errorText, { color: theme.colors.Error.Resting }]}>{error}</Text>
           <Text style={[styles.errorSubtext, { color: theme.colors.Text.Secondary }]}>Please try again.</Text>
         </View>
       ) : searchResults.length > 0 ? (
+        // Actual content
         <FlatList
           data={searchResults}
           keyExtractor={(item) => item.id.toString()}
@@ -210,16 +204,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     width: "48%",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
   },
   errorContainer: {
     flex: 1,

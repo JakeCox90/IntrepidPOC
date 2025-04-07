@@ -5,7 +5,7 @@ import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform } from "
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
-import SkeletonCardArticle from "../components/SkeletonCardArticle"
+import SkeletonLoader from "../components/SkeletonLoader"
 import Typography from "../components/Typography"
 import TabsWithIndicator from "../components/TabsWithIndicator"
 import { fetchNewsByCategory } from "../services/sunNewsService"
@@ -114,13 +114,6 @@ const AllNewsScreen = ({ navigation }) => {
   // Safely get subcategories
   const subcategories = SUBCATEGORIES[selectedMainCategory] || []
 
-  // Render skeleton items
-  const renderSkeletonItems = () => {
-    return Array(5)
-      .fill(0)
-      .map((_, index) => <SkeletonCardArticle key={`skeleton-${index}`} />)
-  }
-
   return (
     <View style={styles.safeArea}>
       {/* Status bar with fixed color */}
@@ -157,8 +150,10 @@ const AllNewsScreen = ({ navigation }) => {
       {/* News List */}
       <View style={styles.newsListContainer}>
         {loading ? (
-          // Skeleton loading state
-          <View style={styles.newsList}>{renderSkeletonItems()}</View>
+          // Skeleton loading state using SkeletonLoader
+          <View style={styles.newsList}>
+            <SkeletonLoader type="allNews" count={5} />
+          </View>
         ) : error ? (
           // Error state
           <View style={styles.errorContainer}>

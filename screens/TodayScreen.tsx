@@ -7,9 +7,7 @@ import Stack from "../components/Stack"
 import CardCatchUp from "../components/CardCatchUp"
 import CardHero from "../components/CardHero"
 import CardArticle from "../components/CardArticle"
-import SkeletonCardHero from "../components/SkeletonCardHero"
-import SkeletonCardArticle from "../components/SkeletonCardArticle"
-import SkeletonCardCatchUp from "../components/SkeletonCardCatchUp"
+import SkeletonLoader from "../components/SkeletonLoader"
 import Header from "../components/Header"
 import Typography from "../components/Typography"
 import { fetchSunNews } from "../services/sunNewsService"
@@ -141,36 +139,9 @@ const TodayScreen = ({ navigation }) => {
       />
 
       {loading ? (
-        // Show loading state
+        // Show loading state using the SkeletonLoader component
         <ScrollView style={styles.scrollView}>
-          {/* Skeleton loading components */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Today&apos;s Catch Up
-            </Typography>
-            <Stack>
-              <SkeletonCardCatchUp />
-              <SkeletonCardCatchUp />
-              <SkeletonCardCatchUp />
-            </Stack>
-          </View>
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Top Stories
-            </Typography>
-            <SkeletonCardHero />
-            <SkeletonCardArticle />
-            <SkeletonCardArticle />
-          </View>
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              All Stories
-            </Typography>
-            <SkeletonCardArticle />
-            <SkeletonCardArticle />
-            <SkeletonCardArticle />
-            <SkeletonCardArticle />
-          </View>
+          <SkeletonLoader type="today" count={4} />
         </ScrollView>
       ) : error ? (
         // Error state

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar, Animated } from "react-native"
+import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
@@ -10,27 +10,20 @@ import Comments from "../components/Comments"
 import Flag from "../components/Flag"
 import Header from "../components/Header"
 import LazyImage from "../components/LazyImage"
-import SkeletonArticle from "../components/SkeletonArticle"
+import SkeletonLoader from "../components/SkeletonLoader"
 import { fetchArticleById } from "../services/sunNewsService"
 import { getCategoryColor } from "../utils/categoryColors"
-import { useFadeAnimation } from "../hooks/useFadeAnimation"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
 
 const ArticleScreen = ({ route, navigation }) => {
   const { article: routeArticle } = route.params || {}
-  const [state, setState] = useState({
-    article: routeArticle || null,
-    loading: !routeArticle || !routeArticle.content,
-    error: null,
-  })
+  const [article, setArticle] = useState(routeArticle || null)
+  const [loading, setLoading] = useState(!routeArticle || !routeArticle.content)
+  const [error, setError] = useState(null)
 
-  const { article, loading, error } = state
   const theme = useTheme()
-
-  // Use the fade animation hook for content transitions
-  const { opacity, fadeIn, fadeOut } = useFadeAnimation({ initialValue: 0 })
 
   useFocusEffect(
     useCallback(() => {
@@ -41,53 +34,38 @@ const ArticleScreen = ({ route, navigation }) => {
         const fetchArticle = async () => {
           if (!isMounted) return
 
-          setState((prevState) => ({ ...prevState, loading: true }))
+          setLoading(true)
 
           try {
             if (routeArticle?.id) {
               const fullArticle = await fetchArticleById(routeArticle.id)
               if (isMounted) {
-                setState({
-                  article: fullArticle,
-                  loading: false,
-                  error: null,
-                })
-                // Fade in the content when loaded
-                fadeIn()
+                setArticle(fullArticle)
+                setLoading(false)
+                setError(null)
               }
             } else {
               if (isMounted) {
-                setState((prevState) => ({
-                  ...prevState,
-                  error: "No article ID provided",
-                  loading: false,
-                }))
+                setError("No article ID provided")
+                setLoading(false)
               }
             }
           } catch (err) {
             console.error(err)
             if (isMounted) {
-              setState((prevState) => ({
-                ...prevState,
-                error: "Failed to load article",
-                loading: false,
-              }))
+              setError("Failed to load article")
+              setLoading(false)
             }
           }
         }
 
         fetchArticle()
-      } else {
-        // If we already have the article, fade in the content
-        fadeIn()
       }
 
       return () => {
         isMounted = false
-        // Fade out when leaving the screen
-        fadeOut()
       }
-    }, [routeArticle, fadeIn, fadeOut]),
+    }, [routeArticle]),
   )
 
   // Get the appropriate section color for this article
@@ -182,9 +160,9 @@ const ArticleScreen = ({ route, navigation }) => {
       />
 
       {loading ? (
-        // Skeleton loading state
+        // Skeleton loading state using SkeletonLoader
         <ScrollView style={styles.scrollView}>
-          <SkeletonArticle />
+          <SkeletonLoader type="article" />
         </ScrollView>
       ) : error || !article ? (
         // Error state
@@ -202,89 +180,87 @@ const ArticleScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       ) : (
-        // Actual content with fade animation
-        <Animated.View style={{ flex: 1, opacity }}>
-          <ScrollView
-            style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
-            contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
+        // Actual content
+        <ScrollView
+          style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
+          contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
+        >
+          {/* Tags */}
+          <View style={styles.tagsContainer}>
+            {!article.flag && (
+              <Flag text={article.category || "NEWS"} category={article.category} style={styles.flag} />
+            )}
+          </View>
+
+          {/* Title */}
+          <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
+            {article.title || "No title available"}
+          </Typography>
+
+          {/* Subtitle */}
+          <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
+            {subtitle}
+          </Typography>
+
+          {/* Reading time */}
+          <View style={styles.readingTimeContainer}>
+            <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
+            <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
+              {article.readTime || "3 min read"}
+            </Typography>
+          </View>
+
+          {/* Author info */}
+          <View style={styles.authorContainer}>
+            <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
+              {article.author || "The Sun"}
+            </Typography>
+            <Typography variant="body-02" color={theme.colors.Text.Secondary}>
+              Published {article.timestamp || "Recently"}
+            </Typography>
+          </View>
+
+          {/* Article Image */}
+          <View
+            style={[
+              styles.articleImage,
+              { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] },
+            ]}
           >
-            {/* Tags */}
-            <View style={styles.tagsContainer}>
-              {!article.flag && (
-                <Flag text={article.category || "NEWS"} category={article.category} style={styles.flag} />
-              )}
-            </View>
+            {article.imageUrl ? (
+              <LazyImage
+                source={{ uri: article.imageUrl }}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="cover"
+              />
+            ) : (
+              <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+            )}
+          </View>
 
-            {/* Title */}
-            <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
-              {article.title || "No title available"}
-            </Typography>
-
-            {/* Subtitle */}
-            <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
-              {subtitle}
-            </Typography>
-
-            {/* Reading time */}
-            <View style={styles.readingTimeContainer}>
-              <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-              <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
-                {article.readTime || "3 min read"}
+          {/* Article content */}
+          <View style={styles.articleContent}>
+            {remainingParagraphs.map((paragraph, index) => (
+              <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
+                {paragraph}
               </Typography>
-            </View>
+            ))}
+          </View>
 
-            {/* Author info */}
-            <View style={styles.authorContainer}>
-              <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-                {article.author || "The Sun"}
-              </Typography>
-              <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-                Published {article.timestamp || "Recently"}
-              </Typography>
-            </View>
+          {/* Comments Section using Comments component */}
+          <Comments
+            comments={comments}
+            totalComments={8}
+            onShowAllPress={handleShowAllComments}
+            onSubmitComment={handleSubmitComment}
+            onLikeComment={handleLikeComment}
+            onReplyComment={handleReplyComment}
+            onViewReplies={handleViewReplies}
+          />
 
-            {/* Article Image */}
-            <View
-              style={[
-                styles.articleImage,
-                { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] },
-              ]}
-            >
-              {article.imageUrl ? (
-                <LazyImage
-                  source={{ uri: article.imageUrl }}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="cover"
-                />
-              ) : (
-                <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
-              )}
-            </View>
-
-            {/* Article content */}
-            <View style={styles.articleContent}>
-              {remainingParagraphs.map((paragraph, index) => (
-                <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
-                  {paragraph}
-                </Typography>
-              ))}
-            </View>
-
-            {/* Comments Section using Comments component */}
-            <Comments
-              comments={comments}
-              totalComments={8}
-              onShowAllPress={handleShowAllComments}
-              onSubmitComment={handleSubmitComment}
-              onLikeComment={handleLikeComment}
-              onReplyComment={handleReplyComment}
-              onViewReplies={handleViewReplies}
-            />
-
-            {/* Bottom spacing */}
-            <View style={styles.bottomSpacing} />
-          </ScrollView>
-        </Animated.View>
+          {/* Bottom spacing */}
+          <View style={styles.bottomSpacing} />
+        </ScrollView>
       )}
     </View>
   )
