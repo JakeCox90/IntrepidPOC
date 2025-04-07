@@ -85,9 +85,11 @@ const ArticleHeader = ({
       {/* Tags */}
       <View style={[baseStyles.tagsContainer, themedStyles.tagsContainer]}>
         {flag && COMMON_FLAGS.includes(flag.toUpperCase()) && (
-          <Flag text={flag} style={[baseStyles.flag, themedStyles.flag]} />
+          <Flag text={flag} style={[baseStyles.flag, themedStyles.flag]} variant="filled" />
         )}
-        {category && <Flag text={category} category={category} style={[baseStyles.flag, themedStyles.flag]} />}
+        {category && (
+          <Flag text={category} category={category} style={[baseStyles.flag, themedStyles.flag]} variant="minimal" />
+        )}
       </View>
 
       {/* Title */}

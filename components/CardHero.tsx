@@ -83,8 +83,8 @@ const CardHero = ({
 
       <View style={[cardStyles.heroContent, themedStyles.heroContent]}>
         <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
-          {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} />}
-          {category && <Flag text={category} category={category} />}
+          {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} variant="filled" />}
+          {category && <Flag text={category} category={category} variant="minimal" />}
         </View>
 
         <Typography variant="h5" color={theme.colors.Text.Primary} style={[cardStyles.title, themedStyles.title]}>

@@ -82,8 +82,8 @@ const CardArticle = ({
       <View style={[cardStyles.articleContent, themedStyles.articleContent]}>
         <View style={[cardStyles.articleTextContent, themedStyles.articleTextContent]}>
           <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
-            {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} />}
-            {category && <Flag text={category} category={category} />}
+            {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} variant="filled" />}
+            {category && <Flag text={category} category={category} variant="minimal" />}
           </View>
 
           <Typography
