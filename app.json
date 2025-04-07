@@ -1,24 +1,24 @@
 {
   "expo": {
-    "name": "IntrepidPOC",
-    "slug": "IntrepidPOC",
+    "name": "Sun News App",
+    "slug": "sun-news-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#E03A3A"
     },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#E03A3A"
       }
     },
     "web": {
@@ -26,3 +26,4 @@
     }
   }
 }
+

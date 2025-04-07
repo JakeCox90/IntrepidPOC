@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
-import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, Animated, Easing } from "react-native"
+import { useState, useCallback } from "react"
+import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, Animated } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
@@ -10,6 +10,10 @@ import Typography from "../components/Typography"
 import TabsWithIndicator from "../components/TabsWithIndicator"
 import { fetchNewsByCategory } from "../services/sunNewsService"
 import { getCategoryColor } from "../utils/categoryColors"
+
+// Import the custom hooks
+import { useColorTransition } from "../hooks/useColorTransition"
+import { useContentTransition } from "../hooks/useContentTransition"
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
@@ -31,6 +35,7 @@ const SUBCATEGORIES = {
   Health: ["Fitness", "Diet", "Health News"],
 }
 
+// Replace the animation code in the component with the hooks
 const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme()
   const [state, setState] = useState({
@@ -41,56 +46,14 @@ const AllNewsScreen = ({ navigation }) => {
     selectedSubCategory: "UK News",
   })
 
-  // Animation values
-  const colorAnimation = useRef(new Animated.Value(0)).current
-  const contentAnimation = useRef(new Animated.Value(1)).current
-  const previousColor = useRef(getCategoryColor("News", theme))
-  const currentColor = useRef(getCategoryColor("News", theme))
-
   const { news, loading, error, selectedMainCategory, selectedSubCategory } = state
 
-  // Update current color when category changes
-  useEffect(() => {
-    previousColor.current = currentColor.current
-    currentColor.current = getCategoryColor(selectedMainCategory, theme)
+  // Use the color transition hook
+  const currentColor = getCategoryColor(selectedMainCategory, theme)
+  const { animatedColor: animatedHeaderColor } = useColorTransition(currentColor)
 
-    // Reset animation value
-    colorAnimation.setValue(0)
-
-    // Start color transition animation
-    Animated.timing(colorAnimation, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: false,
-      easing: Easing.out(Easing.ease),
-    }).start()
-  }, [selectedMainCategory, colorAnimation, theme])
-
-  // Interpolate between previous and current color
-  const animatedHeaderColor = colorAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [previousColor.current, currentColor.current],
-  })
-
-  // Animate content transition
-  const animateContentTransition = () => {
-    // Fade out
-    Animated.timing(contentAnimation, {
-      toValue: 0,
-      duration: 150,
-      useNativeDriver: true,
-      easing: Easing.out(Easing.ease),
-    }).start(() => {
-      // Fade in after data is loaded
-      Animated.timing(contentAnimation, {
-        toValue: 1,
-        duration: 300,
-        delay: 50,
-        useNativeDriver: true,
-        easing: Easing.in(Easing.ease),
-      }).start()
-    })
-  }
+  // Use the content transition hook
+  const { animateTransition, animatedStyle } = useContentTransition()
 
   useFocusEffect(
     useCallback(() => {
@@ -100,7 +63,7 @@ const AllNewsScreen = ({ navigation }) => {
         if (!isMounted) return
 
         setState((prevState) => ({ ...prevState, loading: true }))
-        animateContentTransition()
+        animateTransition()
 
         try {
           let data
@@ -138,7 +101,7 @@ const AllNewsScreen = ({ navigation }) => {
       return () => {
         isMounted = false
       }
-    }, [selectedMainCategory, selectedSubCategory]),
+    }, [selectedMainCategory, selectedSubCategory, animateTransition]),
   )
 
   const handleMainCategoryPress = (category) => {
@@ -160,7 +123,7 @@ const AllNewsScreen = ({ navigation }) => {
     }))
 
     // Animate content transition when subcategory changes
-    animateContentTransition()
+    animateTransition()
   }
 
   const handleNewsPress = (article) => {
@@ -216,28 +179,13 @@ const AllNewsScreen = ({ navigation }) => {
         activeTab={selectedSubCategory}
         onTabPress={handleSubCategoryPress}
         variant="secondary"
-        indicatorColor={currentColor.current}
-        activeTextColor={currentColor.current}
+        indicatorColor={currentColor}
+        activeTextColor={currentColor}
         textVariant="body-02"
       />
 
       {/* News List with Animated Transition */}
-      <Animated.View
-        style={[
-          styles.newsListContainer,
-          {
-            opacity: contentAnimation,
-            transform: [
-              {
-                translateY: contentAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [10, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
+      <Animated.View style={[styles.newsListContainer, animatedStyle]}>
         {loading ? (
           // Skeleton loading state
           <View style={styles.newsList}>{renderSkeletonItems()}</View>

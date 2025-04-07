@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useCallback } from "react"
-import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
+import { View, StyleSheet, ScrollView, StatusBar, Animated } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import Stack from "../components/Stack"
@@ -13,7 +13,10 @@ import SkeletonCardCatchUp from "../components/SkeletonCardCatchUp"
 import Header from "../components/Header"
 import Typography from "../components/Typography"
 import { fetchSunNews } from "../services/sunNewsService"
+// Import the fade animation hook
+import { useFadeAnimation } from "../hooks/useFadeAnimation"
 
+// Add the hook to the component
 const TodayScreen = ({ navigation }) => {
   const theme = useTheme()
   const [state, setState] = useState({
@@ -21,6 +24,9 @@ const TodayScreen = ({ navigation }) => {
     articles: [],
     error: null,
   })
+
+  // Use the fade animation hook
+  const { opacity, fadeIn } = useFadeAnimation({ initialValue: 0 })
 
   // Use useFocusEffect instead of useEffect to avoid potential memory leaks
   useFocusEffect(
@@ -40,6 +46,8 @@ const TodayScreen = ({ navigation }) => {
               articles: data,
               error: null,
             })
+            // Fade in content when loaded
+            fadeIn()
           }
         } catch (err) {
           console.error(err)
@@ -58,7 +66,7 @@ const TodayScreen = ({ navigation }) => {
       return () => {
         isMounted = false
       }
-    }, []),
+    }, [fadeIn]),
   )
 
   const { loading, articles, error } = state
@@ -134,23 +142,7 @@ const TodayScreen = ({ navigation }) => {
   const topStories = React.useMemo(() => articles.slice(0, 3), [articles])
   const allStories = React.useMemo(() => articles.slice(3, 10), [articles])
 
-  // Render error state
-  if (error) {
-    return (
-      <View style={[styles.container, styles.centerContainer]}>
-        <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-        <Header title="News" backgroundColor={theme.colors.Primary.Resting} textColor={theme.colors.Text.Inverse} />
-        <Typography variant="subtitle-01" color={theme.colors.Error.Resting} style={{ marginBottom: 16 }}>
-          {error}
-        </Typography>
-        <Typography variant="body-01" color={theme.colors.Text.Secondary}>
-          Please check your connection and try again.
-        </Typography>
-      </View>
-    )
-  }
-
-  // Render skeleton or content
+  // Wrap the content with the animated view
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
@@ -165,69 +157,119 @@ const TodayScreen = ({ navigation }) => {
         onProfilePress={handleProfilePress}
       />
 
-      <ScrollView style={styles.scrollView}>
-        {/* Today's Catch Up Section */}
-        <View style={styles.section}>
-          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-            Today&apos;s Catch Up
+      {loading ? (
+        // Show loading state without animation
+        <ScrollView style={styles.scrollView}>
+          {/* Skeleton loading components */}
+          <View style={styles.section}>
+            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+              Today&apos;s Catch Up
+            </Typography>
+            <Stack>
+              <SkeletonCardCatchUp />
+              <SkeletonCardCatchUp />
+              <SkeletonCardCatchUp />
+            </Stack>
+          </View>
+          <View style={styles.section}>
+            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+              Top Stories
+            </Typography>
+            <SkeletonCardHero />
+            <SkeletonCardArticle />
+            <SkeletonCardArticle />
+          </View>
+          <View style={styles.section}>
+            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+              All Stories
+            </Typography>
+            <SkeletonCardArticle />
+            <SkeletonCardArticle />
+            <SkeletonCardArticle />
+            <SkeletonCardArticle />
+          </View>
+          {/* Other skeleton sections */}
+        </ScrollView>
+      ) : error ? (
+        // Error state
+        <View style={[styles.container, styles.centerContainer]}>
+          <Typography variant="subtitle-01" color={theme.colors.Error.Resting} style={{ marginBottom: 16 }}>
+            {error}
           </Typography>
-
-          <Stack>
-            {loading ? (
-              // Skeleton loading state
-              <>
-                <SkeletonCardCatchUp />
-                <SkeletonCardCatchUp />
-                <SkeletonCardCatchUp />
-              </>
-            ) : (
-              // Actual content
-              catchUpItems.map((item) => (
-                <CardCatchUp
-                  key={item.id}
-                  title={item.title}
-                  subtitle={item.subtitle}
-                  imageUrl={item.imageUrl}
-                  count={item.count}
-                  onPress={() => handleCatchUpPress(item)}
-                />
-              ))
-            )}
-          </Stack>
+          <Typography variant="body-01" color={theme.colors.Text.Secondary}>
+            Please check your connection and try again.
+          </Typography>
         </View>
+      ) : (
+        // Actual content with fade animation
+        <Animated.View style={{ flex: 1, opacity }}>
+          <ScrollView style={styles.scrollView}>
+            {/* Today's Catch Up Section */}
+            <View style={styles.section}>
+              <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+                Today&apos;s Catch Up
+              </Typography>
 
-        {/* Top Stories Section */}
-        <View style={styles.section}>
-          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-            Top Stories
-          </Typography>
+              <Stack>
+                {catchUpItems.map((item) => (
+                  <CardCatchUp
+                    key={item.id}
+                    title={item.title}
+                    subtitle={item.subtitle}
+                    imageUrl={item.imageUrl}
+                    count={item.count}
+                    onPress={() => handleCatchUpPress(item)}
+                  />
+                ))}
+              </Stack>
+            </View>
 
-          {loading ? (
-            // Skeleton loading state for top stories
-            <>
-              <SkeletonCardHero />
-              <SkeletonCardArticle />
-              <SkeletonCardArticle />
-            </>
-          ) : (
-            // Actual content
-            <>
-              {/* Hero Card */}
-              {topStories.length > 0 && (
-                <CardHero
-                  title={topStories[0].title}
-                  imageUrl={topStories[0].imageUrl}
-                  flag={topStories[0].flag}
-                  category={topStories[0].category}
-                  readTime={topStories[0].readTime}
-                  onPress={() => handleArticlePress(topStories[0])}
-                  onBookmark={() => handleBookmark(topStories[0].id)}
-                  onShare={() => handleShare(topStories[0].id)}
-                />
-              )}
+            {/* Top Stories Section */}
+            <View style={styles.section}>
+              <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+                Top Stories
+              </Typography>
 
-              {/* Other Top Stories */}
-              {topStories.slice(1).map((story) => (
+              <>
+                {/* Hero Card */}
+                {topStories.length > 0 && (
+                  <CardHero
+                    title={topStories[0].title}
+                    imageUrl={topStories[0].imageUrl}
+                    flag={topStories[0].flag}
+                    category={topStories[0].category}
+                    readTime={topStories[0].readTime}
+                    onPress={() => handleArticlePress(topStories[0])}
+                    onBookmark={() => handleBookmark(topStories[0].id)}
+                    onShare={() => handleShare(topStories[0].id)}
+                  />
+                )}
+
+                {/* Other Top Stories */}
+                {topStories.slice(1).map((story) => (
+                  <CardArticle
+                    key={story.id}
+                    id={story.id}
+                    title={story.title}
+                    imageUrl={story.imageUrl}
+                    category={story.category}
+                    flag={story.flag}
+                    readTime={story.readTime}
+                    onPress={() => handleArticlePress(story)}
+                    onBookmark={() => handleBookmark(story.id)}
+                    onShare={() => handleShare(story.id)}
+                  />
+                ))}
+              </>
+            </View>
+
+            {/* All Stories Section */}
+            <View style={styles.section}>
+              <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+                All Stories
+              </Typography>
+
+              {allStories.map((story) => (
                 <CardArticle
                   key={story.id}
                   id={story.id}
@@ -241,46 +283,14 @@ const TodayScreen = ({ navigation }) => {
                   onShare={() => handleShare(story.id)}
                 />
               ))}
-            </>
-          )}
-        </View>
+            </View>
 
-        {/* All Stories Section */}
-        <View style={styles.section}>
-          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-            All Stories
-          </Typography>
-
-          {loading ? (
-            // Skeleton loading state for all stories
-            <>
-              <SkeletonCardArticle />
-              <SkeletonCardArticle />
-              <SkeletonCardArticle />
-              <SkeletonCardArticle />
-            </>
-          ) : (
-            // Actual content
-            allStories.map((story) => (
-              <CardArticle
-                key={story.id}
-                id={story.id}
-                title={story.title}
-                imageUrl={story.imageUrl}
-                category={story.category}
-                flag={story.flag}
-                readTime={story.readTime}
-                onPress={() => handleArticlePress(story)}
-                onBookmark={() => handleBookmark(story.id)}
-                onShare={() => handleShare(story.id)}
-              />
-            ))
-          )}
-        </View>
-
-        {/* Bottom padding */}
-        <View style={styles.bottomPadding} />
-      </ScrollView>
+            {/* Bottom padding */}
+            <View style={styles.bottomPadding} />
+            {/* Content sections */}
+          </ScrollView>
+        </Animated.View>
+      )}
     </View>
   )
 }

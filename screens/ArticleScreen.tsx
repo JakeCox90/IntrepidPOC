@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar } from "react-native"
+import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar, Animated } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
@@ -9,10 +9,11 @@ import Typography from "../components/Typography"
 import Comments from "../components/Comments"
 import Flag from "../components/Flag"
 import Header from "../components/Header"
-import LazyImage from "./LazyImage"
+import LazyImage from "../components/LazyImage"
 import SkeletonArticle from "../components/SkeletonArticle"
 import { fetchArticleById } from "../services/sunNewsService"
 import { getCategoryColor } from "../utils/categoryColors"
+import { useFadeAnimation } from "../hooks/useFadeAnimation"
 
 const { width } = Dimensions.get("window")
 const imageHeight = (width * 2) / 3 // 3:2 ratio
@@ -27,6 +28,9 @@ const ArticleScreen = ({ route, navigation }) => {
 
   const { article, loading, error } = state
   const theme = useTheme()
+
+  // Use the fade animation hook for content transitions
+  const { opacity, fadeIn, fadeOut } = useFadeAnimation({ initialValue: 0 })
 
   useFocusEffect(
     useCallback(() => {
@@ -48,6 +52,8 @@ const ArticleScreen = ({ route, navigation }) => {
                   loading: false,
                   error: null,
                 })
+                // Fade in the content when loaded
+                fadeIn()
               }
             } else {
               if (isMounted) {
@@ -71,12 +77,17 @@ const ArticleScreen = ({ route, navigation }) => {
         }
 
         fetchArticle()
+      } else {
+        // If we already have the article, fade in the content
+        fadeIn()
       }
 
       return () => {
         isMounted = false
+        // Fade out when leaving the screen
+        fadeOut()
       }
-    }, [routeArticle]),
+    }, [routeArticle, fadeIn, fadeOut]),
   )
 
   // Get the appropriate section color for this article
@@ -150,31 +161,33 @@ const ArticleScreen = ({ route, navigation }) => {
     console.log("Save article")
   }
 
-  // Render skeleton loading state
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-        <Header
-          title={article?.category || "Article"}
-          showBackButton
-          onBackPress={() => navigation.goBack()}
-          backgroundColor={sectionColor}
-          textColor="#FFFFFF"
-        />
+  // Safely get article content or provide default
+  const articleContent = article?.content || "No content available"
+
+  // Safely split content into paragraphs
+  const contentParagraphs = articleContent.split("\n\n") || [""]
+  const subtitle = contentParagraphs[0] || ""
+  const remainingParagraphs = contentParagraphs.slice(1) || []
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+      <Header
+        title={article?.category || "Article"}
+        showBackButton
+        onBackPress={() => navigation.goBack()}
+        backgroundColor={sectionColor}
+        textColor="#FFFFFF"
+        flag={article?.flag ? { text: article.flag, category: article.category } : null}
+      />
+
+      {loading ? (
+        // Skeleton loading state
         <ScrollView style={styles.scrollView}>
           <SkeletonArticle />
         </ScrollView>
-      </View>
-    )
-  }
-
-  // If error or article is undefined, show an error message
-  if (error || !article) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-        <Header title="Article" showBackButton onBackPress={() => navigation.goBack()} />
+      ) : error || !article ? (
+        // Error state
         <View style={styles.errorContainer}>
           <Typography variant="h5" color={theme.colors.Text.Primary}>
             {error || "Article not found"}
@@ -188,111 +201,91 @@ const ArticleScreen = ({ route, navigation }) => {
             </Typography>
           </TouchableOpacity>
         </View>
-      </View>
-    )
-  }
+      ) : (
+        // Actual content with fade animation
+        <Animated.View style={{ flex: 1, opacity }}>
+          <ScrollView
+            style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
+            contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
+          >
+            {/* Tags */}
+            <View style={styles.tagsContainer}>
+              {!article.flag && (
+                <Flag text={article.category || "NEWS"} category={article.category} style={styles.flag} />
+              )}
+            </View>
 
-  // Safely get article content or provide default
-  const articleContent = article?.content || "No content available"
-
-  // Safely split content into paragraphs
-  const contentParagraphs = articleContent.split("\n\n") || [""]
-  const subtitle = contentParagraphs[0] || ""
-  const remainingParagraphs = contentParagraphs.slice(1) || []
-
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-
-      {/* Header */}
-      <Header
-        title={article.category || "News"}
-        showBackButton
-        onBackPress={() => navigation.goBack()}
-        rightButtons={[
-          { label: "SHARE", onPress: handleSharePress },
-          { label: "SAVE", onPress: handleSavePress },
-        ]}
-        backgroundColor={sectionColor}
-        textColor="#FFFFFF"
-        flag={article.flag ? { text: article.flag, category: article.category } : null}
-      />
-
-      <ScrollView
-        style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
-        contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
-      >
-        {/* Tags */}
-        <View style={styles.tagsContainer}>
-          {!article.flag && <Flag text={article.category || "NEWS"} category={article.category} style={styles.flag} />}
-        </View>
-
-        {/* Title */}
-        <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
-          {article.title || "No title available"}
-        </Typography>
-
-        {/* Subtitle */}
-        <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
-          {subtitle}
-        </Typography>
-
-        {/* Reading time */}
-        <View style={styles.readingTimeContainer}>
-          <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-          <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
-            {article.readTime || "3 min read"}
-          </Typography>
-        </View>
-
-        {/* Author info */}
-        <View style={styles.authorContainer}>
-          <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-            {article.author || "The Sun"}
-          </Typography>
-          <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-            Published {article.timestamp || "Recently"}
-          </Typography>
-        </View>
-
-        {/* Article Image */}
-        <View
-          style={[styles.articleImage, { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] }]}
-        >
-          {article.imageUrl ? (
-            <LazyImage
-              source={{ uri: article.imageUrl }}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-            />
-          ) : (
-            <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
-          )}
-        </View>
-
-        {/* Article content */}
-        <View style={styles.articleContent}>
-          {remainingParagraphs.map((paragraph, index) => (
-            <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
-              {paragraph}
+            {/* Title */}
+            <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
+              {article.title || "No title available"}
             </Typography>
-          ))}
-        </View>
 
-        {/* Comments Section using Comments component */}
-        <Comments
-          comments={comments}
-          totalComments={8}
-          onShowAllPress={handleShowAllComments}
-          onSubmitComment={handleSubmitComment}
-          onLikeComment={handleLikeComment}
-          onReplyComment={handleReplyComment}
-          onViewReplies={handleViewReplies}
-        />
+            {/* Subtitle */}
+            <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
+              {subtitle}
+            </Typography>
 
-        {/* Bottom spacing */}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
+            {/* Reading time */}
+            <View style={styles.readingTimeContainer}>
+              <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
+              <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
+                {article.readTime || "3 min read"}
+              </Typography>
+            </View>
+
+            {/* Author info */}
+            <View style={styles.authorContainer}>
+              <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
+                {article.author || "The Sun"}
+              </Typography>
+              <Typography variant="body-02" color={theme.colors.Text.Secondary}>
+                Published {article.timestamp || "Recently"}
+              </Typography>
+            </View>
+
+            {/* Article Image */}
+            <View
+              style={[
+                styles.articleImage,
+                { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] },
+              ]}
+            >
+              {article.imageUrl ? (
+                <LazyImage
+                  source={{ uri: article.imageUrl }}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+              )}
+            </View>
+
+            {/* Article content */}
+            <View style={styles.articleContent}>
+              {remainingParagraphs.map((paragraph, index) => (
+                <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
+                  {paragraph}
+                </Typography>
+              ))}
+            </View>
+
+            {/* Comments Section using Comments component */}
+            <Comments
+              comments={comments}
+              totalComments={8}
+              onShowAllPress={handleShowAllComments}
+              onSubmitComment={handleSubmitComment}
+              onLikeComment={handleLikeComment}
+              onReplyComment={handleReplyComment}
+              onViewReplies={handleViewReplies}
+            />
+
+            {/* Bottom spacing */}
+            <View style={styles.bottomSpacing} />
+          </ScrollView>
+        </Animated.View>
+      )}
     </View>
   )
 }
