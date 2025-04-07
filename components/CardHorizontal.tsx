@@ -1,9 +1,10 @@
 "use client"
-import { View, Image, StyleSheet, TouchableOpacity } from "react-native"
-import { Feather } from "@expo/vector-icons"
+import { View, Image, StyleSheet } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
 import { getCategoryColor } from "../utils/categoryColors"
+import Card from "./Card"
+import { cardStyles } from "../utils/cardStyles"
 
 interface CardHorizontalProps {
   id?: number | string
@@ -58,25 +59,31 @@ const CardHorizontal = ({
   }
 
   return (
-    <TouchableOpacity
+    <Card
+      id={id}
+      onPress={onPress}
+      onBookmark={onBookmark}
+      onShare={onShare}
+      readTime={readTime}
       style={[
-        styles.container,
+        cardStyles.horizontalContainer,
         {
           backgroundColor: theme.colors.Surface.Primary,
           borderBottomColor: theme.colors.Border["Border-Primary"],
           borderBottomWidth: theme.borderWidth["10"],
         },
       ]}
-      onPress={onPress}
-      activeOpacity={0.9}
     >
-      <View style={styles.cardContent}>
+      <View style={cardStyles.horizontalCardContent}>
         {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={[styles.image, { borderRadius: theme.radius["radius-default"] }]} />
+          <Image
+            source={{ uri: imageUrl }}
+            style={[cardStyles.horizontalImage, { borderRadius: theme.radius["radius-default"] }]}
+          />
         ) : (
           <View
             style={[
-              styles.imagePlaceholder,
+              cardStyles.horizontalImage,
               {
                 borderRadius: theme.radius["radius-default"],
                 backgroundColor: theme.colors.Border["Border-Primary"],
@@ -85,14 +92,14 @@ const CardHorizontal = ({
           />
         )}
 
-        <View style={styles.textContent}>
-          <Typography variant="overline" color={categoryColor} style={styles.category}>
+        <View style={cardStyles.horizontalTextContent}>
+          <Typography variant="overline" color={categoryColor} style={cardStyles.category}>
             {categoryText.toUpperCase()}
           </Typography>
 
-          <View style={styles.titleContainer}>
+          <View style={cardStyles.titleContainer}>
             {prefix ? (
-              <Typography variant="subtitle-01" color={categoryColor} style={styles.prefix}>
+              <Typography variant="subtitle-01" color={categoryColor} style={cardStyles.prefix}>
                 {prefix}
               </Typography>
             ) : null}
@@ -102,94 +109,15 @@ const CardHorizontal = ({
           </View>
         </View>
       </View>
-
-      <View style={styles.footer}>
-        <View style={styles.readTimeContainer}>
-          <Feather name="book-open" size={16} color={theme.colors.Text.Secondary} />
-          <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.readTime}>
-            {readTime || "3 min read"}
-          </Typography>
-        </View>
-
-        <View style={styles.actions}>
-          {onBookmark && (
-            <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
-              <Feather name="bookmark" size={20} color={theme.colors.Text.Secondary} />
-            </TouchableOpacity>
-          )}
-
-          {onShare && (
-            <TouchableOpacity onPress={onShare} style={styles.actionButton}>
-              <Feather name="share" size={20} color={theme.colors.Text.Secondary} />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
+    </Card>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: "hidden",
-  },
-  cardContent: {
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginRight: 16,
-  },
-  imagePlaceholder: {
-    width: 100,
-    height: 100,
-    marginRight: 16,
-  },
-  textContent: {
-    flex: 1,
-  },
-  category: {
-    marginBottom: 8,
-  },
-  titleContainer: {
-    flexDirection: "column",
-  },
-  prefix: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
   title: {
     fontSize: 18,
     fontWeight: "700",
     lineHeight: 24,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  readTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  readTime: {
-    marginLeft: 8,
-    fontSize: 14,
-  },
-  actions: {
-    flexDirection: "row",
-  },
-  actionButton: {
-    marginLeft: 16,
-    padding: 4,
   },
 })
 

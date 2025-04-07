@@ -1,10 +1,11 @@
 "use client"
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native"
+import { View, Dimensions } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Flag from "./Flag"
-import { Feather } from "@expo/vector-icons"
 import Typography from "./Typography"
 import LazyImage from "./LazyImage"
+import Card from "./Card"
+import { cardStyles } from "../utils/cardStyles"
 
 interface CardHeroProps {
   title: string
@@ -34,23 +35,29 @@ const CardHero = ({
   const theme = useTheme()
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
-      <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+    <Card
+      onPress={onPress}
+      onBookmark={onBookmark}
+      onShare={onShare}
+      readTime={readTime}
+      style={[cardStyles.container, cardStyles.heroContainer]}
+    >
+      <LazyImage source={{ uri: imageUrl }} style={cardStyles.heroImage} resizeMode="cover" />
 
-      <View style={styles.content}>
+      <View style={cardStyles.heroContent}>
         {flag && (
-          <View style={styles.flagContainer}>
+          <View style={cardStyles.flagContainer}>
             <Flag text={flag} />
           </View>
         )}
 
         {category && (
-          <Typography variant="overline" color={theme.colors.Primary.Resting} style={styles.category}>
+          <Typography variant="overline" color={theme.colors.Primary.Resting} style={cardStyles.category}>
             {category.toUpperCase()}
           </Typography>
         )}
 
-        <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.title}>
+        <Typography variant="h5" color={theme.colors.Text.Primary} style={cardStyles.title}>
           {title}
         </Typography>
 
@@ -59,83 +66,15 @@ const CardHero = ({
             variant="subtitle-01"
             color={theme.colors.Text.Secondary}
             numberOfLines={2}
-            style={styles.subtitle}
+            style={cardStyles.subtitle}
           >
             {subtitle}
           </Typography>
         )}
-
-        <View style={styles.footer}>
-          <View style={styles.readTimeContainer}>
-            <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-            <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.readTime}>
-              {readTime}
-            </Typography>
-          </View>
-
-          {onBookmark && onShare && (
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
-                <Feather name="bookmark" size={18} color={theme.colors.Text.Secondary} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onShare} style={styles.actionButton}>
-                <Feather name="share" size={18} color={theme.colors.Text.Secondary} />
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
       </View>
-    </TouchableOpacity>
+    </Card>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: width - 32,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
-    marginBottom: 16,
-    overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    height: 200,
-  },
-  content: {
-    padding: 16,
-  },
-  flagContainer: {
-    marginBottom: 8,
-  },
-  category: {
-    marginBottom: 4,
-  },
-  title: {
-    marginBottom: 8,
-  },
-  subtitle: {
-    marginBottom: 12,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  readTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  readTime: {
-    marginLeft: 6,
-  },
-  actions: {
-    flexDirection: "row",
-  },
-  actionButton: {
-    marginLeft: 16,
-    padding: 4,
-  },
-})
 
 export default CardHero
 

@@ -1,8 +1,9 @@
 "use client"
-import { View, StyleSheet, TouchableOpacity } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
+import { View, StyleSheet } from "react-native"
 import LazyImage from "./LazyImage"
 import Typography from "./Typography"
+import Card from "./Card"
+import { cardStyles } from "../utils/cardStyles"
 
 interface CardCatchUpProps {
   title: string
@@ -13,13 +14,15 @@ interface CardCatchUpProps {
 }
 
 const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpProps) => {
-  const theme = useTheme()
-
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
-      <View style={styles.imageContainer}>
-        <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
-        <View style={styles.overlay}>
+    <Card onPress={onPress} style={cardStyles.catchUpContainer}>
+      <View style={cardStyles.catchUpImageContainer}>
+        <LazyImage
+          source={{ uri: imageUrl }}
+          style={{ width: "100%", height: "100%", borderRadius: 12 }}
+          resizeMode="cover"
+        />
+        <View style={cardStyles.catchUpOverlay}>
           <Typography variant="subtitle-01" color="#FFFFFF" style={styles.title}>
             {title}
           </Typography>
@@ -33,36 +36,11 @@ const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpP
           )}
         </View>
       </View>
-    </TouchableOpacity>
+    </Card>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: 280,
-    height: 160,
-    borderRadius: 12,
-    overflow: "hidden",
-    marginRight: 12,
-  },
-  imageContainer: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 12,
-  },
-  overlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 16,
-  },
   title: {
     marginBottom: 4,
   },
