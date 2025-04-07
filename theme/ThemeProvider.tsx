@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react"
 import { useColorScheme } from "react-native"
-import { colors, space, radius, typography, shadows, zIndex, borderWidth, opacity } from "../design-system/foundations"
+import { colors, space, radius, typography, shadows, zIndex, borderWidth, opacity } from "../design-system/Foundations"
 
 // Define the theme type
 export type ThemeType = {
