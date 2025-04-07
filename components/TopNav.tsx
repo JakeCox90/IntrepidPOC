@@ -1,8 +1,9 @@
 "use client"
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 interface TopNavProps {
   title: string
@@ -26,6 +27,7 @@ const TopNav = ({
 }: TopNavProps) => {
   const theme = useTheme()
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
 
   const handleBackPress = () => {
     if (onBackPress) {
@@ -48,8 +50,10 @@ const TopNav = ({
         styles.container,
         {
           backgroundColor: bgColor,
+          paddingTop: insets.top || (Platform.OS === "ios" ? 44 : StatusBar.currentHeight || 0),
           paddingHorizontal: spacing,
-          paddingVertical: smallSpacing,
+          borderBottomWidth: 1,
+          borderBottomColor: "#EEEEEE",
         },
       ]}
     >
@@ -94,13 +98,12 @@ const TopNav = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
   },
   content: {
     flexDirection: "row",
     alignItems: "center",
     height: 48,
+    paddingVertical: 8,
   },
   backButton: {
     padding: 4,

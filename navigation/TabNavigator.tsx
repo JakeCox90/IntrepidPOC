@@ -1,8 +1,8 @@
 "use client"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native"
 
 import TodayScreen from "../screens/TodayScreen"
 import AllNewsScreen from "../screens/AllNewsScreen"
@@ -10,6 +10,7 @@ import SearchScreen from "../screens/SearchScreen"
 import SavedScreen from "../screens/SavedScreen"
 import ArticleScreen from "../screens/ArticleScreen"
 import CategoryScreen from "../screens/CategoryScreen"
+import BottomNav from "../components/BottomNav"
 
 // Create stack navigators for each tab
 const TodayStack = createNativeStackNavigator()
@@ -65,50 +66,64 @@ function SavedStackScreen() {
 export default function TabNavigator() {
   const theme = useTheme()
 
-  // Ensure we have fallback values if theme properties are undefined
-  const fontFamily = theme?.typography?.fontFamily?.regular || "System"
-  const fontSize = theme?.fontSize?.["8"] || 12
-  const primaryColor = theme?.colors?.Primary?.Resting || "#E03A3A"
-  const secondaryColor = theme?.colors?.Text?.Secondary || "#717171"
-  const borderColor = theme?.colors?.Border?.["Border-Primary"] || "#E5E5E5"
-  const borderWidth = theme?.borderWidth?.["10"] || 1
+  // Helper function to get the root screen name for each tab
+  const getRootRouteName = (tabName) => {
+    switch (tabName) {
+      case "Today":
+        return "TodayMain"
+      case "AllNews":
+        return "AllNewsMain"
+      case "Search":
+        return "SearchMain"
+      case "Saved":
+        return "SavedMain"
+      default:
+        return null
+    }
+  }
 
   return (
     <Tab.Navigator
       initialRouteName="Today"
-      screenOptions={({ route }) => ({
+      screenOptions={{
         headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName = "home"
+        tabBarStyle: { display: "none" }, // Hide the default tab bar
+      }}
+      screenListeners={({ navigation, route }) => ({
+        tabPress: (e) => {
+          // Prevent default behavior for already focused tab
+          const currentRouteName = getFocusedRouteNameFromRoute(route) || getRootRouteName(route.name)
+          const rootRouteName = getRootRouteName(route.name)
 
-          if (route.name === "Today") {
-            iconName = "home"
-          } else if (route.name === "AllNews") {
-            iconName = "grid"
-          } else if (route.name === "Search") {
-            iconName = "search"
-          } else if (route.name === "Saved") {
-            iconName = "bookmark"
+          // If we're already on this tab and not at the root screen
+          if (navigation.isFocused() && currentRouteName !== rootRouteName && rootRouteName) {
+            // Prevent default action
+            e.preventDefault()
+
+            // Navigate to the first screen in the stack
+            navigation.navigate(rootRouteName)
           }
-
-          return <Feather name={iconName} size={size} color={color} />
-        },
-        tabBarActiveTintColor: primaryColor,
-        tabBarInactiveTintColor: secondaryColor,
-        tabBarStyle: {
-          borderTopWidth: borderWidth,
-          borderTopColor: borderColor,
-          height: 60,
-          paddingBottom: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: fontSize,
-          fontFamily: fontFamily,
         },
       })}
+      tabBar={(props) => (
+        <BottomNav
+          activeTab={props.state.routeNames[props.state.index]}
+          onTabPress={(tabName) => {
+            const event = props.navigation.emit({
+              type: "tabPress",
+              target: props.state.routes.find((r) => r.name === tabName).key,
+              canPreventDefault: true,
+            })
+
+            if (!event.defaultPrevented) {
+              props.navigation.navigate(tabName)
+            }
+          }}
+        />
+      )}
     >
       <Tab.Screen name="Today" component={TodayStackScreen} />
-      <Tab.Screen name="AllNews" component={AllNewsStackScreen} options={{ title: "All News" }} />
+      <Tab.Screen name="AllNews" component={AllNewsStackScreen} />
       <Tab.Screen name="Search" component={SearchStackScreen} />
       <Tab.Screen name="Saved" component={SavedStackScreen} />
     </Tab.Navigator>
