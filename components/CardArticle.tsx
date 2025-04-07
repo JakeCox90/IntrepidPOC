@@ -19,6 +19,22 @@ interface CardArticleProps {
   onShare?: () => void
 }
 
+// Common flags used by The Sun
+const COMMON_FLAGS = [
+  "EXCLUSIVE",
+  "BREAKING",
+  "REVEALED",
+  "PICTURED",
+  "WATCH",
+  "UPDATED",
+  "LIVE",
+  "SHOCK",
+  "TRAGIC",
+  "HORROR",
+  "URGENT",
+  "WARNING",
+]
+
 const CardArticle = ({
   id,
   title,
@@ -32,6 +48,28 @@ const CardArticle = ({
 }: CardArticleProps) => {
   const theme = useTheme()
 
+  // Check if the flag is a common flag type
+  const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase())
+
+  const themedStyles = {
+    articleContainer: {
+      paddingVertical: 16,
+      borderBottomColor: theme?.colors?.Border?.["Border-Primary"] || "#EEEEEE",
+    },
+    articleContent: {
+      marginBottom: 12,
+    },
+    articleTextContent: {
+      marginRight: 12,
+    },
+    flagContainer: {
+      marginBottom: 8,
+    },
+    title: {
+      marginBottom: 0,
+    },
+  }
+
   return (
     <Card
       id={id}
@@ -39,27 +77,20 @@ const CardArticle = ({
       onBookmark={onBookmark}
       onShare={onShare}
       readTime={readTime}
-      style={[cardStyles.articleContainer, { borderBottomColor: theme.colors.Border["Border-Primary"] }]}
+      style={[cardStyles.articleContainer, themedStyles.articleContainer]}
     >
-      <View style={cardStyles.articleContent}>
-        <View style={cardStyles.articleTextContent}>
-          {flag && (
-            <View style={cardStyles.flagContainer}>
-              <Flag text={flag} />
-            </View>
-          )}
-
-          {category && (
-            <Typography variant="overline" color={theme.colors.Text.Secondary} style={cardStyles.category}>
-              {category.toUpperCase()}
-            </Typography>
-          )}
+      <View style={[cardStyles.articleContent, themedStyles.articleContent]}>
+        <View style={[cardStyles.articleTextContent, themedStyles.articleTextContent]}>
+          <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
+            {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} />}
+            {category && <Flag text={category} category={category} />}
+          </View>
 
           <Typography
             variant="subtitle-01"
             color={theme.colors.Text.Primary}
             numberOfLines={3}
-            style={cardStyles.title}
+            style={[cardStyles.title, themedStyles.title]}
           >
             {title}
           </Typography>

@@ -2,15 +2,16 @@
 import { View, Image, StyleSheet } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
-import { getCategoryColor } from "../utils/categoryColors"
 import Card from "./Card"
 import { cardStyles } from "../utils/cardStyles"
+import Flag from "./Flag"
 
 interface CardHorizontalProps {
   id?: number | string
   title: string
   imageUrl: string
   category: string
+  flag?: string
   timestamp?: string
   readTime?: string
   onPress: () => void
@@ -18,11 +19,28 @@ interface CardHorizontalProps {
   onShare?: () => void
 }
 
+// Common flags used by The Sun
+const COMMON_FLAGS = [
+  "EXCLUSIVE",
+  "BREAKING",
+  "REVEALED",
+  "PICTURED",
+  "WATCH",
+  "UPDATED",
+  "LIVE",
+  "SHOCK",
+  "TRAGIC",
+  "HORROR",
+  "URGENT",
+  "WARNING",
+]
+
 const CardHorizontal = ({
   id,
   title,
   imageUrl,
   category,
+  flag,
   timestamp,
   readTime = "3 min read",
   onPress,
@@ -32,30 +50,55 @@ const CardHorizontal = ({
   const theme = useTheme()
 
   const categoryText = category || ""
-  const categoryColor = getCategoryColor(categoryText, theme)
 
-  // Safely handle title parsing
-  const titleText = title || ""
+  // Check if the flag is a common flag type
+  const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase())
 
-  // Split title to check if it has a prefix in all caps (like "IN THE CAN")
-  const titleParts = titleText.split(" ")
-  let prefix = ""
-  let mainTitle = titleText
+  // If no flag is provided, try to extract it from the title
+  let extractedFlag = null
+  let mainTitle = title || ""
 
-  // Check if the first few words are in uppercase (typically 2-4 words)
-  if (titleParts.length > 1) {
-    const possiblePrefixWords = titleParts.slice(0, Math.min(4, titleParts.length))
-    const prefixEndIndex = possiblePrefixWords.findIndex((word) => word !== word.toUpperCase())
+  if (!flag) {
+    // Split title to check if it has a prefix in all caps (like "EXCLUSIVE")
+    const titleParts = mainTitle.split(" ")
 
-    if (prefixEndIndex > 0) {
-      // We found a prefix
-      prefix = titleParts.slice(0, prefixEndIndex).join(" ")
-      mainTitle = titleParts.slice(prefixEndIndex).join(" ")
-    } else if (possiblePrefixWords.every((word) => word === word.toUpperCase())) {
-      // All possible prefix words are uppercase
-      prefix = possiblePrefixWords.join(" ")
-      mainTitle = titleParts.slice(possiblePrefixWords.length).join(" ")
+    if (titleParts.length > 1) {
+      // Check if the first word is a common flag
+      const firstWord = titleParts[0].toUpperCase()
+      if (COMMON_FLAGS.includes(firstWord)) {
+        extractedFlag = firstWord
+        mainTitle = titleParts.slice(1).join(" ")
+      }
+      // Check if first two words are a common flag (like "BREAKING NEWS")
+      else if (titleParts.length > 2) {
+        const firstTwoWords = `${titleParts[0]} ${titleParts[1]}`.toUpperCase()
+        if (COMMON_FLAGS.some((f) => firstTwoWords.includes(f))) {
+          extractedFlag = firstTwoWords
+          mainTitle = titleParts.slice(2).join(" ")
+        }
+      }
     }
+  }
+
+  const flagToShow = isCommonFlag ? flag : extractedFlag
+
+  const themedStyles = {
+    horizontalContainer: {
+      backgroundColor: theme?.colors?.Surface?.Primary || "#FFFFFF",
+      borderBottomColor: theme?.colors?.Border?.["Border-Primary"] || "#EEEEEE",
+      borderBottomWidth: theme?.borderWidth?.["10"] || 1,
+      marginBottom: theme?.space?.["40"] || 16,
+    },
+    horizontalCardContent: {
+      padding: theme?.space?.["40"] || 16,
+    },
+    horizontalImage: {
+      borderRadius: theme?.radius?.["radius-default"] || 8,
+      marginRight: theme?.space?.["40"] || 16,
+    },
+    flagContainer: {
+      marginBottom: theme?.space?.["20"] || 8,
+    },
   }
 
   return (
@@ -65,48 +108,30 @@ const CardHorizontal = ({
       onBookmark={onBookmark}
       onShare={onShare}
       readTime={readTime}
-      style={[
-        cardStyles.horizontalContainer,
-        {
-          backgroundColor: theme.colors.Surface.Primary,
-          borderBottomColor: theme.colors.Border["Border-Primary"],
-          borderBottomWidth: theme.borderWidth["10"],
-        },
-      ]}
+      style={[cardStyles.horizontalContainer, themedStyles.horizontalContainer]}
     >
-      <View style={cardStyles.horizontalCardContent}>
+      <View style={[cardStyles.horizontalCardContent, themedStyles.horizontalCardContent]}>
         {imageUrl ? (
-          <Image
-            source={{ uri: imageUrl }}
-            style={[cardStyles.horizontalImage, { borderRadius: theme.radius["radius-default"] }]}
-          />
+          <Image source={{ uri: imageUrl }} style={[cardStyles.horizontalImage, themedStyles.horizontalImage]} />
         ) : (
           <View
             style={[
               cardStyles.horizontalImage,
-              {
-                borderRadius: theme.radius["radius-default"],
-                backgroundColor: theme.colors.Border["Border-Primary"],
-              },
+              themedStyles.horizontalImage,
+              { backgroundColor: theme.colors.Border["Border-Primary"] },
             ]}
           />
         )}
 
         <View style={cardStyles.horizontalTextContent}>
-          <Typography variant="overline" color={categoryColor} style={cardStyles.category}>
-            {categoryText.toUpperCase()}
-          </Typography>
-
-          <View style={cardStyles.titleContainer}>
-            {prefix ? (
-              <Typography variant="subtitle-01" color={categoryColor} style={cardStyles.prefix}>
-                {prefix}
-              </Typography>
-            ) : null}
-            <Typography variant="subtitle-01" color={theme.colors.Text.Primary} style={styles.title}>
-              {prefix ? mainTitle : titleText}
-            </Typography>
+          <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
+            {flagToShow && <Flag text={flagToShow} style={{ marginRight: 8 }} />}
+            {categoryText && <Flag text={categoryText} category={categoryText} />}
           </View>
+
+          <Typography variant="subtitle-01" color={theme.colors.Text.Primary} style={styles.title}>
+            {mainTitle}
+          </Typography>
         </View>
       </View>
     </Card>

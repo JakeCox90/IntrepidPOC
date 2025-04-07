@@ -21,6 +21,22 @@ interface CardHeroProps {
 
 const { width } = Dimensions.get("window")
 
+// Common flags used by The Sun
+const COMMON_FLAGS = [
+  "EXCLUSIVE",
+  "BREAKING",
+  "REVEALED",
+  "PICTURED",
+  "WATCH",
+  "UPDATED",
+  "LIVE",
+  "SHOCK",
+  "TRAGIC",
+  "HORROR",
+  "URGENT",
+  "WARNING",
+]
+
 const CardHero = ({
   title,
   subtitle,
@@ -34,6 +50,27 @@ const CardHero = ({
 }: CardHeroProps) => {
   const theme = useTheme()
 
+  // Check if the flag is a common flag type
+  const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase())
+
+  const themedStyles = {
+    heroContent: {
+      padding: 16,
+    },
+    flagContainer: {
+      marginBottom: 8,
+    },
+    category: {
+      marginBottom: 4,
+    },
+    title: {
+      marginBottom: 8,
+    },
+    subtitle: {
+      marginBottom: 12,
+    },
+  }
+
   return (
     <Card
       onPress={onPress}
@@ -44,20 +81,13 @@ const CardHero = ({
     >
       <LazyImage source={{ uri: imageUrl }} style={cardStyles.heroImage} resizeMode="cover" />
 
-      <View style={cardStyles.heroContent}>
-        {flag && (
-          <View style={cardStyles.flagContainer}>
-            <Flag text={flag} />
-          </View>
-        )}
+      <View style={[cardStyles.heroContent, themedStyles.heroContent]}>
+        <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
+          {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} />}
+          {category && <Flag text={category} category={category} />}
+        </View>
 
-        {category && (
-          <Typography variant="overline" color={theme.colors.Primary.Resting} style={cardStyles.category}>
-            {category.toUpperCase()}
-          </Typography>
-        )}
-
-        <Typography variant="h5" color={theme.colors.Text.Primary} style={cardStyles.title}>
+        <Typography variant="h5" color={theme.colors.Text.Primary} style={[cardStyles.title, themedStyles.title]}>
           {title}
         </Typography>
 
@@ -66,7 +96,7 @@ const CardHero = ({
             variant="subtitle-01"
             color={theme.colors.Text.Secondary}
             numberOfLines={2}
-            style={cardStyles.subtitle}
+            style={[cardStyles.subtitle, themedStyles.subtitle]}
           >
             {subtitle}
           </Typography>

@@ -8,7 +8,7 @@ import CardCatchUp from "../components/CardCatchUp"
 import CardHero from "../components/CardHero"
 import CardArticle from "../components/CardArticle"
 import SkeletonLoader from "../components/SkeletonLoader"
-import Header from "../components/Header"
+import TopNav from "../components/TopNav"
 import Typography from "../components/Typography"
 import { fetchSunNews } from "../services/sunNewsService"
 
@@ -128,14 +128,17 @@ const TodayScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-      {/* Header */}
-      <Header
+      {/* Header - replaced with TopNav */}
+      <TopNav
         title="News"
-        titleStyle="large"
         backgroundColor={theme.colors.Primary.Resting}
         textColor={theme.colors.Text.Inverse}
-        showProfileButton
-        onProfilePress={handleProfilePress}
+        rightButtons={[
+          {
+            label: "Profile",
+            onPress: handleProfilePress,
+          },
+        ]}
       />
 
       {loading ? (
