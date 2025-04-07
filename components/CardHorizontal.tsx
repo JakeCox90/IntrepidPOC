@@ -125,8 +125,8 @@ const CardHorizontal = ({
 
         <View style={cardStyles.horizontalTextContent}>
           <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
-            {flagToShow && <Flag text={flagToShow} style={{ marginRight: 8 }} />}
-            {categoryText && <Flag text={categoryText} category={categoryText} />}
+            {flagToShow && <Flag text={flagToShow} style={{ marginRight: 8 }} variant="minimal" />}
+            {categoryText && <Flag text={categoryText} category={categoryText} variant="minimal" />}
           </View>
 
           <Typography variant="subtitle-01" color={theme.colors.Text.Primary} style={styles.title}>

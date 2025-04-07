@@ -84,7 +84,7 @@ const Header = ({
         <View style={styles.titleContainer}>
           {flag && (
             <View style={styles.flagContainer}>
-              <Flag text={flag.text} category={flag.category} style={styles.flag} />
+              <Flag text={flag.text} category={flag.category} style={styles.flag} variant="minimal" />
             </View>
           )}
           <Text
