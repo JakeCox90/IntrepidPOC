@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, Animated } from "react-native"
+import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
@@ -10,10 +10,6 @@ import Typography from "../components/Typography"
 import TabsWithIndicator from "../components/TabsWithIndicator"
 import { fetchNewsByCategory } from "../services/sunNewsService"
 import { getCategoryColor } from "../utils/categoryColors"
-
-// Import the custom hooks
-import { useColorTransition } from "../hooks/useColorTransition"
-import { useContentTransition } from "../hooks/useContentTransition"
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
@@ -35,25 +31,17 @@ const SUBCATEGORIES = {
   Health: ["Fitness", "Diet", "Health News"],
 }
 
-// Replace the animation code in the component with the hooks
+// Simplified component without animations
 const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme()
-  const [state, setState] = useState({
-    news: [],
-    loading: true,
-    error: null,
-    selectedMainCategory: "News",
-    selectedSubCategory: "UK News",
-  })
+  const [news, setNews] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedMainCategory, setSelectedMainCategory] = useState("News")
+  const [selectedSubCategory, setSelectedSubCategory] = useState("UK News")
 
-  const { news, loading, error, selectedMainCategory, selectedSubCategory } = state
-
-  // Use the color transition hook
+  // Get the current color for the header
   const currentColor = getCategoryColor(selectedMainCategory, theme)
-  const { animatedColor: animatedHeaderColor } = useColorTransition(currentColor)
-
-  // Use the content transition hook
-  const { animateTransition, animatedStyle } = useContentTransition()
 
   useFocusEffect(
     useCallback(() => {
@@ -62,8 +50,7 @@ const AllNewsScreen = ({ navigation }) => {
       const loadNews = async () => {
         if (!isMounted) return
 
-        setState((prevState) => ({ ...prevState, loading: true }))
-        animateTransition()
+        setLoading(true)
 
         try {
           let data
@@ -77,21 +64,15 @@ const AllNewsScreen = ({ navigation }) => {
           }
 
           if (isMounted) {
-            setState((prevState) => ({
-              ...prevState,
-              news: data,
-              loading: false,
-              error: data.length === 0 ? "No articles found for this category." : null,
-            }))
+            setNews(data)
+            setLoading(false)
+            setError(data.length === 0 ? "No articles found for this category." : null)
           }
         } catch (err) {
           console.error(err)
           if (isMounted) {
-            setState((prevState) => ({
-              ...prevState,
-              error: "Failed to load news",
-              loading: false,
-            }))
+            setError("Failed to load news")
+            setLoading(false)
           }
         }
       }
@@ -101,29 +82,18 @@ const AllNewsScreen = ({ navigation }) => {
       return () => {
         isMounted = false
       }
-    }, [selectedMainCategory, selectedSubCategory, animateTransition]),
+    }, [selectedMainCategory, selectedSubCategory]),
   )
 
   const handleMainCategoryPress = (category) => {
     if (!category) return
-
-    setState((prevState) => ({
-      ...prevState,
-      selectedMainCategory: category,
-      selectedSubCategory: SUBCATEGORIES[category]?.[0] || null,
-    }))
+    setSelectedMainCategory(category)
+    setSelectedSubCategory(SUBCATEGORIES[category]?.[0] || null)
   }
 
   const handleSubCategoryPress = (category) => {
     if (!category) return
-
-    setState((prevState) => ({
-      ...prevState,
-      selectedSubCategory: category,
-    }))
-
-    // Animate content transition when subcategory changes
-    animateTransition()
+    setSelectedSubCategory(category)
   }
 
   const handleNewsPress = (article) => {
@@ -153,23 +123,23 @@ const AllNewsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.safeArea}>
-      {/* Status bar with animated section color background */}
-      <Animated.View style={[styles.statusBar, { backgroundColor: animatedHeaderColor }]} />
+      {/* Status bar with fixed color */}
+      <View style={[styles.statusBar, { backgroundColor: currentColor }]} />
 
-      {/* Header with animated background */}
-      <Animated.View style={[styles.header, { backgroundColor: animatedHeaderColor }]}>
+      {/* Header with fixed color */}
+      <View style={[styles.header, { backgroundColor: currentColor }]}>
         <Typography variant="h3" color={theme.colors.Text.Inverse} style={styles.headerTitle}>
           All News
         </Typography>
-      </Animated.View>
+      </View>
 
-      {/* Main Category Tabs with animated background */}
+      {/* Main Category Tabs */}
       <TabsWithIndicator
         tabs={MAIN_CATEGORIES}
         activeTab={selectedMainCategory}
         onTabPress={handleMainCategoryPress}
         variant="primary"
-        backgroundColor={animatedHeaderColor}
+        backgroundColor={currentColor}
         textVariant="overline"
       />
 
@@ -184,8 +154,8 @@ const AllNewsScreen = ({ navigation }) => {
         textVariant="body-02"
       />
 
-      {/* News List with Animated Transition */}
-      <Animated.View style={[styles.newsListContainer, animatedStyle]}>
+      {/* News List */}
+      <View style={styles.newsListContainer}>
         {loading ? (
           // Skeleton loading state
           <View style={styles.newsList}>{renderSkeletonItems()}</View>
@@ -226,7 +196,7 @@ const AllNewsScreen = ({ navigation }) => {
             }
           />
         )}
-      </Animated.View>
+      </View>
     </View>
   )
 }

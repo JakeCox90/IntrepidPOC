@@ -26,8 +26,14 @@ export const useContentTransition = (options: ContentTransitionOptions = {}) => 
   } = options
 
   const contentAnimation = useRef(new Animated.Value(1)).current
+  const isAnimating = useRef(false)
 
   const animateTransition = (onFadeOutComplete?: () => void) => {
+    // Prevent multiple animations from running simultaneously
+    if (isAnimating.current) return
+
+    isAnimating.current = true
+
     // Fade out
     Animated.timing(contentAnimation, {
       toValue: 0,
@@ -47,7 +53,9 @@ export const useContentTransition = (options: ContentTransitionOptions = {}) => 
         delay: fadeInDelay,
         useNativeDriver,
         easing: Easing.in(Easing.ease),
-      }).start()
+      }).start(() => {
+        isAnimating.current = false
+      })
     })
   }
 

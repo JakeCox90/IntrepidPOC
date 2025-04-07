@@ -13,8 +13,21 @@ export const useColorTransition = (currentColor: string, previousColor?: string,
   const colorAnimation = useRef(new Animated.Value(0)).current
   const prevColorRef = useRef(previousColor || currentColor)
   const currentColorRef = useRef(currentColor)
+  const isFirstRender = useRef(true)
 
   useEffect(() => {
+    // Skip animation on first render
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      currentColorRef.current = currentColor
+      return
+    }
+
+    // Skip if color hasn't changed
+    if (currentColorRef.current === currentColor) {
+      return
+    }
+
     // Store previous color before updating
     prevColorRef.current = currentColorRef.current
     currentColorRef.current = currentColor
