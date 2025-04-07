@@ -7,7 +7,7 @@ import { useTheme } from "../theme/ThemeProvider"
 import CardHorizontal from "../components/CardHorizontal"
 import SkeletonLoader from "../components/SkeletonLoader"
 import Typography from "../components/Typography"
-import TabsWithIndicator from "../components/TabsWithIndicator"
+import Tabs from "../components/Tabs"
 import { fetchNewsByCategory } from "../services/sunNewsService"
 import { getCategoryColor } from "../utils/categoryColors"
 
@@ -127,7 +127,7 @@ const AllNewsScreen = ({ navigation }) => {
       </View>
 
       {/* Main Category Tabs */}
-      <TabsWithIndicator
+      <Tabs
         tabs={MAIN_CATEGORIES}
         activeTab={selectedMainCategory}
         onTabPress={handleMainCategoryPress}
@@ -136,14 +136,15 @@ const AllNewsScreen = ({ navigation }) => {
         textVariant="overline"
       />
 
-      {/* Sub Category Tabs */}
-      <TabsWithIndicator
+      {/* Sub Category Tabs - Using secondary variant with correct text colors */}
+      <Tabs
         tabs={subcategories}
         activeTab={selectedSubCategory}
         onTabPress={handleSubCategoryPress}
         variant="secondary"
-        indicatorColor={currentColor}
-        activeTextColor={currentColor}
+        backgroundColor="#FFFFFF"
+        activeTextColor={theme.colors.Text.Primary}
+        inactiveTextColor={theme.colors.Text.Secondary}
         textVariant="body-02"
       />
 
