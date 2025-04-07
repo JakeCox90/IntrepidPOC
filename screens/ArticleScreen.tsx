@@ -1,21 +1,15 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, StatusBar } from "react-native"
+import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
-import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "../components/Typography"
 import Comments from "../components/Comments"
-import Flag from "../components/Flag"
-import Header from "../components/Header"
-import LazyImage from "../components/LazyImage"
 import SkeletonLoader from "../components/SkeletonLoader"
 import { fetchArticleById } from "../services/sunNewsService"
-import { getCategoryColor } from "../utils/categoryColors"
-
-const { width } = Dimensions.get("window")
-const imageHeight = (width * 2) / 3 // 3:2 ratio
+import TopNav from "../components/TopNav"
+import ArticleHeader from "../components/ArticleHeader"
 
 const ArticleScreen = ({ route, navigation }) => {
   const { article: routeArticle } = route.params || {}
@@ -67,9 +61,6 @@ const ArticleScreen = ({ route, navigation }) => {
       }
     }, [routeArticle]),
   )
-
-  // Get the appropriate section color for this article
-  const sectionColor = article?.category ? getCategoryColor(article.category, theme) : theme.colors.Section.News
 
   // Mock comments data with replies
   const comments = [
@@ -131,14 +122,6 @@ const ArticleScreen = ({ route, navigation }) => {
     // In a real app, you would navigate to a comments screen or load more comments
   }
 
-  const handleSharePress = () => {
-    console.log("Share article")
-  }
-
-  const handleSavePress = () => {
-    console.log("Save article")
-  }
-
   // Safely get article content or provide default
   const articleContent = article?.content || "No content available"
 
@@ -150,13 +133,13 @@ const ArticleScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-      <Header
+
+      {/* Top Navigation */}
+      <TopNav
         title={article?.category || "Article"}
         showBackButton
         onBackPress={() => navigation.goBack()}
-        backgroundColor={sectionColor}
-        textColor="#FFFFFF"
-        flag={article?.flag ? { text: article.flag, category: article.category } : null}
+        backgroundColor="#F5F5F5"
       />
 
       {loading ? (
@@ -185,58 +168,17 @@ const ArticleScreen = ({ route, navigation }) => {
           style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
           contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
         >
-          {/* Tags */}
-          <View style={styles.tagsContainer}>
-            {!article.flag && (
-              <Flag text={article.category || "NEWS"} category={article.category} style={styles.flag} />
-            )}
-          </View>
-
-          {/* Title */}
-          <Typography variant="h3" color={theme.colors.Text.Primary} style={styles.title}>
-            {article.title || "No title available"}
-          </Typography>
-
-          {/* Subtitle */}
-          <Typography variant="subtitle-01" color={theme.colors.Text.Secondary} style={styles.subtitle}>
-            {subtitle}
-          </Typography>
-
-          {/* Reading time */}
-          <View style={styles.readingTimeContainer}>
-            <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-            <Typography variant="subtitle-02" color={theme.colors.Text.Secondary} style={styles.readingTime}>
-              {article.readTime || "3 min read"}
-            </Typography>
-          </View>
-
-          {/* Author info */}
-          <View style={styles.authorContainer}>
-            <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-              {article.author || "The Sun"}
-            </Typography>
-            <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-              Published {article.timestamp || "Recently"}
-            </Typography>
-          </View>
-
-          {/* Article Image */}
-          <View
-            style={[
-              styles.articleImage,
-              { height: imageHeight, backgroundColor: theme.colors.Border["Border-Primary"] },
-            ]}
-          >
-            {article.imageUrl ? (
-              <LazyImage
-                source={{ uri: article.imageUrl }}
-                style={{ width: "100%", height: "100%" }}
-                resizeMode="cover"
-              />
-            ) : (
-              <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
-            )}
-          </View>
+          {/* Article Header Component */}
+          <ArticleHeader
+            title={article.title}
+            subtitle={subtitle}
+            category={article.category}
+            flag={article.flag}
+            readTime={article.readTime || "3 min read"}
+            author={article.author}
+            timestamp={article.timestamp}
+            imageUrl={article.imageUrl}
+          />
 
           {/* Article content */}
           <View style={styles.articleContent}>
@@ -289,37 +231,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    marginBottom: 8,
-  },
-  flag: {
-    marginRight: 8,
-  },
-  title: {
-    marginBottom: 8,
-  },
-  subtitle: {
-    marginBottom: 12,
-  },
-  readingTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  readingTime: {
-    marginLeft: 4,
-  },
-  authorContainer: {
-    marginBottom: 16,
-  },
-  articleImage: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-    borderRadius: 4,
   },
   articleContent: {
     marginBottom: 24,
