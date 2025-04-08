@@ -86,6 +86,35 @@ const ForYouScreen = ({ navigation }) => {
     navigation.navigate("ForYouArticle", { article })
   }
 
+  const handleTopStoryPress = (article, index) => {
+    try {
+      // Create a safe copy of all articles with default values for missing properties
+      const safeArticles = topStories.map((item) => ({
+        id: item.id || `article-${Math.random().toString(36).substr(2, 9)}`,
+        title: item.title || "Untitled Article",
+        category: item.category || "",
+        flag: item.flag || "",
+        imageUrl: item.imageUrl || "",
+        readTime: item.readTime || "3 min read",
+        timestamp: item.timestamp || "Today",
+        content: item.content || "",
+        author: item.author || "The Sun",
+        url: item.url || "",
+      }))
+
+      // Navigate to the ArticleStack screen with properly formatted data
+      navigation.navigate("ArticleStackScreen", {
+        articles: safeArticles,
+        initialIndex: index,
+        title: "Top stories",
+      })
+    } catch (error) {
+      console.error("Navigation error:", error)
+      // Fallback to single article view if stack navigation fails
+      navigation.navigate("ForYouArticle", { article })
+    }
+  }
+
   const handleBookmark = (id) => {
     console.log("Bookmark article:", id)
   }
@@ -167,7 +196,7 @@ const ForYouScreen = ({ navigation }) => {
                 flag={featuredArticles[0].flag}
                 category={featuredArticles[0].category}
                 readTime={featuredArticles[0].readTime}
-                onPress={() => handleArticlePress(featuredArticles[0])}
+                onPress={() => handleTopStoryPress(featuredArticles[0], 0)}
                 onBookmark={() => handleBookmark(featuredArticles[0].id)}
                 onShare={() => handleShare(featuredArticles[0].id)}
               />
@@ -177,14 +206,14 @@ const ForYouScreen = ({ navigation }) => {
           {/* Top Stories Horizontal Rail (without title) */}
           <View style={styles.horizontalRailContainer}>
             <Stack spacing={12} style={styles.topStoriesStack}>
-              {topStories.map((article) => (
+              {topStories.map((article, index) => (
                 <NewsCard
-                  key={article.id}
-                  title={article.title}
-                  imageUrl={article.imageUrl}
-                  category={article.category}
+                  key={article.id || index}
+                  title={article.title || ""}
+                  imageUrl={article.imageUrl || ""}
+                  category={article.category || ""}
                   timestamp={article.timestamp || "Today"}
-                  onPress={() => handleArticlePress(article)}
+                  onPress={() => handleTopStoryPress(article, index)}
                 />
               ))}
             </Stack>
@@ -198,13 +227,13 @@ const ForYouScreen = ({ navigation }) => {
 
             {recommendedArticles.map((article) => (
               <CardHorizontal
-                key={article.id}
+                key={article.id || Math.random().toString()}
                 id={article.id}
-                title={article.title}
-                imageUrl={article.imageUrl}
-                category={article.category}
+                title={article.title || ""}
+                imageUrl={article.imageUrl || ""}
+                category={article.category || ""}
                 flag={article.flag}
-                readTime={article.readTime}
+                readTime={article.readTime || "3 min read"}
                 onPress={() => handleArticlePress(article)}
                 onBookmark={() => handleBookmark(article.id)}
                 onShare={() => handleShare(article.id)}
@@ -241,13 +270,13 @@ const ForYouScreen = ({ navigation }) => {
 
             {topicBasedArticles.map((article) => (
               <CardHorizontal
-                key={article.id}
+                key={article.id || Math.random().toString()}
                 id={article.id}
-                title={article.title}
-                imageUrl={article.imageUrl}
-                category={article.category}
+                title={article.title || ""}
+                imageUrl={article.imageUrl || ""}
+                category={article.category || ""}
                 flag={article.flag}
-                readTime={article.readTime}
+                readTime={article.readTime || "3 min read"}
                 onPress={() => handleArticlePress(article)}
                 onBookmark={() => handleBookmark(article.id)}
                 onShare={() => handleShare(article.id)}

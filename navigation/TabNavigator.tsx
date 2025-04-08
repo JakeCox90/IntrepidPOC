@@ -10,6 +10,7 @@ import AllNewsScreen from "../screens/AllNewsScreen"
 import SearchScreen from "../screens/SearchScreen"
 import SavedScreen from "../screens/SavedScreen"
 import ArticleScreen from "../screens/ArticleScreen"
+import ArticleStackScreen from "../screens/ArticleStackScreen"
 import CategoryScreen from "../screens/CategoryScreen"
 import BottomNav from "../components/BottomNav"
 
@@ -21,17 +22,6 @@ const SearchStack = createNativeStackNavigator()
 const SavedStack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
-// For You Tab Stack
-function ForYouStackScreen() {
-  return (
-    <ForYouStack.Navigator screenOptions={{ headerShown: false }}>
-      <ForYouStack.Screen name="ForYouMain" component={ForYouScreen} />
-      <ForYouStack.Screen name="ForYouArticle" component={ArticleScreen} />
-      <ForYouStack.Screen name="ForYouCategory" component={CategoryScreen} />
-    </ForYouStack.Navigator>
-  )
-}
-
 // Today Tab Stack
 function TodayStackScreen() {
   return (
@@ -40,6 +30,18 @@ function TodayStackScreen() {
       <TodayStack.Screen name="TodayArticle" component={ArticleScreen} />
       <TodayStack.Screen name="TodayCategory" component={CategoryScreen} />
     </TodayStack.Navigator>
+  )
+}
+
+// For You Tab Stack
+function ForYouStackScreen() {
+  return (
+    <ForYouStack.Navigator screenOptions={{ headerShown: false }}>
+      <ForYouStack.Screen name="ForYouMain" component={ForYouScreen} />
+      <ForYouStack.Screen name="ForYouArticle" component={ArticleScreen} />
+      <ForYouStack.Screen name="ArticleStackScreen" component={ArticleStackScreen} />
+      <ForYouStack.Screen name="ForYouCategory" component={CategoryScreen} />
+    </ForYouStack.Navigator>
   )
 }
 
@@ -78,10 +80,10 @@ function SavedStackScreen() {
 
 export default function TabNavigator() {
   const theme = useTheme()
-  const [activeTab, setActiveTab] = useState("ForYou")
+  const [activeTab, setActiveTab] = useState("Today")
   const [tabHistory, setTabHistory] = useState<Record<string, boolean>>({
-    ForYou: false,
     Today: false,
+    ForYou: false,
     AllNews: false,
     Search: false,
     Saved: false,
@@ -104,7 +106,7 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="ForYou"
+      initialRouteName="Today"
       screenOptions={{
         headerShown: false,
         tabBarStyle: { display: "none" }, // Hide the default tab bar
@@ -138,8 +140,8 @@ export default function TabNavigator() {
         />
       )}
     >
-      <Tab.Screen name="ForYou" component={ForYouStackScreen} />
       <Tab.Screen name="Today" component={TodayStackScreen} />
+      <Tab.Screen name="ForYou" component={ForYouStackScreen} />
       <Tab.Screen name="AllNews" component={AllNewsStackScreen} />
       <Tab.Screen name="Search" component={SearchStackScreen} />
       <Tab.Screen name="Saved" component={SavedStackScreen} />

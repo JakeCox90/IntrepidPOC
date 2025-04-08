@@ -21,7 +21,12 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
   const theme = useTheme()
 
   return (
-    <TouchableOpacity style={styles.container(theme)} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity
+      style={styles.container(theme)}
+      onPress={onPress}
+      activeOpacity={0.9}
+      testID="news-card-touchable"
+    >
       <View style={styles.imageContainer}>
         <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" showLoader={false} />
       </View>
@@ -66,7 +71,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    marginBottom: 8, // Updated to 8px spacing between headline and timestamp
+    marginBottom: 8,
   },
   timestamp: {},
 })

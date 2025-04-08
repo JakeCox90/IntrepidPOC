@@ -13,7 +13,7 @@ import ArticleHeader from "../components/ArticleHeader"
 import AudioPlayer from "../components/AudioPlayer"
 import Accordion from "../components/Accordion"
 
-const ArticleScreen = ({ route, navigation }) => {
+const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
   const { article: routeArticle } = route.params || {}
   const [article, setArticle] = useState(routeArticle || null)
   const [loading, setLoading] = useState(!routeArticle || !routeArticle.content)
@@ -134,15 +134,18 @@ const ArticleScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-
-      {/* Top Navigation */}
-      <TopNav
-        title={article?.category || "Article"}
-        showBackButton
-        onBackPress={() => navigation.goBack()}
-        backgroundColor="#F5F5F5"
-      />
+      {!hideHeader && (
+        <>
+          <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+          {/* Top Navigation */}
+          <TopNav
+            title={article?.category || "Article"}
+            showBackButton
+            onBackPress={() => navigation.goBack()}
+            backgroundColor="#F5F5F5"
+          />
+        </>
+      )}
 
       {loading ? (
         // Skeleton loading state using SkeletonLoader
