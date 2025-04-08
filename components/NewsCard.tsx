@@ -15,7 +15,7 @@ interface NewsCardProps {
 }
 
 const { width } = Dimensions.get("window")
-const cardWidth = 180 // Fixed width for horizontal scrolling
+const cardWidth = 200 // Width for horizontal scrolling cards
 
 const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardProps) => {
   const theme = useTheme()
@@ -31,7 +31,7 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
             <Flag text={category} category={category} variant="minimal" />
           </View>
         )}
-        <Typography variant="subtitle-02" color={theme.colors.Text.Primary} numberOfLines={2} style={styles.title}>
+        <Typography variant="h6" color={theme.colors.Text.Primary} numberOfLines={4} style={styles.title}>
           {title}
         </Typography>
         <Typography variant="annotation" color={theme.colors.Text.Secondary} style={styles.timestamp}>
@@ -66,8 +66,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    marginBottom: 4,
-    height: 40, // Fixed height for 2 lines of text
+    marginBottom: 8, // Updated to 8px spacing between headline and timestamp
   },
   timestamp: {},
 })

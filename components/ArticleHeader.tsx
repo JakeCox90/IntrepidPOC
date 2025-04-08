@@ -49,6 +49,9 @@ const ArticleHeader = ({
 }: ArticleHeaderProps) => {
   const theme = useTheme()
 
+  // Get the border radius from theme
+  const borderRadius = theme?.radius?.["radius-default"] || 8
+
   // In the component, add this before the return statement:
   const themedStyles = {
     tagsContainer: {
@@ -76,7 +79,8 @@ const ArticleHeader = ({
       height: imageHeight,
       backgroundColor: theme?.colors?.Border?.["Border-Primary"] || "#E5E5E5",
       marginBottom: theme?.space?.["40"] || 16,
-      borderRadius: theme?.radius?.["radius-10"] || 4,
+      borderRadius: borderRadius,
+      overflow: "hidden", // This is crucial to make the border follow the border radius
     },
   }
 
@@ -131,9 +135,22 @@ const ArticleHeader = ({
       </View>
 
       {/* Article Image */}
-      <View style={[baseStyles.articleImage, themedStyles.articleImage]}>
+      <View
+        style={[
+          baseStyles.articleImage,
+          themedStyles.articleImage,
+          {
+            borderWidth: theme.borderWidth["10"],
+            borderColor: theme.colors.Border["Border-Primary"],
+          },
+        ]}
+      >
         {imageUrl ? (
-          <LazyImage source={{ uri: imageUrl }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+          <LazyImage
+            source={{ uri: imageUrl }}
+            style={{ width: "100%", height: "100%", borderRadius: borderRadius - 1 }}
+            resizeMode="cover"
+          />
         ) : (
           <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
         )}
@@ -176,9 +193,8 @@ const baseStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16, // Will be replaced by themed value
-    borderRadius: 4,
+    overflow: "hidden", // Added to make the border follow the border radius
   },
 })
 
 export default ArticleHeader
-

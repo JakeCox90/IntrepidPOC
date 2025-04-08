@@ -62,7 +62,7 @@ const CardHero = ({
           {category && <Flag text={category} category={category} variant="minimal" />}
         </View>
 
-        <Typography variant="h6" color={theme.colors.Text.Primary} style={styles.title}>
+        <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.title}>
           {title}
         </Typography>
 

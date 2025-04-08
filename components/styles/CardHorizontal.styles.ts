@@ -44,9 +44,6 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
     categoryText: {
       marginBottom: 4,
     },
-    title: {
-      // Let the h6 token control the typography
-    },
     footer: {
       paddingHorizontal: 16,
       paddingBottom: 8,

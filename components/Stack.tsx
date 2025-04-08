@@ -8,13 +8,14 @@ interface StackProps {
   contentContainerStyle?: ViewStyle
 }
 
+// Update the Stack component to ensure proper spacing between items
 const Stack = ({ children, spacing = 8, style, contentContainerStyle }: StackProps) => {
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       style={[styles.container, style]}
-      contentContainerStyle={[{ gap: spacing }, contentContainerStyle]}
+      contentContainerStyle={[{ paddingLeft: 16, paddingRight: 16, gap: spacing }, contentContainerStyle]}
     >
       {children}
     </ScrollView>
@@ -24,7 +25,6 @@ const Stack = ({ children, spacing = 8, style, contentContainerStyle }: StackPro
 const styles = StyleSheet.create({
   container: {
     flexGrow: 0,
-    paddingLeft: 16, // Add padding to compensate for negative margin
   },
 })
 

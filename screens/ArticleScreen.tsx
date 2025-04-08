@@ -10,6 +10,8 @@ import SkeletonLoader from "../components/SkeletonLoader"
 import { fetchArticleById } from "../services/sunNewsService"
 import TopNav from "../components/TopNav"
 import ArticleHeader from "../components/ArticleHeader"
+import AudioPlayer from "../components/AudioPlayer"
+import Accordion from "../components/Accordion"
 
 const ArticleScreen = ({ route, navigation }) => {
   const { article: routeArticle } = route.params || {}
@@ -180,6 +182,37 @@ const ArticleScreen = ({ route, navigation }) => {
             imageUrl={article.imageUrl}
           />
 
+          {/* Audio Player Component */}
+          <View style={styles.audioPlayerContainer}>
+            <AudioPlayer
+              title={article.title}
+              category={article.category}
+              duration={321} // Default duration in seconds (5m 21s)
+              onPlay={() => console.log("Audio started playing")}
+              onPause={() => console.log("Audio paused")}
+              onComplete={() => console.log("Audio playback completed")}
+            />
+          </View>
+
+          {/* Accordion Component */}
+          <View style={styles.accordionContainer}>
+            <Accordion title="Key Points" initialExpanded={true}>
+              <View style={styles.keyPointsContainer}>
+                <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
+                  • {article.title.split(" ").slice(0, 5).join(" ")}...
+                </Typography>
+                <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
+                  • {contentParagraphs[0].split(".")[0]}.
+                </Typography>
+                {contentParagraphs.length > 1 && (
+                  <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
+                    • {contentParagraphs[1].split(".")[0]}.
+                  </Typography>
+                )}
+              </View>
+            </Accordion>
+          </View>
+
           {/* Article content */}
           <View style={styles.articleContent}>
             {remainingParagraphs.map((paragraph, index) => (
@@ -232,6 +265,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
   },
+  audioPlayerContainer: {
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  accordionContainer: {
+    marginBottom: 24,
+  },
+  keyPointsContainer: {
+    paddingVertical: 8,
+  },
+  keyPoint: {
+    marginBottom: 8,
+  },
   articleContent: {
     marginBottom: 24,
   },
@@ -244,4 +290,3 @@ const styles = StyleSheet.create({
 })
 
 export default ArticleScreen
-
