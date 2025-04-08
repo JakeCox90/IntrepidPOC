@@ -13,7 +13,7 @@ interface AccordionProps {
   initialExpanded?: boolean
 }
 
-const Accordion = ({ title, children, initialExpanded = false }: AccordionProps) => {
+export default function Accordion({ title, children, initialExpanded = false }: AccordionProps) {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(initialExpanded)
   const animatedHeight = useRef(new Animated.Value(initialExpanded ? 1 : 0)).current
@@ -43,7 +43,17 @@ const Accordion = ({ title, children, initialExpanded = false }: AccordionProps)
   })
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          borderColor: theme.colors.Border["Border-Primary"],
+          borderWidth: theme.borderWidth["10"],
+          borderRadius: theme.radius["radius-default"],
+          overflow: "hidden",
+        },
+      ]}
+    >
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={toggleAccordion}
@@ -51,8 +61,9 @@ const Accordion = ({ title, children, initialExpanded = false }: AccordionProps)
           styles.header,
           {
             backgroundColor: theme.colors.Surface.Primary,
-            borderColor: theme.colors.Border["Border-Primary"],
-            borderRadius: expanded ? theme.radius["radius-default"] : theme.radius["radius-default"],
+            borderBottomColor: expanded ? theme.colors.Border["Border-Primary"] : "transparent",
+            borderBottomWidth: expanded ? 1 : 0,
+            borderRadius: 0,
           },
         ]}
       >
@@ -66,16 +77,9 @@ const Accordion = ({ title, children, initialExpanded = false }: AccordionProps)
         style={[
           styles.contentContainer,
           {
-            height: expanded ? "auto" : 0,
+            height: expanded ? "auto" : height,
             opacity: animatedHeight,
-            borderColor: theme.colors.Border["Border-Primary"],
-            borderBottomLeftRadius: theme.radius["radius-default"],
-            borderBottomRightRadius: theme.radius["radius-default"],
-            borderTopWidth: expanded ? 1 : 0,
-            borderLeftWidth: expanded ? 1 : 0,
-            borderRightWidth: expanded ? 1 : 0,
-            borderBottomWidth: expanded ? 1 : 0,
-            overflow: "hidden",
+            backgroundColor: theme.colors.Surface.Primary,
           },
         ]}
       >
@@ -97,15 +101,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    borderWidth: 1,
   },
   contentContainer: {
-    marginTop: -1,
+    overflow: "hidden",
   },
   content: {
     padding: 16,
   },
 })
-
-export default Accordion
-
