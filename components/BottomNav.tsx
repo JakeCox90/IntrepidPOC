@@ -23,6 +23,7 @@ const BottomNav = ({ activeTab, onTabPress }: BottomNavProps) => {
 
   const tabs = [
     { name: "Today", icon: "home" },
+    { name: "ForYou", icon: "user", label: "For You" },
     { name: "AllNews", icon: "grid", label: "All News" },
     { name: "Search", icon: "search" },
     { name: "Saved", icon: "bookmark" },
@@ -78,4 +79,3 @@ const styles = StyleSheet.create({
 })
 
 export default BottomNav
-

@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useTheme } from "../theme/ThemeProvider"
 import { useState } from "react"
 
+import ForYouScreen from "../screens/ForYouScreen"
 import TodayScreen from "../screens/TodayScreen"
 import AllNewsScreen from "../screens/AllNewsScreen"
 import SearchScreen from "../screens/SearchScreen"
@@ -13,11 +14,23 @@ import CategoryScreen from "../screens/CategoryScreen"
 import BottomNav from "../components/BottomNav"
 
 // Create stack navigators for each tab
+const ForYouStack = createNativeStackNavigator()
 const TodayStack = createNativeStackNavigator()
 const AllNewsStack = createNativeStackNavigator()
 const SearchStack = createNativeStackNavigator()
 const SavedStack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
+
+// For You Tab Stack
+function ForYouStackScreen() {
+  return (
+    <ForYouStack.Navigator screenOptions={{ headerShown: false }}>
+      <ForYouStack.Screen name="ForYouMain" component={ForYouScreen} />
+      <ForYouStack.Screen name="ForYouArticle" component={ArticleScreen} />
+      <ForYouStack.Screen name="ForYouCategory" component={CategoryScreen} />
+    </ForYouStack.Navigator>
+  )
+}
 
 // Today Tab Stack
 function TodayStackScreen() {
@@ -65,8 +78,9 @@ function SavedStackScreen() {
 
 export default function TabNavigator() {
   const theme = useTheme()
-  const [activeTab, setActiveTab] = useState("Today")
+  const [activeTab, setActiveTab] = useState("ForYou")
   const [tabHistory, setTabHistory] = useState<Record<string, boolean>>({
+    ForYou: false,
     Today: false,
     AllNews: false,
     Search: false,
@@ -90,7 +104,7 @@ export default function TabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Today"
+      initialRouteName="ForYou"
       screenOptions={{
         headerShown: false,
         tabBarStyle: { display: "none" }, // Hide the default tab bar
@@ -124,6 +138,7 @@ export default function TabNavigator() {
         />
       )}
     >
+      <Tab.Screen name="ForYou" component={ForYouStackScreen} />
       <Tab.Screen name="Today" component={TodayStackScreen} />
       <Tab.Screen name="AllNews" component={AllNewsStackScreen} />
       <Tab.Screen name="Search" component={SearchStackScreen} />
@@ -131,4 +146,3 @@ export default function TabNavigator() {
     </Tab.Navigator>
   )
 }
-
