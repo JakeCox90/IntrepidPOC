@@ -6,7 +6,8 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
     container: {
       backgroundColor: "#FFFFFF",
       marginBottom: 16,
-      paddingVertical: 16,
+      paddingTop: 16,
+      paddingBottom: 0,
       borderRadius: theme.radius["radius-default"],
       borderWidth: theme.borderWidth["10"],
       borderColor: theme.colors.Border["Border-Primary"],
@@ -14,7 +15,8 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
     contentContainer: {
       flexDirection: "row",
       paddingHorizontal: 16,
-      marginBottom: 8,
+      paddingBottom: 16,
+      paddingTop: 0,
     },
     imageContainer: {
       marginRight: 16,
@@ -30,20 +32,45 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       borderRadius: 8,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.Border["Skeleton-01"],
+      backgroundColor: "#E5E5E5", // Lighter gray to match the screenshot
     },
     textContent: {
       flex: 1,
+      justifyContent: "flex-start",
     },
     flagsContainer: {
-      flexDirection: "row",
-      marginBottom: 8,
+      marginBottom: 4,
+    },
+    categoryText: {
+      marginBottom: 4,
     },
     title: {
       // Let the h6 token control the typography
     },
     footer: {
-      paddingBottom: 0,
+      paddingHorizontal: 16,
+      paddingBottom: 8,
+      paddingTop: 8,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.Border["Border-Primary"],
+    },
+    readTimeContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    readTimeText: {
+      marginLeft: 6,
+    },
+    actionsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    actionButton: {
+      marginLeft: 16,
+      padding: 4,
     },
   })
 }

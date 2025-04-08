@@ -1,13 +1,13 @@
 "use client"
 
-import { View } from "react-native"
+import { View, TouchableOpacity } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
 import Card from "./Card"
-import Flag from "./Flag"
 import { Feather } from "@expo/vector-icons"
 import LazyImage from "./LazyImage"
 import { createCardHorizontalStyles } from "./styles/CardHorizontal.styles"
+import { getCategoryColor } from "../utils/categoryColors"
 
 interface CardHorizontalProps {
   id?: number | string
@@ -87,15 +87,7 @@ const CardHorizontal = ({
   const flagToShow = isCommonFlag ? flag : extractedFlag
 
   return (
-    <Card
-      id={id}
-      onPress={onPress}
-      onBookmark={onBookmark}
-      onShare={onShare}
-      readTime={readTime}
-      style={styles.container}
-      footerStyle={styles.footer}
-    >
+    <Card id={id} onPress={onPress} style={styles.container}>
       <View style={styles.contentContainer}>
         {/* Image or Placeholder */}
         <View style={styles.imageContainer}>
@@ -111,13 +103,40 @@ const CardHorizontal = ({
         {/* Text Content */}
         <View style={styles.textContent}>
           <View style={styles.flagsContainer}>
-            {flagToShow && <Flag text={flagToShow} style={{ marginRight: 8 }} variant="minimal" />}
-            {categoryText && <Flag text={categoryText} category={categoryText} variant="minimal" />}
+            {categoryText && (
+              <Typography variant="overline" color={getCategoryColor(categoryText, theme)} style={styles.categoryText}>
+                {categoryText.toUpperCase()}
+              </Typography>
+            )}
           </View>
 
-          <Typography variant="h6" color={theme.colors.Text.Primary} style={styles.title}>
+          <Typography variant="h6" color={theme.colors.Text.Primary} style={styles.title} numberOfLines={3}>
             {mainTitle}
           </Typography>
+        </View>
+      </View>
+
+      {/* Footer with read time and actions */}
+      <View style={styles.footer}>
+        <View style={styles.readTimeContainer}>
+          <Feather name="book-open" size={16} color={theme.colors.Text.Secondary} />
+          <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.readTimeText}>
+            {readTime}
+          </Typography>
+        </View>
+
+        <View style={styles.actionsContainer}>
+          {onBookmark && (
+            <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
+              <Feather name="bookmark" size={20} color={theme.colors.Text.Secondary} />
+            </TouchableOpacity>
+          )}
+
+          {onShare && (
+            <TouchableOpacity onPress={onShare} style={styles.actionButton}>
+              <Feather name="share" size={20} color={theme.colors.Text.Secondary} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </Card>

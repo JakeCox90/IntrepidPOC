@@ -15,6 +15,7 @@ export interface CardBaseProps {
   children?: React.ReactNode
   readTime?: string
   timestamp?: string
+  renderFooter?: boolean
 }
 
 const Card: React.FC<CardBaseProps> = ({
@@ -27,11 +28,12 @@ const Card: React.FC<CardBaseProps> = ({
   children,
   readTime,
   timestamp,
+  renderFooter = false,
 }) => {
   const theme = useTheme()
 
-  const renderFooter = () => {
-    if (!onBookmark && !onShare && !readTime && !timestamp) return null
+  const renderDefaultFooter = () => {
+    if (!renderFooter || (!onBookmark && !onShare && !readTime && !timestamp)) return null
 
     return (
       <View style={[styles.footer, footerStyle]}>
@@ -74,7 +76,7 @@ const Card: React.FC<CardBaseProps> = ({
   const content = (
     <>
       <View style={styles.content}>{children}</View>
-      {renderFooter()}
+      {renderFooter && renderDefaultFooter()}
     </>
   )
 

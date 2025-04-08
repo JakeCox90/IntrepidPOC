@@ -115,7 +115,7 @@ const AllNewsScreen = ({ navigation }) => {
   const subcategories = SUBCATEGORIES[selectedMainCategory] || []
 
   return (
-    <View style={styles.safeArea}>
+    <View style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
       {/* Status bar with fixed color */}
       <View style={[styles.statusBar, { backgroundColor: currentColor }]} />
 
@@ -149,7 +149,7 @@ const AllNewsScreen = ({ navigation }) => {
       />
 
       {/* News List */}
-      <View style={styles.newsListContainer}>
+      <View style={[styles.newsListContainer, { backgroundColor: theme.colors.Surface.Secondary }]}>
         {loading ? (
           // Skeleton loading state using SkeletonLoader
           <View style={styles.newsList}>
@@ -200,7 +200,6 @@ const AllNewsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   statusBar: {
     height: STATUSBAR_HEIGHT,
@@ -241,4 +240,3 @@ const styles = StyleSheet.create({
 })
 
 export default AllNewsScreen
-
