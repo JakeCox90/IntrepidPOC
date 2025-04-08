@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
@@ -23,29 +23,40 @@ const ArticleStackScreen = ({ route, navigation }) => {
 
   // Scroll to the initial article when the component mounts
   useEffect(() => {
-    if (flatListRef.current && initialIndex > 0 && initialIndex < articles.length) {
-      try {
-        flatListRef.current.scrollToIndex({
-          index: initialIndex,
-          animated: false,
-        })
-      } catch (error) {
-        console.error("Error scrolling to index:", error)
-      }
+    // Only attempt to scroll if we have valid articles and a valid initialIndex
+    if (flatListRef.current && articles.length > 0 && initialIndex >= 0 && initialIndex < articles.length) {
+      // Use a timeout to ensure the FlatList has rendered
+      const timer = setTimeout(() => {
+        try {
+          flatListRef.current?.scrollToIndex({
+            index: initialIndex,
+            animated: false,
+          })
+        } catch (error) {
+          console.error("Error scrolling to index:", error)
+        }
+      }, 100)
+
+      return () => clearTimeout(timer)
     }
   }, [initialIndex, articles.length])
 
-  const handleScroll = (event) => {
-    try {
-      const contentOffsetX = event.nativeEvent.contentOffset.x
-      const newIndex = Math.round(contentOffsetX / width)
-      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < articles.length) {
-        setCurrentIndex(newIndex)
+  const handleScroll = useCallback(
+    (event) => {
+      try {
+        const contentOffsetX = event.nativeEvent.contentOffset.x
+        const newIndex = Math.round(contentOffsetX / width)
+
+        // Only update state if the index has actually changed and is valid
+        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < articles.length) {
+          setCurrentIndex(newIndex)
+        }
+      } catch (error) {
+        console.error("Error handling scroll:", error)
       }
-    } catch (error) {
-      console.error("Error handling scroll:", error)
-    }
-  }
+    },
+    [currentIndex, articles.length, width],
+  )
 
   const handleBackPress = () => {
     navigation.goBack()

@@ -2,7 +2,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useTheme } from "../theme/ThemeProvider"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 import ForYouScreen from "../screens/ForYouScreen"
 import TodayScreen from "../screens/TodayScreen"
@@ -90,19 +90,22 @@ export default function TabNavigator() {
   })
 
   // This function handles tab changes and resets stacks when needed
-  const handleTabPress = (tabName: string) => {
-    // If we're already on this tab, do nothing
-    if (tabName === activeTab) return
+  const handleTabPress = useCallback(
+    (tabName: string) => {
+      // If we're already on this tab, do nothing
+      if (tabName === activeTab) return
 
-    // Update tab history - mark the current tab as visited
-    setTabHistory((prev) => ({
-      ...prev,
-      [activeTab]: true,
-    }))
+      // Update tab history - mark the current tab as visited
+      setTabHistory((prev) => ({
+        ...prev,
+        [activeTab]: true,
+      }))
 
-    // Update the active tab
-    setActiveTab(tabName)
-  }
+      // Update the active tab
+      setActiveTab(tabName)
+    },
+    [activeTab],
+  )
 
   return (
     <Tab.Navigator
@@ -115,17 +118,21 @@ export default function TabNavigator() {
       }}
       // Reset the stack when returning to a tab
       screenListeners={({ navigation, route }) => ({
-        focus: () => {
+        focus: (e) => {
+          // Only proceed if this is a user-initiated focus event
+          if (!e.target) return
+
           const tabName = route.name
 
           // If this tab was previously visited, reset its stack
           if (tabHistory[tabName]) {
-            // Use immediate reset with no animation
+            // Use a more stable key that won't change on every render
+            const resetKey = `${route.name}_reset`
+
             navigation.reset({
               index: 0,
               routes: [{ name: route.name }],
-              // This prevents animation
-              key: `${route.name}_reset_${Date.now()}`,
+              key: resetKey,
             })
           }
         },

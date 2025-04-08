@@ -165,7 +165,7 @@ const ForYouScreen = ({ navigation }) => {
       {loading ? (
         // Show loading state
         <ScrollView style={styles.scrollView}>
-          <SkeletonLoader type="today" count={4} />
+          <SkeletonLoader type="forYou" count={3} />
         </ScrollView>
       ) : error ? (
         // Error state
@@ -208,7 +208,7 @@ const ForYouScreen = ({ navigation }) => {
             <Stack spacing={12} style={styles.topStoriesStack}>
               {topStories.map((article, index) => (
                 <NewsCard
-                  key={article.id || index}
+                  key={article.id || `top-story-${index}`}
                   title={article.title || ""}
                   imageUrl={article.imageUrl || ""}
                   category={article.category || ""}

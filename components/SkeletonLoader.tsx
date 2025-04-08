@@ -9,7 +9,7 @@ import Stack from "./Stack"
 import Typography from "./Typography"
 import { useTheme } from "../theme/ThemeProvider"
 
-type SkeletonType = "today" | "allNews" | "search" | "article" | "catchUp" | "hero" | "horizontal"
+type SkeletonType = "today" | "allNews" | "search" | "article" | "catchUp" | "hero" | "horizontal" | "forYou"
 
 interface SkeletonLoaderProps {
   type: SkeletonType
@@ -53,6 +53,24 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, count = 3, showTi
           {renderSection("Top Stories", SkeletonCardHero, 1)}
           {renderItems(SkeletonCardArticle, 2)}
           {renderSection("All Stories", SkeletonCardArticle, count)}
+        </>
+      )
+
+    case "forYou":
+      return (
+        <>
+          {renderSection("Top stories", SkeletonCardHero, 1)}
+          <View style={styles.section}>
+            <Stack>{renderItems(SkeletonCardCatchUp, 3)}</Stack>
+          </View>
+          {renderSection("Recommended", SkeletonCardArticle, 3)}
+          <View style={styles.section}>
+            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+              Bundles for you
+            </Typography>
+            <Stack>{renderItems(SkeletonCardCatchUp, 3)}</Stack>
+          </View>
+          {renderSection("Topics You Follow", SkeletonCardArticle, count)}
         </>
       )
 
@@ -102,4 +120,3 @@ const styles = StyleSheet.create({
 })
 
 export default SkeletonLoader
-
