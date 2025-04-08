@@ -3,7 +3,6 @@ import React, { useState, useCallback } from "react"
 import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
-import Stack from "../components/Stack"
 import CardCatchUp from "../components/CardCatchUp"
 import CardHero from "../components/CardHero"
 import CardArticle from "../components/CardArticle"
@@ -37,10 +36,12 @@ const TodayScreen = ({ navigation }) => {
             setError(null)
           }
         } catch (err) {
-          console.error(err)
+          console.error("Error loading articles:", err)
           if (isMounted) {
             setError("Failed to load articles")
             setLoading(false)
+            // Set empty array to prevent undefined errors
+            setNews([])
           }
         }
       }
@@ -87,7 +88,7 @@ const TodayScreen = ({ navigation }) => {
 
   // Create catch-up items based on categories
   const catchUpItems = React.useMemo(() => {
-    if (news.length === 0) return []
+    if (!news || news.length === 0) return []
 
     return [
       {
@@ -165,7 +166,12 @@ const TodayScreen = ({ navigation }) => {
               Today&apos;s Catch Up
             </Typography>
 
-            <Stack>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.catchUpScroll}
+              contentContainerStyle={styles.catchUpScrollContent}
+            >
               {catchUpItems.map((item) => (
                 <CardCatchUp
                   key={item.id}
@@ -176,7 +182,7 @@ const TodayScreen = ({ navigation }) => {
                   onPress={() => handleCatchUpPress(item)}
                 />
               ))}
-            </Stack>
+            </ScrollView>
           </View>
 
           {/* Top Stories Section */}
@@ -267,10 +273,28 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: 16,
   },
+  stackContainer: {
+    flexDirection: "row",
+    overflow: "scroll",
+    marginHorizontal: -16,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  catchUpScroll: {
+    marginLeft: -16,
+    paddingLeft: 16,
+  },
+  catchUpScrollContent: {
+    paddingRight: 16,
+    gap: 12,
+  },
+  cardWrapper: {
+    marginRight: 12,
+    width: 280, // Match the width of CardCatchUp
+  },
   bottomPadding: {
     height: 24,
   },
 })
 
 export default TodayScreen
-
