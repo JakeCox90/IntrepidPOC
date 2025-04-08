@@ -24,8 +24,8 @@ const Stack = ({ children, spacing = 8, style, contentContainerStyle }: StackPro
 const styles = StyleSheet.create({
   container: {
     flexGrow: 0,
+    paddingLeft: 16, // Add padding to compensate for negative margin
   },
 })
 
 export default Stack
-

@@ -9,7 +9,10 @@ import SkeletonLoader from "../components/SkeletonLoader"
 import TopNav from "../components/TopNav"
 import Typography from "../components/Typography"
 import { fetchSunNews } from "../services/sunNewsService"
+import Stack from "../components/Stack"
+import NewsCard from "../components/NewsCard"
 
+// Update the component to include the top stories section
 const ForYouScreen = ({ navigation }) => {
   const theme = useTheme()
   const [news, setNews] = useState([])
@@ -69,10 +72,13 @@ const ForYouScreen = ({ navigation }) => {
     console.log("Profile pressed")
   }
 
-  // Get featured and recommended articles
-  const featuredArticles = React.useMemo(() => news.slice(0, 1), [news])
-  const recommendedArticles = React.useMemo(() => news.slice(1, 6), [news])
-  const topicBasedArticles = React.useMemo(() => news.slice(6, 11), [news])
+  // Get top stories for the horizontal rail (8 stories)
+  const topStories = React.useMemo(() => news.slice(0, 8), [news])
+
+  // Get featured and recommended articles (adjust indices to avoid overlap)
+  const featuredArticles = React.useMemo(() => news.slice(8, 9), [news])
+  const recommendedArticles = React.useMemo(() => news.slice(9, 14), [news])
+  const topicBasedArticles = React.useMemo(() => news.slice(14, 19), [news])
 
   return (
     <View style={styles.container}>
@@ -112,6 +118,26 @@ const ForYouScreen = ({ navigation }) => {
           style={styles.scrollView}
           contentContainerStyle={{ backgroundColor: theme.colors.Surface.Secondary }}
         >
+          {/* Top Stories Horizontal Rail */}
+          <View style={styles.section}>
+            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+              Top stories
+            </Typography>
+
+            <Stack spacing={12} style={styles.topStoriesStack}>
+              {topStories.map((article) => (
+                <NewsCard
+                  key={article.id}
+                  title={article.title}
+                  imageUrl={article.imageUrl}
+                  category={article.category}
+                  timestamp={article.timestamp || "Today"}
+                  onPress={() => handleArticlePress(article)}
+                />
+              ))}
+            </Stack>
+          </View>
+
           {/* Featured Section */}
           <View style={styles.section}>
             <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
@@ -184,6 +210,7 @@ const ForYouScreen = ({ navigation }) => {
   )
 }
 
+// Update the styles to include the topStoriesStack
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -202,6 +229,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: 16,
+  },
+  topStoriesStack: {
+    marginBottom: 16,
+    marginLeft: -16, // Extend beyond container padding
   },
   bottomPadding: {
     height: 24,

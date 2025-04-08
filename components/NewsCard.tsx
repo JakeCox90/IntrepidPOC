@@ -1,7 +1,10 @@
 "use client"
-import { View, Image, StyleSheet, TouchableOpacity } from "react-native"
+
+import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
-import Typography from "../components/Typography" // Changed from "../theme/Typography"
+import Typography from "../components/Typography"
+import Flag from "./Flag"
+import LazyImage from "./LazyImage"
 
 interface NewsCardProps {
   title: string
@@ -11,17 +14,24 @@ interface NewsCardProps {
   onPress: () => void
 }
 
+const { width } = Dimensions.get("window")
+const cardWidth = 180 // Fixed width for horizontal scrolling
+
 const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardProps) => {
   const theme = useTheme()
 
   return (
     <TouchableOpacity style={styles.container(theme)} onPress={onPress} activeOpacity={0.9}>
-      <Image source={{ uri: imageUrl }} style={styles.image(theme)} />
+      <View style={styles.imageContainer}>
+        <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" showLoader={false} />
+      </View>
       <View style={styles.content}>
-        <Typography variant="annotation" color={theme.colors.Primary.Resting} style={styles.category}>
-          {category.toUpperCase()}
-        </Typography>
-        <Typography variant="h6" color={theme.colors.Text.Primary} numberOfLines={2} style={styles.title}>
+        {category && (
+          <View style={styles.flagContainer}>
+            <Flag text={category} category={category} variant="minimal" />
+          </View>
+        )}
+        <Typography variant="subtitle-02" color={theme.colors.Text.Primary} numberOfLines={2} style={styles.title}>
           {title}
         </Typography>
         <Typography variant="annotation" color={theme.colors.Text.Secondary} style={styles.timestamp}>
@@ -34,30 +44,32 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
 
 const styles = StyleSheet.create({
   container: (theme: any) => ({
-    flexDirection: "row",
-    marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.Border["Border-Primary"],
-    paddingBottom: 16,
-  }),
-  image: (theme: any) => ({
-    width: 100,
-    height: 80,
+    width: cardWidth,
+    backgroundColor: theme.colors.Surface.Primary,
     borderRadius: theme.radius["radius-default"],
+    borderWidth: theme.borderWidth["10"],
+    borderColor: theme.colors.Border["Border-Primary"],
+    overflow: "hidden",
   }),
-  content: {
-    flex: 1,
-    marginLeft: 12,
-    justifyContent: "space-between",
+  imageContainer: {
+    width: "100%",
+    height: 100,
   },
-  category: {
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  content: {
+    padding: 12,
+  },
+  flagContainer: {
     marginBottom: 4,
   },
   title: {
     marginBottom: 4,
+    height: 40, // Fixed height for 2 lines of text
   },
   timestamp: {},
 })
 
 export default NewsCard
-
