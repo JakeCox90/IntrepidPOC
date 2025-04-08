@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardCatchUp from "../components/CardCatchUp"
 import CardHero from "../components/CardHero"
-import CardArticle from "../components/CardArticle"
+import CardHorizontal from "../components/CardHorizontal"
 import SkeletonLoader from "../components/SkeletonLoader"
 import TopNav from "../components/TopNav"
 import Typography from "../components/Typography"
@@ -208,7 +208,7 @@ const TodayScreen = ({ navigation }) => {
 
               {/* Other Top Stories */}
               {topStories.slice(1).map((story) => (
-                <CardArticle
+                <CardHorizontal
                   key={story.id}
                   id={story.id}
                   title={story.title}
@@ -231,7 +231,7 @@ const TodayScreen = ({ navigation }) => {
             </Typography>
 
             {allStories.map((story) => (
-              <CardArticle
+              <CardHorizontal
                 key={story.id}
                 id={story.id}
                 title={story.title}

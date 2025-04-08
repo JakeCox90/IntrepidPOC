@@ -1,11 +1,11 @@
 "use client"
-import { View, Dimensions } from "react-native"
+import { View } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Flag from "./Flag"
 import Typography from "./Typography"
 import LazyImage from "./LazyImage"
 import Card from "./Card"
-import { cardStyles } from "../utils/cardStyles"
+import { createCardHeroStyles } from "./styles/CardHero.styles"
 
 interface CardHeroProps {
   title: string
@@ -18,8 +18,6 @@ interface CardHeroProps {
   onBookmark?: () => void
   onShare?: () => void
 }
-
-const { width } = Dimensions.get("window")
 
 // Common flags used by The Sun
 const COMMON_FLAGS = [
@@ -49,45 +47,22 @@ const CardHero = ({
   onShare,
 }: CardHeroProps) => {
   const theme = useTheme()
+  const styles = createCardHeroStyles(theme)
 
   // Check if the flag is a common flag type
   const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase())
 
-  const themedStyles = {
-    heroContent: {
-      padding: 16,
-    },
-    flagContainer: {
-      marginBottom: 8,
-    },
-    category: {
-      marginBottom: 4,
-    },
-    title: {
-      marginBottom: 8,
-    },
-    subtitle: {
-      marginBottom: 12,
-    },
-  }
-
   return (
-    <Card
-      onPress={onPress}
-      onBookmark={onBookmark}
-      onShare={onShare}
-      readTime={readTime}
-      style={[cardStyles.container, cardStyles.heroContainer]}
-    >
-      <LazyImage source={{ uri: imageUrl }} style={cardStyles.heroImage} resizeMode="cover" />
+    <Card onPress={onPress} onBookmark={onBookmark} onShare={onShare} readTime={readTime} style={styles.container}>
+      <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
 
-      <View style={[cardStyles.heroContent, themedStyles.heroContent]}>
-        <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
+      <View style={styles.heroContent}>
+        <View style={styles.flagContainer}>
           {isCommonFlag && <Flag text={flag} style={{ marginRight: 8 }} variant="filled" />}
           {category && <Flag text={category} category={category} variant="minimal" />}
         </View>
 
-        <Typography variant="h5" color={theme.colors.Text.Primary} style={[cardStyles.title, themedStyles.title]}>
+        <Typography variant="h6" color={theme.colors.Text.Primary} style={styles.title}>
           {title}
         </Typography>
 
@@ -96,7 +71,7 @@ const CardHero = ({
             variant="subtitle-01"
             color={theme.colors.Text.Secondary}
             numberOfLines={2}
-            style={[cardStyles.subtitle, themedStyles.subtitle]}
+            style={styles.subtitle}
           >
             {subtitle}
           </Typography>
@@ -107,4 +82,3 @@ const CardHero = ({
 }
 
 export default CardHero
-

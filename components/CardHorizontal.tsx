@@ -1,10 +1,13 @@
 "use client"
-import { View, Image, StyleSheet } from "react-native"
+
+import { View } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
 import Card from "./Card"
-import { cardStyles } from "../utils/cardStyles"
 import Flag from "./Flag"
+import { Feather } from "@expo/vector-icons"
+import LazyImage from "./LazyImage"
+import { createCardHorizontalStyles } from "./styles/CardHorizontal.styles"
 
 interface CardHorizontalProps {
   id?: number | string
@@ -48,6 +51,7 @@ const CardHorizontal = ({
   onShare,
 }: CardHorizontalProps) => {
   const theme = useTheme()
+  const styles = createCardHorizontalStyles(theme)
 
   const categoryText = category || ""
 
@@ -82,25 +86,6 @@ const CardHorizontal = ({
 
   const flagToShow = isCommonFlag ? flag : extractedFlag
 
-  const themedStyles = {
-    horizontalContainer: {
-      backgroundColor: theme?.colors?.Surface?.Primary || "#FFFFFF",
-      borderBottomColor: theme?.colors?.Border?.["Border-Primary"] || "#EEEEEE",
-      borderBottomWidth: theme?.borderWidth?.["10"] || 1,
-      marginBottom: theme?.space?.["40"] || 16,
-    },
-    horizontalCardContent: {
-      padding: theme?.space?.["40"] || 16,
-    },
-    horizontalImage: {
-      borderRadius: theme?.radius?.["radius-default"] || 8,
-      marginRight: theme?.space?.["40"] || 16,
-    },
-    flagContainer: {
-      marginBottom: theme?.space?.["20"] || 8,
-    },
-  }
-
   return (
     <Card
       id={id}
@@ -108,28 +93,29 @@ const CardHorizontal = ({
       onBookmark={onBookmark}
       onShare={onShare}
       readTime={readTime}
-      style={[cardStyles.horizontalContainer, themedStyles.horizontalContainer]}
+      style={styles.container}
+      footerStyle={styles.footer}
     >
-      <View style={[cardStyles.horizontalCardContent, themedStyles.horizontalCardContent]}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={[cardStyles.horizontalImage, themedStyles.horizontalImage]} />
-        ) : (
-          <View
-            style={[
-              cardStyles.horizontalImage,
-              themedStyles.horizontalImage,
-              { backgroundColor: theme.colors.Border["Border-Primary"] },
-            ]}
-          />
-        )}
+      <View style={styles.contentContainer}>
+        {/* Image or Placeholder */}
+        <View style={styles.imageContainer}>
+          {imageUrl && imageUrl.trim() !== "" ? (
+            <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+          ) : (
+            <View style={styles.placeholderImage}>
+              <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+            </View>
+          )}
+        </View>
 
-        <View style={cardStyles.horizontalTextContent}>
-          <View style={[cardStyles.flagContainer, { flexDirection: "row" }]}>
+        {/* Text Content */}
+        <View style={styles.textContent}>
+          <View style={styles.flagsContainer}>
             {flagToShow && <Flag text={flagToShow} style={{ marginRight: 8 }} variant="minimal" />}
             {categoryText && <Flag text={categoryText} category={categoryText} variant="minimal" />}
           </View>
 
-          <Typography variant="subtitle-01" color={theme.colors.Text.Primary} style={styles.title}>
+          <Typography variant="h6" color={theme.colors.Text.Primary} style={styles.title}>
             {mainTitle}
           </Typography>
         </View>
@@ -138,13 +124,4 @@ const CardHorizontal = ({
   )
 }
 
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    lineHeight: 24,
-  },
-})
-
 export default CardHorizontal
-

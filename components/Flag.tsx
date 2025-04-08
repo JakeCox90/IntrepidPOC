@@ -1,8 +1,9 @@
 "use client"
-import { View, StyleSheet, type ViewStyle, type TextStyle } from "react-native"
+import { View, type ViewStyle, type TextStyle } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
 import { getCategoryColor } from "../utils/categoryColors"
+import { createFlagStyles } from "./styles/Flag.styles"
 
 type FlagVariant = "minimal" | "filled"
 
@@ -18,6 +19,7 @@ interface FlagProps {
 
 const Flag = ({ text, color, backgroundColor, style, textStyle, category, variant = "filled" }: FlagProps) => {
   const theme = useTheme()
+  const styles = createFlagStyles(theme)
 
   // Default colors based on text or category
   const defaultBgColor = category ? getCategoryColor(category, theme) : getCategoryColor(text, theme)
@@ -40,14 +42,4 @@ const Flag = ({ text, color, backgroundColor, style, textStyle, category, varian
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    alignSelf: "flex-start",
-  },
-})
-
 export default Flag
-

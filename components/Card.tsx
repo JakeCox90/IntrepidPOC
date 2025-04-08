@@ -11,19 +11,30 @@ export interface CardBaseProps {
   onBookmark?: () => void
   onShare?: () => void
   style?: StyleProp<ViewStyle>
+  footerStyle?: StyleProp<ViewStyle>
   children?: React.ReactNode
   readTime?: string
   timestamp?: string
 }
 
-const Card: React.FC<CardBaseProps> = ({ id, onPress, onBookmark, onShare, style, children, readTime, timestamp }) => {
+const Card: React.FC<CardBaseProps> = ({
+  id,
+  onPress,
+  onBookmark,
+  onShare,
+  style,
+  footerStyle,
+  children,
+  readTime,
+  timestamp,
+}) => {
   const theme = useTheme()
 
   const renderFooter = () => {
     if (!onBookmark && !onShare && !readTime && !timestamp) return null
 
     return (
-      <View style={styles.footer}>
+      <View style={[styles.footer, footerStyle]}>
         {(readTime || timestamp) && (
           <View style={styles.metaContainer}>
             {readTime && (
@@ -94,6 +105,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingTop: 8,
+    paddingBottom: 4,
+    paddingHorizontal: 16,
   },
   metaContainer: {
     flexDirection: "row",
@@ -117,4 +130,3 @@ const styles = StyleSheet.create({
 })
 
 export default Card
-
