@@ -13,7 +13,7 @@ import ArticleHeader from "../components/ArticleHeader"
 import AudioPlayer from "../components/AudioPlayer"
 import Accordion from "../components/Accordion"
 
-const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
+const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding = false }) => {
   const { article: routeArticle } = route.params || {}
   const [article, setArticle] = useState(routeArticle || null)
   const [loading, setLoading] = useState(!routeArticle || !routeArticle.content)
@@ -66,7 +66,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
 
   // Calculate the height of the TopNav with additional padding
   const topNavHeight = Platform.OS === "ios" ? 88 : 44 + (StatusBar.currentHeight || 0)
-  const contentPaddingTop = topNavHeight + 24 // Add extra padding to prevent overlap
+  const contentPaddingTop = removeTopPadding ? 0 : 16 // Use a fixed value instead of calculating based on topNavHeight
 
   // Mock comments data with replies
   const comments = [
@@ -166,7 +166,8 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
           style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
           contentContainerStyle={[
             styles.scrollViewContent,
-            { paddingHorizontal: theme.space["40"], paddingTop: contentPaddingTop },
+            { paddingHorizontal: theme.space["40"] },
+            // Remove paddingTop here
           ]}
           scrollEventThrottle={16}
           onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
@@ -239,7 +240,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
       {/* TopNav rendered last to ensure it's on top */}
       {!hideHeader && (
         <View style={styles.topNavContainer}>
-          <TopNav showBackButton onBackPress={() => navigation.goBack()} />
+          <TopNav showBackButton onBackPress={() => navigation.goBack()} backgroundColor="transparent" />
         </View>
       )}
     </View>
@@ -263,7 +264,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
+    paddingHorizontal: 16, // Keep horizontal padding
     paddingBottom: 16,
+    // Remove paddingTop since it's now in the ArticleHeader component
   },
   errorContainer: {
     flex: 1,

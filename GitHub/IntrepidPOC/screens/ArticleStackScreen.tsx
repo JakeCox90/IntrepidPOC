@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { View, StyleSheet, FlatList, Dimensions, StatusBar, TouchableOpacity } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "../components/Typography"
 import Stepper from "../components/Stepper"
 import ArticleScreen from "./ArticleScreen"
+import TopNav from "../components/TopNav"
 
 const { width } = Dimensions.get("window")
 
@@ -83,9 +83,15 @@ const ArticleStackScreen = ({ route, navigation }) => {
 
     // Pass the article to the ArticleScreen component
     // but hide the header since we're providing our own
+    // and remove top padding
     return (
       <View style={styles.articleContainer}>
-        <ArticleScreen route={{ params: { article: safeArticle } }} navigation={navigation} hideHeader={true} />
+        <ArticleScreen
+          route={{ params: { article: safeArticle } }}
+          navigation={navigation}
+          hideHeader={true}
+          removeTopPadding={true}
+        />
       </View>
     )
   }
@@ -94,22 +100,10 @@ const ArticleStackScreen = ({ route, navigation }) => {
   if (!articles.length) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+        <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-        {/* Header */}
-        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
-          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-            <View style={styles.backButtonCircle}>
-              <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
-            </View>
-          </TouchableOpacity>
-
-          <View style={styles.titleContainer}>
-            <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={1}>
-              {title}
-            </Typography>
-          </View>
-        </View>
+        {/* Use TopNav component */}
+        <TopNav title={title} showBackButton onBackPress={handleBackPress} />
 
         {/* Error message */}
         <View style={styles.errorContainer}>
@@ -131,27 +125,19 @@ const ArticleStackScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-      {/* Custom header with stepper */}
-      <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-          <View style={styles.backButtonCircle}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.titleContainer}>
-          <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={1}>
-            {title}
-          </Typography>
-        </View>
-      </View>
+      {/* Use TopNav component */}
+      <TopNav
+        title={title}
+        showBackButton
+        onBackPress={handleBackPress}
+        backgroundColor="transparent"
+        textColor={theme.colors.Text.Primary}
+      />
 
       {/* Stepper component */}
-      <View style={styles.stepperContainer}>
-        <Stepper totalSteps={articles.length} currentStep={currentIndex} />
-      </View>
+      <Stepper totalSteps={articles.length} currentStep={currentIndex} />
 
       {/* Article content */}
       <FlatList
@@ -166,6 +152,7 @@ const ArticleStackScreen = ({ route, navigation }) => {
         initialNumToRender={articles.length}
         maxToRenderPerBatch={3}
         windowSize={5}
+        contentContainerStyle={styles.flatListContent}
         getItemLayout={(data, index) => ({
           length: width,
           offset: width * index,
@@ -181,30 +168,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingTop: 44, // Account for status bar
-    paddingBottom: 10,
-    paddingHorizontal: 16,
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  backButtonCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#F0F0F0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  titleContainer: {
-    flex: 1,
-  },
   stepperContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    // Remove all padding since it's now in the Stepper component
   },
   articleContainer: {
     width,
@@ -221,6 +186,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
+  },
+  flatListContent: {
+    paddingTop: 0, // Ensure no extra padding at the top
   },
 })
 

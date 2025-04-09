@@ -163,6 +163,7 @@ const ArticleHeader = ({
 const baseStyles = StyleSheet.create({
   container: {
     width: "100%",
+    paddingTop: 24,
   },
   tagsContainer: {
     flexDirection: "row",

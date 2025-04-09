@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: 4,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingInline: 16,
     alignItems: "center",
   },
   step: {
