@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
@@ -10,6 +10,7 @@ import Typography from "../components/Typography"
 import Tabs from "../components/Tabs"
 import { fetchNewsByCategory } from "../services/sunNewsService"
 import { getCategoryColor } from "../utils/categoryColors"
+import cacheService from "../services/cacheService"
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === "ios" ? 44 : 0)
@@ -31,58 +32,79 @@ const SUBCATEGORIES = {
   Health: ["Fitness", "Diet", "Health News"],
 }
 
+// Function to generate cache key based on category selections
+const getCacheKey = (mainCategory, subCategory) => `allNews_${mainCategory}_${subCategory}`
+
 // Simplified component without animations
 const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme()
   const [news, setNews] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [selectedMainCategory, setSelectedMainCategory] = useState("News")
   const [selectedSubCategory, setSelectedSubCategory] = useState("UK News")
+  const [categoryDataLoaded, setCategoryDataLoaded] = useState({})
 
   // Get the current color for the header
   const currentColor = getCategoryColor(selectedMainCategory, theme)
 
+  // Load data on initial mount or when categories change
+  useEffect(() => {
+    const cacheKey = getCacheKey(selectedMainCategory, selectedSubCategory)
+    const cachedData = cacheService.getData(cacheKey)
+
+    if (cachedData) {
+      setNews(cachedData)
+      setCategoryDataLoaded((prev) => ({ ...prev, [cacheKey]: true }))
+    } else {
+      loadNews(true)
+    }
+  }, [selectedMainCategory, selectedSubCategory])
+
+  // Function to load news
+  const loadNews = async (showLoading = false) => {
+    const cacheKey = getCacheKey(selectedMainCategory, selectedSubCategory)
+
+    // Only show loading if explicitly requested and this category hasn't been loaded before
+    if (showLoading && !categoryDataLoaded[cacheKey]) {
+      setLoading(true)
+    }
+
+    try {
+      let data
+      // If a subcategory is selected, fetch by subcategory
+      if (selectedSubCategory) {
+        data = await fetchNewsByCategory(selectedSubCategory)
+      }
+      // Otherwise fetch by main category
+      else {
+        data = await fetchNewsByCategory(selectedMainCategory)
+      }
+
+      setNews(data)
+      setError(data.length === 0 ? "No articles found for this category." : null)
+      setCategoryDataLoaded((prev) => ({ ...prev, [cacheKey]: true }))
+
+      // Cache the fetched data
+      cacheService.setData(cacheKey, data)
+    } catch (err) {
+      console.error(err)
+      setError("Failed to load news")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Use useFocusEffect to check if we need to refresh data
   useFocusEffect(
     useCallback(() => {
-      let isMounted = true
+      const cacheKey = getCacheKey(selectedMainCategory, selectedSubCategory)
 
-      const loadNews = async () => {
-        if (!isMounted) return
-
-        setLoading(true)
-
-        try {
-          let data
-          // If a subcategory is selected, fetch by subcategory
-          if (selectedSubCategory) {
-            data = await fetchNewsByCategory(selectedSubCategory)
-          }
-          // Otherwise fetch by main category
-          else {
-            data = await fetchNewsByCategory(selectedMainCategory)
-          }
-
-          if (isMounted) {
-            setNews(data)
-            setLoading(false)
-            setError(data.length === 0 ? "No articles found for this category." : null)
-          }
-        } catch (err) {
-          console.error(err)
-          if (isMounted) {
-            setError("Failed to load news")
-            setLoading(false)
-          }
-        }
+      // If we don't have data for this category and we're not already loading, load it
+      if (!categoryDataLoaded[cacheKey] && !loading) {
+        loadNews(true)
       }
-
-      loadNews()
-
-      return () => {
-        isMounted = false
-      }
-    }, [selectedMainCategory, selectedSubCategory]),
+    }, [selectedMainCategory, selectedSubCategory, categoryDataLoaded, loading]),
   )
 
   const handleMainCategoryPress = (category) => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar, Text } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Typography from "../components/Typography"
@@ -9,6 +9,10 @@ import Header from "../components/Header"
 import CardHorizontal from "../components/CardHorizontal"
 import SkeletonLoader from "../components/SkeletonLoader"
 import { searchNews, type Article } from "../services/sunNewsService"
+import cacheService from "../services/cacheService"
+
+// Function to generate cache key based on search query
+const getCacheKey = (query) => `search_${query}`
 
 const SearchScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -16,14 +20,36 @@ const SearchScreen = ({ navigation }) => {
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const theme = useTheme()
+  const initialSearchComplete = useRef({})
 
   const handleSearch = async () => {
     if (searchQuery.trim()) {
-      try {
-        setIsSearching(true)
+      const cacheKey = getCacheKey(searchQuery)
+
+      // Check if we already have cached data for this search query
+      const cachedData = cacheService.getData(cacheKey)
+
+      if (cachedData) {
+        // Use cached data if available
+        setSearchResults(cachedData)
         setError(null)
+        return
+      }
+
+      // Only show loading state if this is the first search for this query
+      if (!initialSearchComplete.current[cacheKey]) {
+        setIsSearching(true)
+      }
+
+      setError(null)
+
+      try {
         const results = await searchNews(searchQuery)
         setSearchResults(results)
+        initialSearchComplete.current[cacheKey] = true
+
+        // Cache the search results
+        cacheService.setData(cacheKey, results)
       } catch (err) {
         setError("Failed to search articles")
         console.error(err)
@@ -223,4 +249,3 @@ const styles = StyleSheet.create({
 })
 
 export default SearchScreen
-

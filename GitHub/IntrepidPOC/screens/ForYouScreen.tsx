@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useCallback } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
@@ -12,6 +12,10 @@ import { fetchSunNews } from "../services/sunNewsService"
 import Stack from "../components/Stack"
 import NewsCard from "../components/NewsCard"
 import BundleCard from "../components/BundleCard"
+import cacheService from "../services/cacheService"
+
+// Cache key for ForYou screen
+const CACHE_KEY = "forYouScreen"
 
 // Sample bundle data
 const bundles = [
@@ -42,44 +46,52 @@ const bundles = [
 const ForYouScreen = ({ navigation }) => {
   const theme = useTheme()
   const [news, setNews] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Use useFocusEffect to load data when the screen comes into focus
+  // Load data on initial mount
+  useEffect(() => {
+    const cachedData = cacheService.getData(CACHE_KEY)
+    if (cachedData) {
+      setNews(cachedData)
+    } else {
+      loadArticles(true)
+    }
+  }, [])
+
+  // Function to load articles
+  const loadArticles = async (showLoading = false) => {
+    // Only show loading state if explicitly requested
+    if (showLoading) {
+      setLoading(true)
+    }
+
+    try {
+      const data = await fetchSunNews()
+      // Simulate personalized content by shuffling the articles
+      const shuffled = [...data].sort(() => 0.5 - Math.random())
+      setNews(shuffled)
+      setError(null)
+
+      // Cache the fetched data
+      cacheService.setData(CACHE_KEY, shuffled)
+    } catch (err) {
+      console.error("Error loading articles:", err)
+      setError("Failed to load personalized content")
+      setNews([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Use useFocusEffect to check if we need to refresh data
   useFocusEffect(
     useCallback(() => {
-      let isMounted = true
-
-      const loadArticles = async () => {
-        if (!isMounted) return
-
-        setLoading(true)
-
-        try {
-          const data = await fetchSunNews()
-          if (isMounted) {
-            // Simulate personalized content by shuffling the articles
-            const shuffled = [...data].sort(() => 0.5 - Math.random())
-            setNews(shuffled)
-            setLoading(false)
-            setError(null)
-          }
-        } catch (err) {
-          console.error("Error loading articles:", err)
-          if (isMounted) {
-            setError("Failed to load personalized content")
-            setLoading(false)
-            setNews([])
-          }
-        }
+      // If we don't have data and we're not already loading, load it
+      if (news.length === 0 && !loading) {
+        loadArticles(true)
       }
-
-      loadArticles()
-
-      return () => {
-        isMounted = false
-      }
-    }, []),
+    }, [news.length, loading]),
   )
 
   const handleArticlePress = (article) => {
