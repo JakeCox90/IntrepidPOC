@@ -1,6 +1,7 @@
 "use client"
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHero from "../components/CardHero"
 import CardHorizontal from "../components/CardHorizontal"
@@ -44,95 +45,51 @@ const ForYouScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Use useEffect instead of useFocusEffect to load data only once
-  React.useEffect(() => {
-    let isMounted = true
+  // Use useFocusEffect to load data when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true
 
-    const loadArticles = async () => {
-      if (!isMounted) return
+      const loadArticles = async () => {
+        if (!isMounted) return
 
-      // Only show loading state on initial load
-      if (news.length === 0) {
         setLoading(true)
+
+        try {
+          const data = await fetchSunNews()
+          if (isMounted) {
+            // Simulate personalized content by shuffling the articles
+            const shuffled = [...data].sort(() => 0.5 - Math.random())
+            setNews(shuffled)
+            setLoading(false)
+            setError(null)
+          }
+        } catch (err) {
+          console.error("Error loading articles:", err)
+          if (isMounted) {
+            setError("Failed to load personalized content")
+            setLoading(false)
+            setNews([])
+          }
+        }
       }
 
-      try {
-        const data = await fetchSunNews()
-        if (isMounted) {
-          // Simulate personalized content by shuffling the articles
-          const shuffled = [...data].sort(() => 0.5 - Math.random())
-          setNews(shuffled)
-          setLoading(false)
-          setError(null)
-        }
-      } catch (err) {
-        console.error("Error loading articles:", err)
-        if (isMounted) {
-          setError("Failed to load personalized content")
-          setLoading(false)
-          setNews([])
-        }
+      loadArticles()
+
+      return () => {
+        isMounted = false
       }
-    }
-
-    loadArticles()
-
-    return () => {
-      isMounted = false
-    }
-  }, []) // Empty dependency array means this runs once on mount
+    }, []),
+  )
 
   const handleArticlePress = (article) => {
-    // Make sure we have a valid article object with all required properties
-    const safeArticle = {
-      id: article.id || `article-${Math.random().toString(36).substr(2, 9)}`,
-      title: article.title || "Untitled Article",
-      category: article.category || "",
-      flag: article.flag || "",
-      imageUrl: article.imageUrl || "",
-      readTime: article.readTime || "3 min read",
-      timestamp: article.timestamp || "Today",
-      content: article.content || "",
-      author: article.author || "The Sun",
-      url: article.url || "",
-    }
-
-    // Navigate with the safe article object
-    navigation.navigate("ForYouArticle", { article: safeArticle })
+    navigation.navigate("ForYouArticle", { article })
   }
 
-  // Get top stories for the horizontal rail (8 stories)
-  const topStories = React.useMemo(() => news.slice(0, 8), [news])
-
-  // Get featured and recommended articles (adjust indices to avoid overlap)
-  const featuredArticles = React.useMemo(() => news.slice(8, 9), [news])
-  const recommendedArticles = React.useMemo(() => news.slice(9, 14), [news])
-  const topicBasedArticles = React.useMemo(() => news.slice(14, 19), [news])
-
-  // Replace the handleTopStoryPress function with this improved version
   const handleTopStoryPress = (article, index) => {
-    // For the hero card, we need to navigate directly to the article
-    if (index === 0 && article === featuredArticles[0]) {
-      const safeArticle = {
-        id: article.id || `article-${Math.random().toString(36).substr(2, 9)}`,
-        title: article.title || "Untitled Article",
-        category: article.category || "",
-        flag: article.flag || "",
-        imageUrl: article.imageUrl || "",
-        readTime: article.readTime || "3 min read",
-        timestamp: article.timestamp || "Today",
-        content: article.content || "",
-        author: article.author || "The Sun",
-        url: article.url || "",
-      }
-      navigation.navigate("ForYouArticle", { article: safeArticle })
-      return
-    }
-
-    // For the horizontal rail, use the ArticleStackScreen
     try {
-      // Create a dedicated array just for the top stories rail
-      const railArticles = topStories.map((item) => ({
+      // Create a safe copy of all articles with default values for missing properties
+      const safeArticles = topStories.map((item) => ({
         id: item.id || `article-${Math.random().toString(36).substr(2, 9)}`,
         title: item.title || "Untitled Article",
         category: item.category || "",
@@ -145,28 +102,16 @@ const ForYouScreen = ({ navigation }) => {
         url: item.url || "",
       }))
 
-      // Navigate to the ArticleStack screen with the rail articles
+      // Navigate to the ArticleStack screen with properly formatted data
       navigation.navigate("ArticleStackScreen", {
-        articles: railArticles,
+        articles: safeArticles,
         initialIndex: index,
         title: "Top stories",
       })
     } catch (error) {
       console.error("Navigation error:", error)
       // Fallback to single article view if stack navigation fails
-      const safeArticle = {
-        id: article.id || `article-${Math.random().toString(36).substr(2, 9)}`,
-        title: article.title || "Untitled Article",
-        category: article.category || "",
-        flag: article.flag || "",
-        imageUrl: article.imageUrl || "",
-        readTime: article.readTime || "3 min read",
-        timestamp: article.timestamp || "Today",
-        content: article.content || "",
-        author: article.author || "The Sun",
-        url: article.url || "",
-      }
-      navigation.navigate("ForYouArticle", { article: safeArticle })
+      navigation.navigate("ForYouArticle", { article })
     }
   }
 
@@ -191,6 +136,14 @@ const ForYouScreen = ({ navigation }) => {
     console.log("Bundle notification toggled:", bundle.title)
     // In a real app, this would toggle notifications for the bundle
   }
+
+  // Get top stories for the horizontal rail (8 stories)
+  const topStories = React.useMemo(() => news.slice(0, 8), [news])
+
+  // Get featured and recommended articles (adjust indices to avoid overlap)
+  const featuredArticles = React.useMemo(() => news.slice(8, 9), [news])
+  const recommendedArticles = React.useMemo(() => news.slice(9, 14), [news])
+  const topicBasedArticles = React.useMemo(() => news.slice(14, 19), [news])
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>

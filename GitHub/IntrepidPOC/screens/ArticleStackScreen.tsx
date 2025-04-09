@@ -25,30 +25,22 @@ const ArticleStackScreen = ({ route, navigation }) => {
   useEffect(() => {
     // Only attempt to scroll if we have valid articles and a valid initialIndex
     if (flatListRef.current && articles.length > 0 && initialIndex >= 0 && initialIndex < articles.length) {
-      // Use a longer timeout to ensure the FlatList has fully rendered
+      // Set the current index immediately to ensure the stepper shows the correct position
+      setCurrentIndex(initialIndex)
+
+      // Use a timeout to ensure the FlatList has rendered
       const timer = setTimeout(() => {
         try {
           flatListRef.current?.scrollToIndex({
             index: initialIndex,
             animated: false,
-            viewPosition: 0.5,
+            viewPosition: 0,
+            viewOffset: 0,
           })
         } catch (error) {
           console.error("Error scrolling to index:", error)
-          // Try again with a different approach if the first attempt fails
-          setTimeout(() => {
-            try {
-              flatListRef.current?.scrollToItem({
-                item: articles[initialIndex],
-                animated: false,
-                viewPosition: 0.5,
-              })
-            } catch (secondError) {
-              console.error("Second scroll attempt failed:", secondError)
-            }
-          }, 300)
         }
-      }, 300)
+      }, 300) // Longer timeout to ensure rendering is complete
 
       return () => clearTimeout(timer)
     }
@@ -88,9 +80,6 @@ const ArticleStackScreen = ({ route, navigation }) => {
       content: item.content || "",
       author: item.author || "The Sun",
     }
-
-    // Log the article being rendered for debugging
-    console.log(`Rendering article at index ${index}:`, safeArticle.title)
 
     // Pass the article to the ArticleScreen component
     // but hide the header since we're providing our own
@@ -174,9 +163,14 @@ const ArticleStackScreen = ({ route, navigation }) => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScroll}
-        initialNumToRender={1}
-        maxToRenderPerBatch={2}
-        windowSize={3}
+        initialNumToRender={articles.length}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        getItemLayout={(data, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
       />
     </View>
   )

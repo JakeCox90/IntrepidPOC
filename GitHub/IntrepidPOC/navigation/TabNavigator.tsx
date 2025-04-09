@@ -156,7 +156,7 @@ export default function TabNavigator() {
       <Tab.Screen name="Today" component={TodayStackScreen} />
       <Tab.Screen name="ForYou" component={ForYouStackScreen} />
       <Tab.Screen name="AllNews" component={AllNewsStackScreen} />
-      <Tab.Screen name="Search" component={SearchStackScreen} component={AllNewsStackScreen} />
+      <Tab.Screen name="Search" component={SearchStackScreen} />
       <Tab.Screen name="Saved" component={SavedStackScreen} />
     </Tab.Navigator>
   )
