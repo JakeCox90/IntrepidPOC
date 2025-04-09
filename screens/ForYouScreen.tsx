@@ -146,14 +146,15 @@ const ForYouScreen = ({ navigation }) => {
   const topicBasedArticles = React.useMemo(() => news.slice(14, 19), [news])
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+    <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
-      {/* Header */}
+      {/* Header - updated to use the explore variant */}
       <TopNav
-        title="For You"
-        backgroundColor={theme.colors.Primary.Resting}
-        textColor={theme.colors.Text.Inverse}
+        title="For you"
+        backgroundColor={theme.colors.Surface.Secondary}
+        textColor={theme.colors.Text.Primary}
+        variant="explore"
         rightButtons={[
           {
             label: "Profile",
@@ -296,7 +297,6 @@ const ForYouScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
   },
   centerContainer: {
     justifyContent: "center",

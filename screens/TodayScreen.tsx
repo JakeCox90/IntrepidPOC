@@ -56,7 +56,10 @@ const TodayScreen = ({ navigation }) => {
 
   const handleCatchUpPress = (item) => {
     if (item.id === "daily-digest") {
-      navigation.navigate("AllNews")
+      // Navigate to the ArticleSwipeScreen with the first 10 articles
+      navigation.navigate("ArticleSwipeScreen", {
+        articles: news.slice(0, 10), // Pass the first 10 articles
+      })
     } else if (item.id === "sport") {
       navigation.navigate("AllNewsCategory", {
         category: { name: "Sport" },
@@ -126,14 +129,15 @@ const TodayScreen = ({ navigation }) => {
   const allStories = React.useMemo(() => news.slice(3, 10), [news])
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
       {/* Header - replaced with TopNav */}
       <TopNav
-        title="News"
-        backgroundColor={theme.colors.Primary.Resting}
-        textColor={theme.colors.Text.Inverse}
+        title="Welcome, Jake"
+        backgroundColor={theme.colors.Surface.Secondary}
+        textColor={theme.colors.Text.Primary}
+        variant="explore"
         rightButtons={[
           {
             label: "Profile",

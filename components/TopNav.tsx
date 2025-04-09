@@ -15,6 +15,7 @@ interface TopNavProps {
     label: string
     onPress: () => void
   }>
+  variant?: "default" | "explore"
 }
 
 const TopNav = ({
@@ -24,6 +25,7 @@ const TopNav = ({
   backgroundColor,
   textColor,
   rightButtons = [],
+  variant = "default",
 }: TopNavProps) => {
   const theme = useTheme()
   const navigation = useNavigation()
@@ -43,6 +45,36 @@ const TopNav = ({
   const fontFamily = theme?.typography?.fontFamily?.semiBold || "System"
   const spacing = theme?.space?.["40"] || 16
   const smallSpacing = theme?.space?.["20"] || 8
+
+  if (variant === "explore") {
+    return (
+      <View
+        style={[
+          styles.exploreContainer,
+          {
+            backgroundColor: bgColor,
+            paddingTop: insets.top || (Platform.OS === "ios" ? 44 : StatusBar.currentHeight || 0),
+            paddingHorizontal: spacing,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.exploreTitle,
+            {
+              color: txtColor,
+              fontSize: theme?.typography?.styles?.h3?.fontSize,
+              lineHeight: theme?.typography?.styles?.h3?.lineHeight,
+              fontFamily: theme?.typography?.styles?.h3?.fontFamily,
+              fontWeight: theme?.typography?.styles?.h3?.fontWeight,
+            },
+          ]}
+        >
+          {title}
+        </Text>
+      </View>
+    )
+  }
 
   return (
     <View
@@ -121,7 +153,15 @@ const styles = StyleSheet.create({
   rightButtonText: {
     fontWeight: "600",
   },
+  // New styles for explore variant
+  exploreContainer: {
+    width: "100%",
+    paddingBottom: 16,
+  },
+  exploreTitle: {
+    marginTop: 24,
+    marginBottom: 8,
+  },
 })
 
 export default TopNav
-

@@ -11,6 +11,7 @@ import SearchScreen from "../screens/SearchScreen"
 import SavedScreen from "../screens/SavedScreen"
 import ArticleScreen from "../screens/ArticleScreen"
 import ArticleStackScreen from "../screens/ArticleStackScreen"
+import ArticleSwipeScreen from "../screens/ArticleSwipeScreen"
 import CategoryScreen from "../screens/CategoryScreen"
 import BottomNav from "../components/BottomNav"
 
@@ -29,6 +30,7 @@ function TodayStackScreen() {
       <TodayStack.Screen name="TodayMain" component={TodayScreen} />
       <TodayStack.Screen name="TodayArticle" component={ArticleScreen} />
       <TodayStack.Screen name="TodayCategory" component={CategoryScreen} />
+      <TodayStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </TodayStack.Navigator>
   )
 }
@@ -41,6 +43,7 @@ function ForYouStackScreen() {
       <ForYouStack.Screen name="ForYouArticle" component={ArticleScreen} />
       <ForYouStack.Screen name="ArticleStackScreen" component={ArticleStackScreen} />
       <ForYouStack.Screen name="ForYouCategory" component={CategoryScreen} />
+      <ForYouStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </ForYouStack.Navigator>
   )
 }
@@ -52,6 +55,7 @@ function AllNewsStackScreen() {
       <AllNewsStack.Screen name="AllNewsMain" component={AllNewsScreen} />
       <AllNewsStack.Screen name="AllNewsArticle" component={ArticleScreen} />
       <AllNewsStack.Screen name="AllNewsCategory" component={CategoryScreen} />
+      <AllNewsStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </AllNewsStack.Navigator>
   )
 }
@@ -63,6 +67,7 @@ function SearchStackScreen() {
       <SearchStack.Screen name="SearchMain" component={SearchScreen} />
       <SearchStack.Screen name="SearchArticle" component={ArticleScreen} />
       <SearchStack.Screen name="SearchCategory" component={CategoryScreen} />
+      <SearchStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </SearchStack.Navigator>
   )
 }
@@ -74,6 +79,7 @@ function SavedStackScreen() {
       <SavedStack.Screen name="SavedMain" component={SavedScreen} />
       <SavedStack.Screen name="SavedArticle" component={ArticleScreen} />
       <SavedStack.Screen name="SavedCategory" component={CategoryScreen} />
+      <SavedStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </SavedStack.Navigator>
   )
 }
@@ -150,7 +156,7 @@ export default function TabNavigator() {
       <Tab.Screen name="Today" component={TodayStackScreen} />
       <Tab.Screen name="ForYou" component={ForYouStackScreen} />
       <Tab.Screen name="AllNews" component={AllNewsStackScreen} />
-      <Tab.Screen name="Search" component={SearchStackScreen} />
+      <Tab.Screen name="Search" component={SearchStackScreen} component={AllNewsStackScreen} />
       <Tab.Screen name="Saved" component={SavedStackScreen} />
     </Tab.Navigator>
   )
