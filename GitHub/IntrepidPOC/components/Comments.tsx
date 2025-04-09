@@ -18,6 +18,12 @@ interface CommentType {
 interface CommentsProps {
   comments: CommentType[]
   totalComments?: number
+  titleVariant?: "h5" | "h6"
+  authorVariant?: "subtitle-02" | "subtitle-01"
+  timeVariant?: "body-02" | "annotation"
+  commentVariant?: "body-02" | "body-01"
+  actionVariant?: "body-02" | "button"
+  showAllVariant?: "button"
   onShowAllPress?: () => void
   onSubmitComment?: (text: string) => void
   onLikeComment?: (commentId: number | string, isLiked: boolean) => void
@@ -28,6 +34,12 @@ interface CommentsProps {
 const Comments = ({
   comments: initialComments,
   totalComments = 0,
+  titleVariant = "h5",
+  authorVariant = "subtitle-02",
+  timeVariant = "body-02",
+  commentVariant = "body-02",
+  actionVariant = "body-02",
+  showAllVariant = "button",
   onShowAllPress,
   onSubmitComment,
   onLikeComment,
@@ -76,6 +88,21 @@ const Comments = ({
     }
   }
 
+  const renderSectionHeader = () => (
+    <View style={styles.commentsSectionHeader}>
+      <Typography variant={titleVariant} color={theme.colors.Text.Primary}>
+        Comments
+      </Typography>
+      {totalComments > 0 && (
+        <TouchableOpacity onPress={onShowAllPress}>
+          <Typography variant={showAllVariant} color={theme.colors.Primary.Resting}>
+            Show all ({totalComments})
+          </Typography>
+        </TouchableOpacity>
+      )}
+    </View>
+  )
+
   const renderComment = ({ item }: { item: CommentType }) => {
     const isLiked = likedComments[item.id] || false
 
@@ -98,14 +125,14 @@ const Comments = ({
             </View>
             <View>
               <View style={styles.nameTimeContainer}>
-                <Typography variant="subtitle-02" color={theme.colors.Text.Primary} style={styles.authorName}>
+                <Typography variant={authorVariant} color={theme.colors.Text.Primary} style={styles.authorName}>
                   {item.author}
                 </Typography>
-                <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.commentTime}>
+                <Typography variant={timeVariant} color={theme.colors.Text.Secondary} style={styles.commentTime}>
                   {item.time}
                 </Typography>
               </View>
-              <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.commentText}>
+              <Typography variant={commentVariant} color={theme.colors.Text.Secondary} style={styles.commentText}>
                 {item.text}
               </Typography>
             </View>
@@ -114,18 +141,18 @@ const Comments = ({
 
         <View style={styles.commentFooter}>
           <TouchableOpacity style={styles.replyButton} onPress={() => onReplyComment && onReplyComment(item.id)}>
-            <Typography variant="body-02" color={theme.colors.Primary.Resting} style={styles.replyText}>
+            <Typography variant={actionVariant} color={theme.colors.Primary.Resting} style={styles.replyText}>
               Reply
             </Typography>
           </TouchableOpacity>
 
           {item.replies && item.replies.length > 0 && (
             <View style={styles.viewRepliesContainer}>
-              <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.bulletPoint}>
+              <Typography variant={actionVariant} color={theme.colors.Text.Secondary} style={styles.bulletPoint}>
                 •
               </Typography>
               <TouchableOpacity onPress={() => onViewReplies && onViewReplies(item.id)}>
-                <Typography variant="body-02" color={theme.colors.Text.Secondary}>
+                <Typography variant={actionVariant} color={theme.colors.Text.Secondary}>
                   View {item.replies.length} {item.replies.length === 1 ? "reply" : "replies"}
                 </Typography>
               </TouchableOpacity>
@@ -142,7 +169,7 @@ const Comments = ({
             </TouchableOpacity>
             {item.likes > 0 && (
               <Typography
-                variant="body-02"
+                variant={actionVariant}
                 color={isLiked ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
                 style={styles.likeCount}
               >
@@ -159,18 +186,7 @@ const Comments = ({
     <View
       style={[styles.commentsSection, { backgroundColor: theme.isDark ? theme.colors.Surface.Secondary : "#F5F5F5" }]}
     >
-      <View style={styles.commentsSectionHeader}>
-        <Typography variant="h5" color={theme.colors.Text.Primary}>
-          Comments
-        </Typography>
-        {totalComments > 0 && (
-          <TouchableOpacity onPress={onShowAllPress}>
-            <Typography variant="button" color={theme.colors.Primary.Resting}>
-              Show all ({totalComments})
-            </Typography>
-          </TouchableOpacity>
-        )}
-      </View>
+      {renderSectionHeader()}
 
       {/* Comments list */}
       <FlatList
@@ -311,4 +327,3 @@ const styles = StyleSheet.create({
 })
 
 export default Comments
-

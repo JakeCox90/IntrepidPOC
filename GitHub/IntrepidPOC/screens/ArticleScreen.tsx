@@ -199,13 +199,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
 
           {/* Accordion Component */}
           <View style={styles.accordionContainer}>
-            <Accordion
-              title="Key Points"
-              initialExpanded={true}
-              titleVariant="h6"
-              contentVariant="body-02"
-              contentColor={theme.colors.Text.Secondary}
-            >
+            <Accordion title="Key Points" initialExpanded={true} titleVariant="h6" contentVariant="body-02">
               <View style={styles.keyPointsContainer}>
                 <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
                   • {article.title.split(" ").slice(0, 5).join(" ")}...

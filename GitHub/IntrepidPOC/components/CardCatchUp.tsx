@@ -10,10 +10,24 @@ interface CardCatchUpProps {
   subtitle: string
   imageUrl: string
   count?: number
+  titleVariant?: "subtitle-01" | "h6"
+  subtitleVariant?: "body-02" | "caption"
+  countVariant?: "annotation" | "body-02"
+  textColor?: string
   onPress: () => void
 }
 
-const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpProps) => {
+const CardCatchUp = ({
+  title,
+  subtitle,
+  imageUrl,
+  count,
+  titleVariant = "subtitle-01",
+  subtitleVariant = "body-02",
+  countVariant = "annotation",
+  textColor = "#FFFFFF",
+  onPress,
+}: CardCatchUpProps) => {
   return (
     <Card onPress={onPress} style={cardStyles.catchUpContainer}>
       <View style={cardStyles.catchUpImageContainer}>
@@ -23,14 +37,14 @@ const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpP
           resizeMode="cover"
         />
         <View style={cardStyles.catchUpOverlay}>
-          <Typography variant="subtitle-01" color="#FFFFFF" style={styles.title}>
+          <Typography variant={titleVariant} color={textColor} style={styles.title}>
             {title}
           </Typography>
-          <Typography variant="body-02" color="#FFFFFF" style={styles.subtitle} numberOfLines={2}>
+          <Typography variant={subtitleVariant} color={textColor} style={styles.subtitle} numberOfLines={2}>
             {subtitle}
           </Typography>
           {count !== undefined && (
-            <Typography variant="annotation" color="#FFFFFF" style={styles.count}>
+            <Typography variant={countVariant} color={textColor} style={styles.count}>
               {count} stories
             </Typography>
           )}
@@ -54,4 +68,3 @@ const styles = StyleSheet.create({
 })
 
 export default CardCatchUp
-

@@ -1,24 +1,17 @@
 /**
  * Typography Guidelines
  *
- * This configuration file establishes the typography standards for the application.
- * All text in the application MUST use the Typography component to ensure consistent
- * styling, accessibility, and maintainability.
- *
- * Guidelines:
- * 1. Always use the Typography component for any text content
- * 2. Configure appropriate variants based on the content's semantic meaning
- * 3. Components should accept variant and color props to allow customization
- * 4. Default variants should be specified at the component level
- * 5. Screen-level overrides should be possible via props
+ * This file establishes standards for typography usage across the application.
+ * All text should use the Typography component with appropriate variants.
  */
 
-// Default typography variants for common UI elements
+// Default typography variants for different UI elements
 export const defaultTypographyVariants = {
-  // Headings
-  pageTitle: "h3",
+  // Headers and titles
+  screenTitle: "h3",
   sectionTitle: "h5",
   cardTitle: "h6",
+  modalTitle: "h5",
 
   // Body text
   bodyText: "body-02",
@@ -34,26 +27,70 @@ export const defaultTypographyVariants = {
     title: "h6",
     content: "body-02",
   },
-  card: {
-    title: "h6",
-    subtitle: "subtitle-02",
-    body: "body-02",
+  audioPlayer: {
+    title: "subtitle-02",
+    category: "subtitle-02",
+    duration: "body-02",
   },
-  form: {
-    label: "subtitle-02",
-    helper: "annotation",
-    error: "annotation",
+  bundleCard: {
+    title: "h5",
+    subtitle: "body-02",
+    count: "body-02",
+  },
+  cardCatchUp: {
+    title: "subtitle-01",
+    subtitle: "body-02",
+    count: "annotation",
+  },
+  comments: {
+    title: "h5",
+    author: "subtitle-02",
+    comment: "body-02",
+    action: "body-02",
+  },
+  flag: {
+    text: "overline",
+  },
+  header: {
+    title: "h6",
+    largeTitle: "h3",
+    button: "button",
+  },
+  topNav: {
+    title: "subtitle-01",
+    exploreTitle: "h3",
+    button: "button",
   },
 }
 
 /**
- * Usage example:
+ * Guidelines for Typography Usage:
  *
- * import { defaultTypographyVariants } from '../config/typography-guidelines';
+ * 1. All text should use the Typography component
+ * 2. Components should accept typography variant props with sensible defaults
+ * 3. Screen-level overrides should be possible
+ * 4. Use the appropriate variant for the context (see defaultTypographyVariants)
  *
- * const MyComponent = ({ titleVariant = defaultTypographyVariants.accordion.title }) => {
- *   return (
- *     <Typography variant={titleVariant}>My Title</Typography>
- *   )
+ * Example usage in a component:
+ *
+ * interface MyComponentProps {
+ *   title: string;
+ *   description: string;
+ *   titleVariant?: "h5" | "h6";
+ *   descriptionVariant?: "body-01" | "body-02";
  * }
+ *
+ * const MyComponent = ({
+ *   title,
+ *   description,
+ *   titleVariant = "h5",
+ *   descriptionVariant = "body-02"
+ * }: MyComponentProps) => {
+ *   return (
+ *     <View>
+ *       <Typography variant={titleVariant}>{title}</Typography>
+ *       <Typography variant={descriptionVariant}>{description}</Typography>
+ *     </View>
+ *   );
+ * };
  */

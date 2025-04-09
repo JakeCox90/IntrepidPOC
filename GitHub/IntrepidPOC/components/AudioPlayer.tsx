@@ -10,6 +10,12 @@ interface AudioPlayerProps {
   title: string
   category?: string
   duration: number // in seconds
+  titleVariant?: "subtitle-01" | "subtitle-02" | "h6"
+  categoryVariant?: "subtitle-02" | "overline"
+  durationVariant?: "body-02" | "annotation"
+  titleColor?: string
+  categoryColor?: string
+  durationColor?: string
   onPlay?: () => void
   onPause?: () => void
   onComplete?: () => void
@@ -25,6 +31,12 @@ const AudioPlayer = ({
   title,
   category = "US NEWS",
   duration = 321, // 5m 21s default
+  titleVariant = "subtitle-02",
+  categoryVariant = "subtitle-02",
+  durationVariant = "body-02",
+  titleColor,
+  categoryColor,
+  durationColor,
   onPlay,
   onPause,
   onComplete,
@@ -134,10 +146,10 @@ const AudioPlayer = ({
                   setContentWidth(event.nativeEvent.layout.width)
                 }}
               >
-                <Typography variant="subtitle-02" color={theme.colors.Primary.Resting}>
+                <Typography variant={categoryVariant} color={categoryColor || theme.colors.Primary.Resting}>
                   {category}
                 </Typography>
-                <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
+                <Typography variant={titleVariant} color={titleColor || theme.colors.Text.Primary}>
                   {" " + title}
                 </Typography>
               </Animated.View>
@@ -150,12 +162,16 @@ const AudioPlayer = ({
                 setContentWidth(event.nativeEvent.layout.width)
               }}
             >
-              <Typography variant="subtitle-02" color={theme.colors.Primary.Resting} numberOfLines={1}>
+              <Typography
+                variant={categoryVariant}
+                color={categoryColor || theme.colors.Primary.Resting}
+                numberOfLines={1}
+              >
                 {category}
               </Typography>
               <Typography
-                variant="subtitle-02"
-                color={theme.colors.Text.Primary}
+                variant={titleVariant}
+                color={titleColor || theme.colors.Text.Primary}
                 numberOfLines={1}
                 style={styles.truncatedTitle}
               >
@@ -166,7 +182,11 @@ const AudioPlayer = ({
 
           <View style={styles.durationContainer}>
             <Ionicons name="volume-medium-outline" size={20} color={theme.colors.Text.Secondary} />
-            <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.duration}>
+            <Typography
+              variant={durationVariant}
+              color={durationColor || theme.colors.Text.Secondary}
+              style={styles.duration}
+            >
               {formatTime(remainingTime)} remaining
             </Typography>
           </View>
@@ -234,4 +254,3 @@ const styles = StyleSheet.create({
 })
 
 export default AudioPlayer
-

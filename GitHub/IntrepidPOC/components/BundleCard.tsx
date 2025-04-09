@@ -9,6 +9,10 @@ interface BundleCardProps {
   subtitle: string
   storyCount: number
   imageUrl: string
+  titleVariant?: "h5" | "h6"
+  subtitleVariant?: "body-02" | "subtitle-02"
+  countVariant?: "body-02" | "annotation"
+  textColor?: string
   onPress: () => void
   onNotify?: () => void
 }
@@ -17,7 +21,18 @@ const { width } = Dimensions.get("window")
 const cardWidth = 280
 const cardHeight = 265
 
-const BundleCard = ({ title, subtitle, storyCount, imageUrl, onPress, onNotify }: BundleCardProps) => {
+const BundleCard = ({
+  title,
+  subtitle,
+  storyCount,
+  imageUrl,
+  titleVariant = "h5",
+  subtitleVariant = "body-02",
+  countVariant = "body-02",
+  textColor = "#FFFFFF",
+  onPress,
+  onNotify,
+}: BundleCardProps) => {
   const theme = useTheme()
 
   const handleNotifyPress = (e) => {
@@ -33,13 +48,13 @@ const BundleCard = ({ title, subtitle, storyCount, imageUrl, onPress, onNotify }
         {/* Dark gradient overlay */}
         <View style={styles.overlay}>
           <View style={styles.content}>
-            <Typography variant="h5" color="#FFFFFF" style={styles.title}>
+            <Typography variant={titleVariant} color={textColor} style={styles.title}>
               {title}
             </Typography>
-            <Typography variant="body-02" color="#FFFFFF" style={styles.subtitle}>
+            <Typography variant={subtitleVariant} color={textColor} style={styles.subtitle}>
               {subtitle}
             </Typography>
-            <Typography variant="body-02" color="#FFFFFF" style={styles.storyCount}>
+            <Typography variant={countVariant} color={textColor} style={styles.storyCount}>
               {storyCount} stories
             </Typography>
           </View>

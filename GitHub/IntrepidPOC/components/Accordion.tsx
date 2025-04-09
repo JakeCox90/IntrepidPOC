@@ -6,13 +6,14 @@ import { View, TouchableOpacity, StyleSheet, Animated } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "./Typography"
+import { defaultTypographyVariants } from "../config/typography-guidelines"
 
 interface AccordionProps {
   title: string
   children: React.ReactNode
   initialExpanded?: boolean
-  titleVariant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle-01" | "subtitle-02" | "body-01" | "body-02"
-  contentVariant?: "body-01" | "body-02" | "subtitle-01" | "subtitle-02"
+  titleVariant?: "h5" | "h6" | "subtitle-01"
+  contentVariant?: "body-01" | "body-02" | "subtitle-02"
   titleColor?: string
   contentColor?: string
 }
@@ -21,8 +22,8 @@ export default function Accordion({
   title,
   children,
   initialExpanded = false,
-  titleVariant = "h6",
-  contentVariant = "body-02",
+  titleVariant = defaultTypographyVariants.accordion.title,
+  contentVariant = defaultTypographyVariants.accordion.content,
   titleColor,
   contentColor,
 }: AccordionProps) {
@@ -30,10 +31,6 @@ export default function Accordion({
   const [expanded, setExpanded] = useState(initialExpanded)
   const animatedHeight = useRef(new Animated.Value(initialExpanded ? 1 : 0)).current
   const contentHeight = useRef(0)
-
-  // Default colors if not provided
-  const defaultTitleColor = titleColor || theme.colors.Text.Primary
-  const defaultContentColor = contentColor || theme.colors.Text.Secondary
 
   useEffect(() => {
     Animated.timing(animatedHeight, {
@@ -58,19 +55,18 @@ export default function Accordion({
     outputRange: [0, contentHeight.current],
   })
 
-  // Helper function to render children with proper Typography
+  // Helper function to render content with Typography if it's a string
   const renderContent = () => {
     // If children is a string, wrap it in Typography
     if (typeof children === "string") {
       return (
-        <Typography variant={contentVariant} color={defaultContentColor}>
+        <Typography variant={contentVariant} color={contentColor || theme.colors.Text.Secondary}>
           {children}
         </Typography>
       )
     }
 
-    // If children is already a React element, return as is
-    // This allows for complex content while still using Typography
+    // Otherwise, return children as is
     return children
   }
 
@@ -99,10 +95,10 @@ export default function Accordion({
           },
         ]}
       >
-        <Typography variant={titleVariant} color={defaultTitleColor}>
+        <Typography variant={titleVariant} color={titleColor || theme.colors.Text.Primary}>
           {title}
         </Typography>
-        <Ionicons name={expanded ? "remove" : "add"} size={24} color={defaultTitleColor} />
+        <Ionicons name={expanded ? "remove" : "add"} size={24} color={theme.colors.Text.Primary} />
       </TouchableOpacity>
 
       <Animated.View

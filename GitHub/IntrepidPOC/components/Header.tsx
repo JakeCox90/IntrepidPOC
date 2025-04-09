@@ -1,9 +1,10 @@
 "use client"
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import Flag from "./Flag"
+import { Typography } from "./Typography"
 
 interface HeaderButton {
   label: string
@@ -24,6 +25,8 @@ interface HeaderProps {
   textColor?: string
   flag?: FlagProps | null
   titleStyle?: "default" | "large"
+  titleVariant?: "h3" | "h4" | "h5" | "h6" | "subtitle-01"
+  buttonVariant?: "button" | "subtitle-02"
   showProfileButton?: boolean
   onProfilePress?: () => void
 }
@@ -37,6 +40,8 @@ const Header = ({
   textColor,
   flag,
   titleStyle = "default",
+  titleVariant,
+  buttonVariant = "button",
   showProfileButton = false,
   onProfilePress,
 }: HeaderProps) => {
@@ -54,12 +59,13 @@ const Header = ({
   // Safely get theme values with fallbacks
   const bgColor = backgroundColor || theme?.colors?.Surface?.Primary || "#FFFFFF"
   const txtColor = textColor || theme?.colors?.Text?.Primary || "#000000"
-  const fontFamily = theme?.typography?.fontFamily?.bold || "System"
-  const fontSize = titleStyle === "large" ? 40 : theme?.fontSize?.["3"] || 24
   const spacing = theme?.space?.["40"] || 16
   const smallSpacing = theme?.space?.["20"] || 8
   const borderWidth = theme?.borderWidth?.["10"] || 1
   const borderColor = theme?.colors?.Border?.["Border-Primary"] || "#EEEEEE"
+
+  // Determine title variant based on titleStyle
+  const actualTitleVariant = titleVariant || (titleStyle === "large" ? "h3" : "h6")
 
   return (
     <View
@@ -87,25 +93,18 @@ const Header = ({
               <Flag text={flag.text} category={flag.category} style={styles.flag} variant="minimal" />
             </View>
           )}
-          <Text
-            style={[
-              styles.title,
-              {
-                color: txtColor,
-                fontFamily: fontFamily,
-                fontSize: fontSize,
-              },
-            ]}
-          >
+          <Typography variant={actualTitleVariant} color={txtColor} numberOfLines={1} style={styles.title}>
             {title}
-          </Text>
+          </Typography>
         </View>
 
         {rightButtons.length > 0 && (
           <View style={styles.rightButtonsContainer}>
             {rightButtons.map((button, index) => (
               <TouchableOpacity key={index} style={styles.rightButton} onPress={button.onPress}>
-                <Text style={[styles.rightButtonText, { color: txtColor }]}>{button.label}</Text>
+                <Typography variant={buttonVariant} color={txtColor} style={styles.rightButtonText}>
+                  {button.label}
+                </Typography>
               </TouchableOpacity>
             ))}
           </View>
@@ -154,4 +153,3 @@ const styles = StyleSheet.create({
 })
 
 export default Header
-

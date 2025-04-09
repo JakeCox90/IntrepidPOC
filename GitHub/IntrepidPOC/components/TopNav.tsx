@@ -1,9 +1,10 @@
 "use client"
-import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native"
+import { View, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import Typography from "../components/Typography"
 
 interface TopNavProps {
   title: string
@@ -11,6 +12,8 @@ interface TopNavProps {
   onBackPress?: () => void
   backgroundColor?: string
   textColor?: string
+  titleVariant?: "h3" | "subtitle-01" | "h5"
+  buttonVariant?: "button" | "subtitle-02"
   rightButtons?: Array<{
     label: string
     onPress: () => void
@@ -24,6 +27,8 @@ const TopNav = ({
   onBackPress,
   backgroundColor,
   textColor,
+  titleVariant,
+  buttonVariant = "button",
   rightButtons = [],
   variant = "default",
 }: TopNavProps) => {
@@ -42,9 +47,11 @@ const TopNav = ({
   // Safely get theme values with fallbacks
   const bgColor = backgroundColor || "#F5F5F5" // Default to gray for article header
   const txtColor = textColor || theme?.colors?.Text?.Primary || "#000000"
-  const fontFamily = theme?.typography?.fontFamily?.semiBold || "System"
   const spacing = theme?.space?.["40"] || 16
   const smallSpacing = theme?.space?.["20"] || 8
+
+  // Determine title variant based on the component variant
+  const actualTitleVariant = titleVariant || (variant === "explore" ? "h3" : "subtitle-01")
 
   if (variant === "explore") {
     return (
@@ -58,20 +65,9 @@ const TopNav = ({
           },
         ]}
       >
-        <Text
-          style={[
-            styles.exploreTitle,
-            {
-              color: txtColor,
-              fontSize: theme?.typography?.styles?.h3?.fontSize,
-              lineHeight: theme?.typography?.styles?.h3?.lineHeight,
-              fontFamily: theme?.typography?.styles?.h3?.fontFamily,
-              fontWeight: theme?.typography?.styles?.h3?.fontWeight,
-            },
-          ]}
-        >
+        <Typography variant={actualTitleVariant} color={txtColor} style={styles.exploreTitle}>
           {title}
-        </Text>
+        </Typography>
       </View>
     )
   }
@@ -97,27 +93,18 @@ const TopNav = ({
         )}
 
         <View style={styles.titleContainer}>
-          <Text
-            style={[
-              styles.title,
-              {
-                color: txtColor,
-                fontFamily: fontFamily,
-                fontSize: 16,
-                fontWeight: "600",
-              },
-            ]}
-            numberOfLines={1}
-          >
+          <Typography variant={actualTitleVariant} color={txtColor} numberOfLines={1} style={styles.title}>
             {title}
-          </Text>
+          </Typography>
         </View>
 
         {rightButtons.length > 0 && (
           <View style={styles.rightButtonsContainer}>
             {rightButtons.map((button, index) => (
               <TouchableOpacity key={index} style={styles.rightButton} onPress={button.onPress}>
-                <Text style={[styles.rightButtonText, { color: txtColor }]}>{button.label}</Text>
+                <Typography variant={buttonVariant} color={txtColor} style={styles.rightButtonText}>
+                  {button.label}
+                </Typography>
               </TouchableOpacity>
             ))}
           </View>

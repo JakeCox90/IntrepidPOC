@@ -15,9 +15,19 @@ interface FlagProps {
   textStyle?: TextStyle
   category?: string
   variant?: FlagVariant
+  typographyVariant?: "overline" | "annotation" | "caption"
 }
 
-const Flag = ({ text, color, backgroundColor, style, textStyle, category, variant = "filled" }: FlagProps) => {
+const Flag = ({
+  text,
+  color,
+  backgroundColor,
+  style,
+  textStyle,
+  category,
+  variant = "filled",
+  typographyVariant = "overline",
+}: FlagProps) => {
   const theme = useTheme()
   const styles = createFlagStyles(theme)
 
@@ -27,7 +37,7 @@ const Flag = ({ text, color, backgroundColor, style, textStyle, category, varian
 
   if (variant === "minimal") {
     return (
-      <Typography variant="overline" color={color || defaultBgColor} style={[textStyle]}>
+      <Typography variant={typographyVariant} color={color || defaultBgColor} style={[textStyle]}>
         {text.toUpperCase()}
       </Typography>
     )
@@ -35,7 +45,7 @@ const Flag = ({ text, color, backgroundColor, style, textStyle, category, varian
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor || defaultBgColor }, style]}>
-      <Typography variant="overline" color={color || defaultTextColor} style={textStyle}>
+      <Typography variant={typographyVariant} color={color || defaultTextColor} style={textStyle}>
         {text.toUpperCase()}
       </Typography>
     </View>
