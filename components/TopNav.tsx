@@ -97,16 +97,9 @@ const TopNav = ({
 
         <View style={styles.titleContainer}>
           <Typography
-            variant="body-01"
-            style={[
-              styles.title,
-              {
-                color: txtColor,
-                fontFamily: fontFamily,
-                fontSize: 16,
-                fontWeight: "600",
-              },
-            ]}
+            variant="subtitle-01"
+            color={txtColor}
+            style={[styles.title]}
             numberOfLines={1}
           >
             {title}
@@ -118,8 +111,8 @@ const TopNav = ({
             {rightButtons.map((button, index) => (
               <TouchableOpacity key={index} style={styles.rightButton} onPress={button.onPress}>
                 <Typography
-                  variant="body-01"
-                  style={[styles.rightButtonText, { color: txtColor }]}
+                  variant="subtitle-01"
+                  color={txtColor}
                 >
                   {button.label}
                 </Typography>
@@ -154,9 +147,6 @@ const styles = StyleSheet.create({
   },
   rightButton: {
     marginLeft: 16,
-  },
-  rightButtonText: {
-    fontWeight: "600",
   },
   // New styles for explore variant
   exploreContainer: {

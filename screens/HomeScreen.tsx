@@ -1,7 +1,8 @@
 "use client"
-import { View, StyleSheet, SafeAreaView, Text } from "react-native"
+import { View, StyleSheet, SafeAreaView } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import { StatusBar } from "expo-status-bar"
+import Typography from "../components/Typography"
 
 const HomeScreen = () => {
   const theme = useTheme()
@@ -12,15 +13,17 @@ const HomeScreen = () => {
 
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.colors.Primary.Resting }]}>
-        <Text style={styles.headerTitle}>Today</Text>
+        <Typography variant="h1" color={theme.colors.Text.Inverse}>Today</Typography>
       </View>
 
       {/* Placeholder content */}
       <View style={[styles.placeholderContainer, { backgroundColor: theme.colors.Surface.Primary }]}>
-        <Text style={[styles.placeholderText, { color: theme.colors.Text.Secondary }]}>Coming soon...</Text>
-        <Text style={[styles.placeholderSubtext, { color: theme.colors.Text.Secondary }]}>
+        <Typography variant="h3" color={theme.colors.Text.Secondary} style={styles.placeholderText}>
+          Coming soon...
+        </Typography>
+        <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.placeholderSubtext}>
           This feature is currently under development
-        </Text>
+        </Typography>
       </View>
     </SafeAreaView>
   )
@@ -36,11 +39,6 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 16,
   },
-  headerTitle: {
-    fontSize: 40,
-    fontWeight: "700",
-    color: "#FFFFFF",
-  },
   placeholderContainer: {
     flex: 1,
     justifyContent: "center",
@@ -48,13 +46,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   placeholderText: {
-    fontSize: 24,
-    fontWeight: "600",
     marginBottom: 12,
     textAlign: "center",
   },
   placeholderSubtext: {
-    fontSize: 16,
     textAlign: "center",
   },
 })

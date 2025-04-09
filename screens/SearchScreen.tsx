@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar, Text } from "react-native"
+import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Typography from "../components/Typography"
 import { useTheme } from "../theme/ThemeProvider"
@@ -9,13 +9,97 @@ import Header from "../components/Header"
 import CardHorizontal from "../components/CardHorizontal"
 import SkeletonLoader from "../components/SkeletonLoader"
 import { searchNews, type Article } from "../services/sunNewsService"
+import type { NativeStackScreenProps } from "@react-navigation/native-stack"
 
-const SearchScreen = ({ navigation }) => {
+type SearchStackParamList = {
+  SearchMain: undefined
+  SearchArticle: { article: Article }
+}
+
+type Props = NativeStackScreenProps<SearchStackParamList, "SearchMain">
+
+const SearchScreen = ({ navigation }: Props) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState<Article[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const theme = useTheme()
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#FFFFFF",
+    },
+    searchContainer: {
+      flexDirection: "row",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: "#EEEEEE",
+    },
+    searchInputContainer: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      marginRight: 8,
+      height: 44,
+    },
+    searchIcon: {
+      marginRight: 8,
+    },
+    searchInput: {
+      flex: 1,
+      height: 44,
+      fontSize: theme.typography.scale[theme.typography.variants["input-text"].scale],
+      fontFamily: theme.typography.fontFamily[theme.typography.variants["input-text"].weight],
+      lineHeight: theme.typography.lineHeight[theme.typography.variants["input-text"].scale],
+    },
+    searchButton: {
+      borderRadius: 8,
+      justifyContent: "center",
+      paddingHorizontal: 16,
+      height: 44,
+    },
+    searchResults: {
+      padding: 16,
+    },
+    trendingContainer: {
+      padding: 16,
+      flex: 1,
+    },
+    trendingTitle: {
+      marginBottom: 16,
+    },
+    trendingList: {
+      paddingBottom: 16,
+    },
+    trendingColumns: {
+      justifyContent: "space-between",
+      marginBottom: 12,
+    },
+    trendingItem: {
+      borderRadius: 8,
+      padding: 12,
+      width: "48%",
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    errorText: {
+      fontSize: 18,
+      fontWeight: "600",
+      marginBottom: 8,
+    },
+    errorSubtext: {
+      fontSize: 16,
+      textAlign: "center",
+    },
+  })
 
   const handleSearch = async () => {
     if (searchQuery.trim()) {
@@ -39,19 +123,19 @@ const SearchScreen = ({ navigation }) => {
     setError(null)
   }
 
-  const handleArticlePress = (article) => {
+  const handleArticlePress = (article: Article) => {
     navigation.navigate("SearchArticle", { article })
   }
 
-  const handleBookmark = (id) => {
+  const handleBookmark = (id: string) => {
     console.log("Bookmark article:", id)
   }
 
-  const handleShare = (id) => {
+  const handleShare = (id: string) => {
     console.log("Share article:", id)
   }
 
-  const renderTrendingItem = ({ item }) => (
+  const renderTrendingItem = ({ item }: { item: string }) => (
     <TouchableOpacity
       style={[styles.trendingItem, { backgroundColor: theme.colors.Surface.Secondary }]}
       onPress={() => {
@@ -107,8 +191,12 @@ const SearchScreen = ({ navigation }) => {
       ) : error ? (
         // Error state
         <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: theme.colors.Error.Resting }]}>{error}</Text>
-          <Text style={[styles.errorSubtext, { color: theme.colors.Text.Secondary }]}>Please try again.</Text>
+          <Typography variant="body-01" color={theme.colors.Error.Resting} style={styles.errorText}>
+            {error}
+          </Typography>
+          <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.errorSubtext}>
+            Please try again.
+          </Typography>
         </View>
       ) : searchResults.length > 0 ? (
         // Actual content
@@ -123,8 +211,8 @@ const SearchScreen = ({ navigation }) => {
               category={item.category}
               readTime={item.readTime}
               onPress={() => handleArticlePress(item)}
-              onBookmark={() => handleBookmark(item.id)}
-              onShare={() => handleShare(item.id)}
+              onBookmark={() => handleBookmark(item.id.toString())}
+              onShare={() => handleShare(item.id.toString())}
             />
           )}
           contentContainerStyle={styles.searchResults}
@@ -147,80 +235,6 @@ const SearchScreen = ({ navigation }) => {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
-  },
-  searchInputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginRight: 8,
-    height: 44,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: 44,
-    fontSize: 16,
-  },
-  searchButton: {
-    borderRadius: 8,
-    justifyContent: "center",
-    paddingHorizontal: 16,
-    height: 44,
-  },
-  searchResults: {
-    padding: 16,
-  },
-  trendingContainer: {
-    padding: 16,
-    flex: 1,
-  },
-  trendingTitle: {
-    marginBottom: 16,
-  },
-  trendingList: {
-    paddingBottom: 16,
-  },
-  trendingColumns: {
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  trendingItem: {
-    borderRadius: 8,
-    padding: 12,
-    width: "48%",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  errorSubtext: {
-    fontSize: 16,
-    textAlign: "center",
-  },
-})
 
 export default SearchScreen
 

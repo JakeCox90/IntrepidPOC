@@ -1,7 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { useFonts } from "expo-font"
-import { ActivityIndicator, View, Text, LogBox, Platform } from "react-native"
+import { ActivityIndicator, View, LogBox, Platform } from "react-native"
+import Typography from "./components/Typography"
 
 import TabNavigator from "./navigation/TabNavigator"
 import { ThemeProvider } from "./theme/ThemeProvider"
@@ -42,7 +43,7 @@ export default function App() {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#E03A3A" />
-        <Text style={{ marginTop: 10 }}>Loading fonts...</Text>
+        <Typography variant="body-01" style={{ marginTop: 10 }}>Loading fonts...</Typography>
       </View>
     )
   }

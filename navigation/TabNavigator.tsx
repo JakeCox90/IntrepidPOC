@@ -28,6 +28,7 @@ import type {
   NativeStackScreenProps 
 } from "@react-navigation/native-stack"
 import { ErrorBoundary } from "react-error-boundary"
+import Typography from "../components/Typography"
 
 import ForYouScreen from "../screens/ForYouScreen"
 import TodayScreen from "../screens/TodayScreen"
@@ -115,23 +116,24 @@ function NavigationErrorFallback({ error, resetErrorBoundary }: { error: Error, 
   
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-      <Text style={{ fontSize: 16, marginBottom: 20, textAlign: 'center' }}>
+      <Typography variant="body-01" style={{ marginBottom: 20, textAlign: 'center' }}>
         Something went wrong with navigation. Please try again.
-      </Text>
-      <Text style={{ color: errorTextColor, marginBottom: 20 }}>
+      </Typography>
+      <Typography variant="body-02" color={errorTextColor} style={{ marginBottom: 20 }}>
         {error?.message || "Unknown navigation error"}
-      </Text>
+      </Typography>
       <View style={{ 
         padding: 10, 
         backgroundColor: errorButtonBgColor, 
         borderRadius: 8 
       }}>
-        <Text 
-          style={{ color: errorButtonTextColor }}
+        <Typography 
+          variant="button"
+          color={errorButtonTextColor}
           onPress={resetErrorBoundary}
         >
           Try Again
-        </Text>
+        </Typography>
       </View>
     </View>
   );

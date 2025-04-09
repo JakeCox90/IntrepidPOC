@@ -1,10 +1,11 @@
 "use client"
-import { View, TouchableOpacity, StyleSheet, Text, ActivityIndicator } from "react-native"
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import { useTheme } from "../theme/ThemeProvider"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { ErrorBoundary } from "react-error-boundary"
 import { useState, useCallback } from "react"
+import Typography from "./Typography"
 
 // Define valid tab names as a type to ensure type safety
 type ValidTabName = "Today" | "ForYou" | "AllNews" | "Search" | "Saved";
@@ -44,16 +45,16 @@ const BottomNavErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProp
       backgroundColor: errorBgColor, 
       borderTopColor: errorBorderColor 
     }]}>
-      <Text style={[styles.errorText, { color: errorTextColor }]}>
+      <Typography variant="body-01" color={errorTextColor} style={styles.errorText}>
         Navigation error occurred
-      </Text>
+      </Typography>
       <TouchableOpacity 
         style={[styles.errorButton, { backgroundColor: errorButtonBgColor }]}
         onPress={resetErrorBoundary}
       >
-        <Text style={[styles.errorButtonText, { color: errorButtonTextColor }]}>
+        <Typography variant="button" color={errorButtonTextColor} style={styles.errorButtonText}>
           Try Again
-        </Text>
+        </Typography>
       </TouchableOpacity>
     </View>
   );
@@ -102,14 +103,14 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
   if (tabPressError) {
     return (
       <View style={[styles.container, { backgroundColor: surfaceColor, borderTopWidth: borderWidth, borderTopColor: borderColor }]}>
-        <Text style={{ color: errorColor, textAlign: 'center', padding: 10 }}>
+        <Typography variant="body-01" color={errorColor} style={{ textAlign: 'center', padding: 10 }}>
           Navigation error. Please try again.
-        </Text>
+        </Typography>
         <TouchableOpacity 
           style={{ padding: 5, backgroundColor: primaryColor, borderRadius: 4, margin: 5 }}
           onPress={() => setTabPressError(null)}
         >
-          <Text style={{ color: surfaceColor }}>Dismiss</Text>
+          <Typography variant="button" color={surfaceColor}>Dismiss</Typography>
         </TouchableOpacity>
       </View>
     );
@@ -177,19 +178,13 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
               size={24} 
               color={activeTab === tab.name ? primaryColor : secondaryColor} 
             />
-            <Text
-              style={[
-                styles.tabLabel,
-                {
-                  color: activeTab === tab.name ? primaryColor : secondaryColor,
-                  fontFamily: fontFamily,
-                  fontSize: fontSize,
-                },
-                tab.disabled && styles.disabledText
-              ]}
+            <Typography
+              variant="caption"
+              color={activeTab === tab.name ? primaryColor : secondaryColor}
+              style={[styles.tabLabel, { opacity: tab.disabled ? 0.7 : 1 }]}
             >
               {tab.label || tab.name}
-            </Text>
+            </Typography>
           </TouchableOpacity>
         ))}
       </View>
@@ -210,13 +205,13 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     marginTop: 4,
-  },
+  } as const,
   disabledTab: {
     opacity: 0.5,
   },
   disabledText: {
     opacity: 0.7,
-  },
+  } as const,
   errorContainer: {
     padding: 10,
     borderTopWidth: 1,
@@ -227,7 +222,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginBottom: 8,
-  },
+  } as const,
   errorButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -235,7 +230,7 @@ const styles = StyleSheet.create({
   },
   errorButtonText: {
     fontWeight: "bold",
-  },
+  } as const,
 })
 
 export default BottomNav

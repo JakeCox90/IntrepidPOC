@@ -155,6 +155,102 @@ const Comments = ({
     )
   }
 
+  const styles = StyleSheet.create({
+    commentsSection: {
+      padding: 16,
+    },
+    commentsSectionHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    commentsList: {
+      paddingBottom: 16,
+    },
+    commentItem: {
+      marginBottom: 16,
+      borderRadius: 8,
+      padding: 16,
+    },
+    commentHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: 8,
+    },
+    commentAuthorContainer: {
+      flexDirection: "row",
+      flex: 1,
+    },
+    avatarContainer: {
+      marginRight: 12,
+    },
+    avatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: theme.colors.Surface.Secondary,
+    },
+    nameTimeContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 4,
+    },
+    authorName: {
+      marginRight: 8,
+    },
+    commentTime: {},
+    commentText: {
+      marginBottom: 8,
+    },
+    commentFooter: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    replyButton: {
+      marginRight: 8,
+    },
+    replyText: {},
+    viewRepliesContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    bulletPoint: {
+      marginHorizontal: 8,
+    },
+    likeContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    likeButton: {
+      padding: 4,
+    },
+    likeCount: {
+      marginLeft: 4,
+    },
+    addCommentContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.Border["Border-Primary"],
+    },
+    commentInput: {
+      flex: 1,
+      minHeight: 40,
+      maxHeight: 120,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 8,
+      backgroundColor: theme.colors.Surface.Secondary,
+      fontSize: theme.typography.scale[theme.typography.variants["input-text"].scale],
+      fontFamily: theme.typography.fontFamily[theme.typography.variants["input-text"].weight],
+      lineHeight: theme.typography.lineHeight[theme.typography.variants["input-text"].scale],
+    },
+  })
+
   return (
     <View
       style={[styles.commentsSection, { backgroundColor: theme.isDark ? theme.colors.Surface.Secondary : "#F5F5F5" }]}
@@ -198,117 +294,10 @@ const Comments = ({
           onChangeText={setCommentText}
           multiline
         />
-        <TouchableOpacity
-          style={[styles.micButton, { backgroundColor: theme.colors.Primary.Resting }]}
-          disabled={commentText.trim().length > 0}
-        >
-          <Ionicons name="mic" size={24} color={theme.colors.Text.Inverse} />
-        </TouchableOpacity>
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  commentsSection: {
-    borderRadius: 8,
-  },
-  commentsSectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-    paddingTop: 16,
-  },
-  commentsList: {
-    gap: 8,
-  },
-  commentItem: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 8,
-  },
-  commentHeader: {
-    marginBottom: 8,
-  },
-  commentAuthorContainer: {
-    flexDirection: "row",
-  },
-  avatarContainer: {
-    marginRight: 12,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#CCCCCC",
-  },
-  nameTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  authorName: {
-    marginRight: 8,
-  },
-  commentTime: {
-    opacity: 0.7,
-  },
-  commentText: {
-    marginBottom: 12,
-  },
-  commentFooter: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  replyButton: {
-    marginRight: 8,
-  },
-  replyText: {
-    fontWeight: "500",
-  },
-  viewRepliesContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  bulletPoint: {
-    marginHorizontal: 4,
-  },
-  likeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "absolute",
-    right: 0,
-  },
-  likeButton: {
-    padding: 4,
-  },
-  likeCount: {
-    marginLeft: 4,
-    textAlign: "center",
-  },
-  addCommentContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 40,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  commentInput: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-  },
-  micButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-})
 
 export default Comments
 
