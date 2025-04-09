@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import Typography from "../components/Typography"
+import { BlurView } from "expo-blur"
 
 interface TopNavProps {
   showBackButton?: boolean
@@ -68,11 +69,11 @@ const TopNav = ({ showBackButton = false, onBackPress, rightButtons = [], varian
               styles.iconButton,
               {
                 marginRight: smallSpacing,
-                backgroundColor: "rgba(200, 200, 200, 0.3)", // Grey translucent background
               },
             ]}
             onPress={handleBackPress}
           >
+            <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />
             <Ionicons name="arrow-back" size={24} color={iconColor} />
           </TouchableOpacity>
         )}
@@ -88,11 +89,11 @@ const TopNav = ({ showBackButton = false, onBackPress, rightButtons = [], varian
                   styles.iconButton,
                   {
                     marginLeft: smallSpacing,
-                    backgroundColor: "rgba(200, 200, 200, 0.3)", // Grey translucent background
                   },
                 ]}
                 onPress={button.onPress}
               >
+                <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />
                 {button.icon ? (
                   <Ionicons name={button.icon} size={24} color={iconColor} />
                 ) : (
@@ -112,6 +113,7 @@ const TopNav = ({ showBackButton = false, onBackPress, rightButtons = [], varian
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    backgroundColor: "transparent",
   },
   content: {
     flexDirection: "row",
@@ -125,6 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden", // Important for the BlurView to stay within the rounded borders
   },
   spacer: {
     flex: 1,
@@ -136,6 +139,7 @@ const styles = StyleSheet.create({
   exploreContainer: {
     width: "100%",
     paddingBottom: 16,
+    backgroundColor: "transparent",
   },
 })
 
