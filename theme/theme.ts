@@ -1,3 +1,5 @@
+import { typographyScale, typographyLineHeight, typographyVariants, type TypographyVariant } from "../design-system/typography"
+
 // Design system tokens based on your foundations
 export const lightTheme = {
   colors: {
@@ -19,15 +21,9 @@ export const lightTheme = {
       semiBold: "Inter-SemiBold",
       bold: "Inter-Bold",
     },
-    fontSize: {
-      xs: 12,
-      sm: 14,
-      md: 16,
-      lg: 18,
-      xl: 20,
-      xxl: 24,
-      xxxl: 32,
-    },
+    scale: typographyScale,
+    lineHeight: typographyLineHeight,
+    variants: typographyVariants,
   },
   spacing: {
     xs: 4,
@@ -70,15 +66,9 @@ export const darkTheme = {
       semiBold: "Inter-SemiBold",
       bold: "Inter-Bold",
     },
-    fontSize: {
-      xs: 12,
-      sm: 14,
-      md: 16,
-      lg: 18,
-      xl: 20,
-      xxl: 24,
-      xxxl: 32,
-    },
+    scale: typographyScale,
+    lineHeight: typographyLineHeight,
+    variants: typographyVariants,
   },
   spacing: {
     xs: 4,

@@ -1,8 +1,15 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useColorScheme } from "react-native"
-import { colors, space, radius, typography, shadows, zIndex, borderWidth, opacity } from "../design-system/Foundations"
+import { colors } from "../design-system/Foundations/colors"
+import { space } from "../design-system/Foundations/space"
+import { radius } from "../design-system/Foundations/radius"
+import { shadows } from "../design-system/Foundations/shadows"
+import { zIndex } from "../design-system/Foundations/zIndex"
+import { borderWidth } from "../design-system/Foundations/borderWidth"
+import { opacity } from "../design-system/Foundations/opacity"
+import { typographyScale, typographyLineHeight, typographyVariants } from "../design-system/typography"
 
 // Define the theme type
 export type ThemeType = {
@@ -37,6 +44,9 @@ export type ThemeType = {
       Resting: string
       Pressed: string
       Disabled: string
+      Background: string
+      Border: string
+      Text: string
     }
     Warning: {
       Resting: string
@@ -56,10 +66,82 @@ export type ThemeType = {
       Error: string
     }
     Section: {
-      Breaking: string
+      News: string
+      Sport: string
+      TV: string
+      Showbiz: string
+      Fabulous: string
+      Money: string
+      Travel: string
+      Tech: string
+      Motors: string
+      Health: string
+      "UK News": string
+      "World News": string
+      "Irish News": string
+      "Scottish News": string
+      Politics: string
+      "Royal Family": string
+      "US News": string
+      Opinion: string
+      Football: string
+      Boxing: string
+      Racing: string
+      UFC: string
+      F1: string
+      Cricket: string
+      Rugby: string
+      Golf: string
+      Tennis: string
+      NFL: string
+      "Dream Team": string
+      Soaps: string
+      "Reality TV": string
+      "TV News": string
+      Celebrity: string
+      Music: string
+      Film: string
+      Fashion: string
+      Beauty: string
+      Food: string
+      Parenting: string
+      Property: string
+      Bills: string
+      Banking: string
+      Pensions: string
+      "Beach Holidays": string
+      "UK Holidays": string
+      "City Breaks": string
+      Cruises: string
+      Phones: string
+      Gaming: string
+      Science: string
+      "New Cars": string
+      "Used Cars": string
+      Fitness: string
+      Diet: string
+      "Health News": string
+      Puzzles: string
+      "Dear Deidre": string
+      "Sun Bingo": string
+      "Sun Vegas": string
+      "Sun Savers": string
+      "Sun Casino": string
+      "Sun Win": string
+      "Sun Selects": string
     }
   }
-  typography: typeof typography
+  typography: {
+    fontFamily: {
+      regular: string
+      medium: string
+      semiBold: string
+      bold: string
+    }
+    scale: typeof typographyScale
+    lineHeight: typeof typographyLineHeight
+    variants: typeof typographyVariants
+  }
   space: typeof space
   radius: typeof radius
   borderWidth: typeof borderWidth
@@ -71,10 +153,21 @@ export type ThemeType = {
 }
 
 // Ensure all required properties exist in the theme objects
-const ensureThemeProperties = (theme) => {
-  // Make sure typography and fontFamily exist
-  if (!theme.typography) theme.typography = typography
-  if (!theme.typography.fontFamily) theme.typography.fontFamily = typography.fontFamily
+const ensureThemeProperties = (theme: Partial<ThemeType>): ThemeType => {
+  // Make sure typography exists with all required properties
+  if (!theme.typography) {
+    theme.typography = {
+      fontFamily: {
+        regular: "Inter-Regular",
+        medium: "Inter-Medium",
+        semiBold: "Inter-SemiBold",
+        bold: "Inter-Bold",
+      },
+      scale: typographyScale,
+      lineHeight: typographyLineHeight,
+      variants: typographyVariants,
+    }
+  }
 
   // Make sure other properties exist
   if (!theme.space) theme.space = space
@@ -84,13 +177,23 @@ const ensureThemeProperties = (theme) => {
   if (!theme.shadows) theme.shadows = shadows
   if (!theme.zIndex) theme.zIndex = zIndex
 
-  return theme
+  return theme as ThemeType
 }
 
 // Create light theme
 const lightTheme: ThemeType = ensureThemeProperties({
   colors: colors,
-  typography,
+  typography: {
+    fontFamily: {
+      regular: "Inter-Regular",
+      medium: "Inter-Medium",
+      semiBold: "Inter-SemiBold",
+      bold: "Inter-Bold",
+    },
+    scale: typographyScale,
+    lineHeight: typographyLineHeight,
+    variants: typographyVariants,
+  },
   space,
   radius,
   borderWidth,
@@ -127,7 +230,17 @@ const darkTheme: ThemeType = ensureThemeProperties({
       Error: colors.Border.Error,
     },
   },
-  typography,
+  typography: {
+    fontFamily: {
+      regular: "Inter-Regular",
+      medium: "Inter-Medium",
+      semiBold: "Inter-SemiBold",
+      bold: "Inter-Bold",
+    },
+    scale: typographyScale,
+    lineHeight: typographyLineHeight,
+    variants: typographyVariants,
+  },
   space,
   radius,
   borderWidth,
@@ -144,8 +257,12 @@ const ThemeContext = createContext<ThemeType>(lightTheme)
 // Hook to use the theme
 export const useTheme = () => useContext(ThemeContext)
 
+interface ThemeProviderProps {
+  children: ReactNode
+}
+
 // Theme provider component
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const colorScheme = useColorScheme()
   const [isDark, setIsDark] = useState(colorScheme === "dark")
 

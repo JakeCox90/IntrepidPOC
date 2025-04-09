@@ -1,9 +1,10 @@
 "use client"
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import Flag from "./Flag"
+import Typography from "./Typography"
 
 interface HeaderButton {
   label: string
@@ -51,15 +52,12 @@ const Header = ({
     }
   }
 
-  // Safely get theme values with fallbacks
-  const bgColor = backgroundColor || theme?.colors?.Surface?.Primary || "#FFFFFF"
-  const txtColor = textColor || theme?.colors?.Text?.Primary || "#000000"
-  const fontFamily = theme?.typography?.fontFamily?.bold || "System"
-  const fontSize = titleStyle === "large" ? 40 : theme?.fontSize?.["3"] || 24
-  const spacing = theme?.space?.["40"] || 16
-  const smallSpacing = theme?.space?.["20"] || 8
-  const borderWidth = theme?.borderWidth?.["10"] || 1
-  const borderColor = theme?.colors?.Border?.["Border-Primary"] || "#EEEEEE"
+  const bgColor = backgroundColor || theme.colors.Surface.Primary
+  const txtColor = textColor || theme.colors.Text.Primary
+  const spacing = theme.space["40"]
+  const smallSpacing = theme.space["20"]
+  const borderWidth = theme.borderWidth["10"]
+  const borderColor = theme.colors.Border["Border-Primary"]
 
   return (
     <View
@@ -87,25 +85,21 @@ const Header = ({
               <Flag text={flag.text} category={flag.category} style={styles.flag} variant="minimal" />
             </View>
           )}
-          <Text
-            style={[
-              styles.title,
-              {
-                color: txtColor,
-                fontFamily: fontFamily,
-                fontSize: fontSize,
-              },
-            ]}
+          <Typography
+            variant={titleStyle === "large" ? "h1" : "h2"}
+            color={txtColor}
           >
             {title}
-          </Text>
+          </Typography>
         </View>
 
         {rightButtons.length > 0 && (
           <View style={styles.rightButtonsContainer}>
             {rightButtons.map((button, index) => (
               <TouchableOpacity key={index} style={styles.rightButton} onPress={button.onPress}>
-                <Text style={[styles.rightButtonText, { color: txtColor }]}>{button.label}</Text>
+                <Typography variant="button" color={txtColor}>
+                  {button.label}
+                </Typography>
               </TouchableOpacity>
             ))}
           </View>
@@ -137,15 +131,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   flag: {},
-  title: {},
   rightButtonsContainer: {
     flexDirection: "row",
   },
   rightButton: {
     marginLeft: 16,
-  },
-  rightButtonText: {
-    fontWeight: "600",
   },
   profileButton: {
     marginLeft: 16,

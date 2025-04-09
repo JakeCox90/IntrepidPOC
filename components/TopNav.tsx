@@ -1,9 +1,10 @@
 "use client"
-import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native"
+import { View, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native"
 import { useTheme } from "../theme/ThemeProvider"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import Typography from "./Typography"
 
 interface TopNavProps {
   title: string
@@ -40,11 +41,12 @@ const TopNav = ({
   }
 
   // Safely get theme values with fallbacks
-  const bgColor = backgroundColor || "#F5F5F5" // Default to gray for article header
-  const txtColor = textColor || theme?.colors?.Text?.Primary || "#000000"
+  const bgColor = backgroundColor || theme?.colors?.Surface?.Primary || "#FFFFFF"
+  const txtColor = textColor || theme?.colors?.Text?.Primary || "#1D1D1B"
   const fontFamily = theme?.typography?.fontFamily?.semiBold || "System"
   const spacing = theme?.space?.["40"] || 16
   const smallSpacing = theme?.space?.["20"] || 8
+  const borderColor = theme?.colors?.Border?.["Border-Primary"] || "#E5E5E5"
 
   if (variant === "explore") {
     return (
@@ -58,20 +60,17 @@ const TopNav = ({
           },
         ]}
       >
-        <Text
+        <Typography
+          variant="h3"
           style={[
             styles.exploreTitle,
             {
               color: txtColor,
-              fontSize: theme?.typography?.styles?.h3?.fontSize,
-              lineHeight: theme?.typography?.styles?.h3?.lineHeight,
-              fontFamily: theme?.typography?.styles?.h3?.fontFamily,
-              fontWeight: theme?.typography?.styles?.h3?.fontWeight,
             },
           ]}
         >
           {title}
-        </Text>
+        </Typography>
       </View>
     )
   }
@@ -85,7 +84,7 @@ const TopNav = ({
           paddingTop: insets.top || (Platform.OS === "ios" ? 44 : StatusBar.currentHeight || 0),
           paddingHorizontal: spacing,
           borderBottomWidth: 1,
-          borderBottomColor: "#EEEEEE",
+          borderBottomColor: borderColor,
         },
       ]}
     >
@@ -97,7 +96,8 @@ const TopNav = ({
         )}
 
         <View style={styles.titleContainer}>
-          <Text
+          <Typography
+            variant="body-01"
             style={[
               styles.title,
               {
@@ -110,14 +110,19 @@ const TopNav = ({
             numberOfLines={1}
           >
             {title}
-          </Text>
+          </Typography>
         </View>
 
         {rightButtons.length > 0 && (
           <View style={styles.rightButtonsContainer}>
             {rightButtons.map((button, index) => (
               <TouchableOpacity key={index} style={styles.rightButton} onPress={button.onPress}>
-                <Text style={[styles.rightButtonText, { color: txtColor }]}>{button.label}</Text>
+                <Typography
+                  variant="body-01"
+                  style={[styles.rightButtonText, { color: txtColor }]}
+                >
+                  {button.label}
+                </Typography>
               </TouchableOpacity>
             ))}
           </View>

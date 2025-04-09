@@ -33,6 +33,10 @@ export const colors = {
     Resting: palette.red[30],
     Pressed: palette.red[80],
     Disabled: palette.grey[20],
+    // Error state tokens for consistent error styling
+    Background: palette.red[10],
+    Border: palette.red[40],
+    Text: palette.red[70],
   },
   Warning: {
     Resting: palette.amber[60],
