@@ -11,13 +11,29 @@ interface AccordionProps {
   title: string
   children: React.ReactNode
   initialExpanded?: boolean
+  titleVariant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle-01" | "subtitle-02" | "body-01" | "body-02"
+  contentVariant?: "body-01" | "body-02" | "subtitle-01" | "subtitle-02"
+  titleColor?: string
+  contentColor?: string
 }
 
-export default function Accordion({ title, children, initialExpanded = false }: AccordionProps) {
+export default function Accordion({
+  title,
+  children,
+  initialExpanded = false,
+  titleVariant = "h6",
+  contentVariant = "body-02",
+  titleColor,
+  contentColor,
+}: AccordionProps) {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(initialExpanded)
   const animatedHeight = useRef(new Animated.Value(initialExpanded ? 1 : 0)).current
   const contentHeight = useRef(0)
+
+  // Default colors if not provided
+  const defaultTitleColor = titleColor || theme.colors.Text.Primary
+  const defaultContentColor = contentColor || theme.colors.Text.Secondary
 
   useEffect(() => {
     Animated.timing(animatedHeight, {
@@ -41,6 +57,22 @@ export default function Accordion({ title, children, initialExpanded = false }: 
     inputRange: [0, 1],
     outputRange: [0, contentHeight.current],
   })
+
+  // Helper function to render children with proper Typography
+  const renderContent = () => {
+    // If children is a string, wrap it in Typography
+    if (typeof children === "string") {
+      return (
+        <Typography variant={contentVariant} color={defaultContentColor}>
+          {children}
+        </Typography>
+      )
+    }
+
+    // If children is already a React element, return as is
+    // This allows for complex content while still using Typography
+    return children
+  }
 
   return (
     <View
@@ -67,10 +99,10 @@ export default function Accordion({ title, children, initialExpanded = false }: 
           },
         ]}
       >
-        <Typography variant="h6" color={theme.colors.Text.Primary}>
+        <Typography variant={titleVariant} color={defaultTitleColor}>
           {title}
         </Typography>
-        <Ionicons name={expanded ? "remove" : "add"} size={24} color={theme.colors.Text.Primary} />
+        <Ionicons name={expanded ? "remove" : "add"} size={24} color={defaultTitleColor} />
       </TouchableOpacity>
 
       <Animated.View
@@ -84,7 +116,7 @@ export default function Accordion({ title, children, initialExpanded = false }: 
         ]}
       >
         <View style={styles.content} onLayout={onContentLayout}>
-          {children}
+          {renderContent()}
         </View>
       </Animated.View>
     </View>

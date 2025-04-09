@@ -56,11 +56,6 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
         }
 
         fetchArticle()
-      } else {
-        // If we already have a full article, use it directly
-        setArticle(routeArticle)
-        setLoading(false)
-        setError(null)
       }
 
       return () => {
@@ -204,16 +199,22 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
 
           {/* Accordion Component */}
           <View style={styles.accordionContainer}>
-            <Accordion title="Key Points" initialExpanded={true}>
+            <Accordion
+              title="Key Points"
+              initialExpanded={true}
+              titleVariant="h6"
+              contentVariant="body-02"
+              contentColor={theme.colors.Text.Secondary}
+            >
               <View style={styles.keyPointsContainer}>
-                <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
+                <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
                   • {article.title.split(" ").slice(0, 5).join(" ")}...
                 </Typography>
-                <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
+                <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
                   • {contentParagraphs[0].split(".")[0]}.
                 </Typography>
                 {contentParagraphs.length > 1 && (
-                  <Typography variant="body-01" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
+                  <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
                     • {contentParagraphs[1].split(".")[0]}.
                   </Typography>
                 )}
@@ -224,7 +225,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
           {/* Article content */}
           <View style={styles.articleContent}>
             {remainingParagraphs.map((paragraph, index) => (
-              <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
+              <Typography key={index} variant="body-02" color={theme.colors.Text.Secondary} style={styles.paragraph}>
                 {paragraph}
               </Typography>
             ))}
