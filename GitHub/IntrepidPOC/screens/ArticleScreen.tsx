@@ -66,7 +66,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding
 
   // Calculate the height of the TopNav with additional padding
   const topNavHeight = Platform.OS === "ios" ? 88 : 44 + (StatusBar.currentHeight || 0)
-  const contentPaddingTop = removeTopPadding ? 0 : 16 // Use a fixed value instead of calculating based on topNavHeight
+  const contentPaddingTop = removeTopPadding ? 0 : topNavHeight // Use topNavHeight instead of fixed value
 
   // Mock comments data with replies
   const comments = [
@@ -142,7 +142,12 @@ const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding
 
       {loading ? (
         // Skeleton loading state using SkeletonLoader
-        <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingTop: contentPaddingTop }}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={{
+            paddingTop: topNavHeight, // Use topNavHeight instead of contentPaddingTop
+          }}
+        >
           <SkeletonLoader type="article" />
         </ScrollView>
       ) : error || !article ? (
@@ -166,8 +171,10 @@ const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding
           style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
           contentContainerStyle={[
             styles.scrollViewContent,
-            { paddingHorizontal: theme.space["40"] },
-            // Remove paddingTop here
+            {
+              paddingHorizontal: theme.space["40"],
+              paddingTop: contentPaddingTop, // Add paddingTop here
+            },
           ]}
           scrollEventThrottle={16}
           onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
@@ -198,7 +205,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding
 
           {/* Accordion Component */}
           <View style={styles.accordionContainer}>
-            <Accordion title="Key Points" initialExpanded={true} titleVariant="h6" contentVariant="body-02">
+            <Accordion title="Summary" initialExpanded={true} titleVariant="h6" contentVariant="body-02">
               <View style={styles.keyPointsContainer}>
                 <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.keyPoint}>
                   • {article.title.split(" ").slice(0, 5).join(" ")}...
@@ -217,7 +224,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding
 
           <View style={styles.articleContent}>
             {remainingParagraphs.map((paragraph, index) => (
-              <Typography key={index} variant="body-02" color={theme.colors.Text.Secondary} style={styles.paragraph}>
+              <Typography key={index} variant="body-01" color={theme.colors.Text.Secondary} style={styles.paragraph}>
                 {paragraph}
               </Typography>
             ))}
@@ -240,7 +247,12 @@ const ArticleScreen = ({ route, navigation, hideHeader = false, removeTopPadding
       {/* TopNav rendered last to ensure it's on top */}
       {!hideHeader && (
         <View style={styles.topNavContainer}>
-          <TopNav showBackButton onBackPress={() => navigation.goBack()} backgroundColor="transparent" />
+          <TopNav
+            showBackButton
+            onBackPress={() => navigation.goBack()}
+            backgroundColor="transparent"
+            textColor={theme.colors.Text.Primary}
+          />
         </View>
       )}
     </View>
@@ -266,7 +278,6 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingHorizontal: 16, // Keep horizontal padding
     paddingBottom: 16,
-    // Remove paddingTop since it's now in the ArticleHeader component
   },
   errorContainer: {
     flex: 1,

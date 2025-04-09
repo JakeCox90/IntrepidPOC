@@ -7,6 +7,8 @@ import Typography from "../components/Typography"
 import Stepper from "../components/Stepper"
 import ArticleScreen from "./ArticleScreen"
 import TopNav from "../components/TopNav"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { setStatusBarBackgroundColor } from "expo-status-bar"
 
 const { width } = Dimensions.get("window")
 
@@ -20,6 +22,10 @@ const ArticleStackScreen = ({ route, navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const flatListRef = useRef(null)
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
+
+  // Calculate the height of the TopNav
+  const topNavHeight = insets.top + 48 // Safe area top + content height
 
   // Scroll to the initial article when the component mounts
   useEffect(() => {
@@ -102,11 +108,18 @@ const ArticleStackScreen = ({ route, navigation }) => {
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-        {/* Use TopNav component */}
-        <TopNav title={title} showBackButton onBackPress={handleBackPress} />
+        {/* TopNav */}
+        <View style={[styles.topNavContainer, { backgroundColor: "transparent" }]}>
+          <TopNav
+            showBackButton
+            onBackPress={handleBackPress}
+            backgroundColor="transparent"
+            textColor={theme.colors.Text.Primary}
+          />
+        </View>
 
         {/* Error message */}
-        <View style={styles.errorContainer}>
+        <View style={[styles.errorContainer, { marginTop: topNavHeight }]}>
           <Typography variant="subtitle-01" color={theme.colors.Error.Resting}>
             No articles available
           </Typography>
@@ -127,38 +140,42 @@ const ArticleStackScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-      {/* Use TopNav component */}
-      <TopNav
-        title={title}
-        showBackButton
-        onBackPress={handleBackPress}
-        backgroundColor="transparent"
-        textColor={theme.colors.Text.Primary}
-      />
-
-      {/* Stepper component */}
-      <Stepper totalSteps={articles.length} currentStep={currentIndex} />
+      {/* Fixed position stepper below TopNav */}
+      <View style={[styles.stepperContainer, { top: topNavHeight }]}>
+        <Stepper totalSteps={articles.length} currentStep={currentIndex} />
+      </View>
 
       {/* Article content */}
-      <FlatList
-        ref={flatListRef}
-        data={articles}
-        renderItem={renderArticle}
-        keyExtractor={(item, index) => (item.id ? item.id.toString() : `article-${index}`)}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={handleScroll}
-        initialNumToRender={articles.length}
-        maxToRenderPerBatch={3}
-        windowSize={5}
-        contentContainerStyle={styles.flatListContent}
-        getItemLayout={(data, index) => ({
-          length: width,
-          offset: width * index,
-          index,
-        })}
-      />
+      <View style={[styles.articlesContainer, { marginTop: topNavHeight + 24 }]}>
+        <FlatList
+          ref={flatListRef}
+          data={articles}
+          renderItem={renderArticle}
+          keyExtractor={(item, index) => (item.id ? item.id.toString() : `article-${index}`)}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScroll}
+          initialNumToRender={articles.length}
+          maxToRenderPerBatch={3}
+          windowSize={5}
+          contentContainerStyle={styles.flatListContent}
+          getItemLayout={(data, index) => ({
+            length: width,
+            offset: width * index,
+            index,
+          })}
+        />
+      </View>
+
+      {/* TopNav on top */}
+      <View style={[styles.topNavContainer, { backgroundColor: "transparent" }]}>
+        <TopNav
+          showBackButton
+          onBackPress={handleBackPress}
+          textColor={theme.colors.Text.Primary}
+        />
+      </View>
     </View>
   )
 }
@@ -166,10 +183,25 @@ const ArticleStackScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "transparent",
+  },
+  topNavContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: "transparent",
   },
   stepperContainer: {
-    // Remove all padding since it's now in the Stepper component
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 5,
+    backgroundColor: "transparent",
+  },
+  articlesContainer: {
+    flex: 1,
   },
   articleContainer: {
     width,
@@ -188,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   flatListContent: {
-    paddingTop: 0, // Ensure no extra padding at the top
+    paddingTop: 0,
   },
 })
 

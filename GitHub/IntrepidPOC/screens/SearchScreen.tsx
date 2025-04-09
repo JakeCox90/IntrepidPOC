@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar, Text } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import Typography from "../components/Typography"
@@ -20,7 +20,7 @@ const SearchScreen = ({ navigation }) => {
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const theme = useTheme()
-  const initialSearchComplete = useRef({})
+  const [searchesPerformed, setSearchesPerformed] = useState({})
 
   const handleSearch = async () => {
     if (searchQuery.trim()) {
@@ -37,7 +37,7 @@ const SearchScreen = ({ navigation }) => {
       }
 
       // Only show loading state if this is the first search for this query
-      if (!initialSearchComplete.current[cacheKey]) {
+      if (!searchesPerformed[cacheKey]) {
         setIsSearching(true)
       }
 
@@ -46,7 +46,7 @@ const SearchScreen = ({ navigation }) => {
       try {
         const results = await searchNews(searchQuery)
         setSearchResults(results)
-        initialSearchComplete.current[cacheKey] = true
+        setSearchesPerformed((prev) => ({ ...prev, [cacheKey]: true }))
 
         // Cache the search results
         cacheService.setData(cacheKey, results)
