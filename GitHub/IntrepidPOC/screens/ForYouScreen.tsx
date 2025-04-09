@@ -1,6 +1,6 @@
 "use client"
-import React, { useState, useCallback, useEffect } from "react"
-import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
+import React, { useState, useCallback, useEffect, useRef } from "react"
+import { View, StyleSheet, ScrollView, StatusBar, Platform, Animated } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import CardHero from "../components/CardHero"
@@ -48,6 +48,7 @@ const ForYouScreen = ({ navigation }) => {
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const scrollY = useRef(new Animated.Value(0)).current
 
   // Load data on initial mount
   useEffect(() => {
@@ -149,6 +150,10 @@ const ForYouScreen = ({ navigation }) => {
     // In a real app, this would toggle notifications for the bundle
   }
 
+  // Calculate the height of the TopNav with additional padding
+  const topNavHeight = Platform.OS === "ios" ? 88 : 44 + (StatusBar.currentHeight || 0)
+  const contentPaddingTop = topNavHeight + 24 // Add extra padding to prevent overlap
+
   // Get top stories for the horizontal rail (8 stories)
   const topStories = React.useMemo(() => news.slice(0, 8), [news])
 
@@ -161,28 +166,14 @@ const ForYouScreen = ({ navigation }) => {
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
-      {/* Header - updated to use the explore variant */}
-      <TopNav
-        title="For you"
-        backgroundColor={theme.colors.Surface.Secondary}
-        textColor={theme.colors.Text.Primary}
-        variant="explore"
-        rightButtons={[
-          {
-            label: "Profile",
-            onPress: handleProfilePress,
-          },
-        ]}
-      />
-
       {loading ? (
         // Show loading state
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingTop: contentPaddingTop }}>
           <SkeletonLoader type="forYou" count={3} />
         </ScrollView>
       ) : error ? (
         // Error state
-        <View style={[styles.container, styles.centerContainer]}>
+        <View style={[styles.container, styles.centerContainer, { paddingTop: contentPaddingTop }]}>
           <Typography variant="subtitle-01" color={theme.colors.Error.Resting} style={{ marginBottom: 16 }}>
             {error}
           </Typography>
@@ -192,9 +183,11 @@ const ForYouScreen = ({ navigation }) => {
         </View>
       ) : (
         // Actual content
-        <ScrollView
+        <Animated.ScrollView
           style={styles.scrollView}
-          contentContainerStyle={{ backgroundColor: theme.colors.Surface.Secondary }}
+          contentContainerStyle={{ backgroundColor: theme.colors.Surface.Secondary, paddingTop: contentPaddingTop }}
+          scrollEventThrottle={16}
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
         >
           {/* Top Stories Section (renamed from Featured For You) */}
           <View style={styles.section}>
@@ -299,8 +292,23 @@ const ForYouScreen = ({ navigation }) => {
 
           {/* Bottom padding */}
           <View style={styles.bottomPadding} />
-        </ScrollView>
+        </Animated.ScrollView>
       )}
+
+      {/* TopNav rendered last to ensure it's on top */}
+      <View style={styles.topNavContainer}>
+        <TopNav
+          showBackButton={false}
+          rightButtons={[
+            {
+              label: "Profile",
+              icon: "person-circle-outline",
+              onPress: handleProfilePress,
+            },
+          ]}
+          variant="explore"
+        />
+      </View>
     </View>
   )
 }
@@ -309,6 +317,14 @@ const ForYouScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  topNavContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: "transparent",
   },
   centerContainer: {
     justifyContent: "center",

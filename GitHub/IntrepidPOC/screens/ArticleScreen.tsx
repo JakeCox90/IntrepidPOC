@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from "react-native"
+import { useState, useCallback, useRef } from "react"
+import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar, Platform, Animated } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { useTheme } from "../theme/ThemeProvider"
 import Typography from "../components/Typography"
@@ -18,7 +18,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
   const [article, setArticle] = useState(routeArticle || null)
   const [loading, setLoading] = useState(!routeArticle || !routeArticle.content)
   const [error, setError] = useState(null)
-
+  const scrollY = useRef(new Animated.Value(0)).current
   const theme = useTheme()
 
   useFocusEffect(
@@ -63,6 +63,10 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
       }
     }, [routeArticle]),
   )
+
+  // Calculate the height of the TopNav with additional padding
+  const topNavHeight = Platform.OS === "ios" ? 88 : 44 + (StatusBar.currentHeight || 0)
+  const contentPaddingTop = topNavHeight + 24 // Add extra padding to prevent overlap
 
   // Mock comments data with replies
   const comments = [
@@ -134,27 +138,16 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
 
   return (
     <View style={styles.container}>
-      {!hideHeader && (
-        <>
-          <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-          {/* Top Navigation */}
-          <TopNav
-            title={article?.category || "Article"}
-            showBackButton
-            onBackPress={() => navigation.goBack()}
-            backgroundColor="#F5F5F5"
-          />
-        </>
-      )}
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
       {loading ? (
         // Skeleton loading state using SkeletonLoader
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingTop: contentPaddingTop }}>
           <SkeletonLoader type="article" />
         </ScrollView>
       ) : error || !article ? (
         // Error state
-        <View style={styles.errorContainer}>
+        <View style={[styles.errorContainer, { paddingTop: contentPaddingTop }]}>
           <Typography variant="h5" color={theme.colors.Text.Primary}>
             {error || "Article not found"}
           </Typography>
@@ -169,9 +162,14 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
         </View>
       ) : (
         // Actual content
-        <ScrollView
+        <Animated.ScrollView
           style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
-          contentContainerStyle={[styles.scrollViewContent, { paddingHorizontal: theme.space["40"] }]}
+          contentContainerStyle={[
+            styles.scrollViewContent,
+            { paddingHorizontal: theme.space["40"], paddingTop: contentPaddingTop },
+          ]}
+          scrollEventThrottle={16}
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
         >
           {/* Article Header Component */}
           <ArticleHeader
@@ -185,7 +183,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
             imageUrl={article.imageUrl}
           />
 
-          {/* Audio Player Component */}
+          {/* Rest of the content remains the same */}
           <View style={styles.audioPlayerContainer}>
             <AudioPlayer
               title={article.title}
@@ -216,7 +214,6 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
             </Accordion>
           </View>
 
-          {/* Article content */}
           <View style={styles.articleContent}>
             {remainingParagraphs.map((paragraph, index) => (
               <Typography key={index} variant="body-02" color={theme.colors.Text.Secondary} style={styles.paragraph}>
@@ -225,7 +222,6 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
             ))}
           </View>
 
-          {/* Comments Section using Comments component */}
           <Comments
             comments={comments}
             totalComments={8}
@@ -236,9 +232,15 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
             onViewReplies={handleViewReplies}
           />
 
-          {/* Bottom spacing */}
           <View style={styles.bottomSpacing} />
-        </ScrollView>
+        </Animated.ScrollView>
+      )}
+
+      {/* TopNav rendered last to ensure it's on top */}
+      {!hideHeader && (
+        <View style={styles.topNavContainer}>
+          <TopNav showBackButton onBackPress={() => navigation.goBack()} />
+        </View>
       )}
     </View>
   )
@@ -249,11 +251,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
+  topNavContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: "transparent",
+  },
   scrollView: {
     flex: 1,
   },
   scrollViewContent: {
-    paddingTop: 16,
     paddingBottom: 16,
   },
   errorContainer: {
