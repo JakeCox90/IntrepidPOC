@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import { useRef } from "react"
-import { Animated, Easing } from "react-native"
+import { useRef } from 'react';
+import { Animated, Easing } from 'react-native';
 
 interface ContentTransitionOptions {
-  fadeOutDuration?: number
-  fadeInDuration?: number
-  fadeInDelay?: number
-  translateY?: number
-  useNativeDriver?: boolean
+  fadeOutDuration?: number;
+  fadeInDuration?: number;
+  fadeInDelay?: number;
+  translateY?: number;
+  useNativeDriver?: boolean;
 }
 
 /**
@@ -23,16 +23,16 @@ export const useContentTransition = (options: ContentTransitionOptions = {}) => 
     fadeInDelay = 50,
     translateY = 10,
     useNativeDriver = true,
-  } = options
+  } = options;
 
-  const contentAnimation = useRef(new Animated.Value(1)).current
-  const isAnimating = useRef(false)
+  const contentAnimation = useRef(new Animated.Value(1)).current;
+  const isAnimating = useRef(false);
 
   const animateTransition = (onFadeOutComplete?: () => void) => {
     // Prevent multiple animations from running simultaneously
-    if (isAnimating.current) return
+    if (isAnimating.current) return;
 
-    isAnimating.current = true
+    isAnimating.current = true;
 
     // Fade out
     Animated.timing(contentAnimation, {
@@ -43,7 +43,7 @@ export const useContentTransition = (options: ContentTransitionOptions = {}) => 
     }).start(() => {
       // Execute callback if provided
       if (onFadeOutComplete) {
-        onFadeOutComplete()
+        onFadeOutComplete();
       }
 
       // Fade in after data is loaded
@@ -54,10 +54,10 @@ export const useContentTransition = (options: ContentTransitionOptions = {}) => 
         useNativeDriver,
         easing: Easing.in(Easing.ease),
       }).start(() => {
-        isAnimating.current = false
-      })
-    })
-  }
+        isAnimating.current = false;
+      });
+    });
+  };
 
   const animatedStyle = {
     opacity: contentAnimation,
@@ -69,12 +69,11 @@ export const useContentTransition = (options: ContentTransitionOptions = {}) => 
         }),
       },
     ],
-  }
+  };
 
   return {
     contentAnimation,
     animateTransition,
     animatedStyle,
-  }
-}
-
+  };
+};

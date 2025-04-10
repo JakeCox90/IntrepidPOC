@@ -1,35 +1,44 @@
-"use client"
-import { View, StyleSheet, TouchableOpacity, ImageBackground, Dimensions } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import Typography from "./Typography"
-import { Feather } from "@expo/vector-icons"
+'use client';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
+import Typography from './Typography';
+import { Feather } from '@expo/vector-icons';
 
 interface BundleCardProps {
-  title: string
-  subtitle: string
-  storyCount: number
-  imageUrl: string
-  onPress: () => void
-  onNotify?: () => void
+  title: string;
+  subtitle: string;
+  storyCount: number;
+  imageUrl: string;
+  onPress: () => void;
+  onNotify?: () => void;
 }
 
-const { width } = Dimensions.get("window")
-const cardWidth = 280
-const cardHeight = 265
+const cardWidth = 280;
+const cardHeight = 265;
 
-const BundleCard = ({ title, subtitle, storyCount, imageUrl, onPress, onNotify }: BundleCardProps) => {
-  const theme = useTheme()
-
-  const handleNotifyPress = (e) => {
-    e.stopPropagation()
+const BundleCard = ({
+  title,
+  subtitle,
+  storyCount,
+  imageUrl,
+  onPress,
+  onNotify,
+}: BundleCardProps) => {
+  const theme = useTheme();
+  const handleNotifyPress = e => {
+    e.stopPropagation();
     if (onNotify) {
-      onNotify()
+      onNotify();
     }
-  }
+  };
 
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
-      <ImageBackground source={{ uri: imageUrl }} style={styles.container} imageStyle={styles.imageStyle}>
+      <ImageBackground
+        source={{ uri: imageUrl }}
+        style={styles.container}
+        imageStyle={styles.imageStyle}
+      >
         {/* Dark gradient overlay */}
         <View style={styles.overlay}>
           <View style={styles.content}>
@@ -52,53 +61,53 @@ const BundleCard = ({ title, subtitle, storyCount, imageUrl, onPress, onNotify }
         </View>
       </ImageBackground>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    width: cardWidth,
-    height: cardHeight,
     borderRadius: 12,
-    overflow: "hidden",
+    height: cardHeight,
+    overflow: 'hidden',
+    width: cardWidth,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   imageStyle: {
     borderRadius: 12,
   },
+  notifyButton: {
+    alignSelf: 'flex-end',
+  },
+  notifyIconContainer: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 18,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 16,
-    justifyContent: "space-between",
-    flexDirection: "row",
   },
-  content: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  title: {
-    fontWeight: "700",
-    marginBottom: 4,
+  storyCount: {
+    opacity: 0.8,
   },
   subtitle: {
     marginBottom: 4,
     opacity: 0.9,
   },
-  storyCount: {
-    opacity: 0.8,
+  title: {
+    fontWeight: '700',
+    marginBottom: 4,
   },
-  notifyButton: {
-    alignSelf: "flex-end",
-  },
-  notifyIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-})
+});
 
-export default BundleCard
+export default BundleCard;

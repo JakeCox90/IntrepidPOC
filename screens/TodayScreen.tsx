@@ -1,132 +1,138 @@
-"use client"
-import React, { useState, useCallback } from "react"
-import { View, StyleSheet, ScrollView, StatusBar } from "react-native"
-import { useFocusEffect } from "@react-navigation/native"
-import { useTheme } from "../theme/ThemeProvider"
-import CardCatchUp from "../components/CardCatchUp"
-import CardHero from "../components/CardHero"
-import CardHorizontal from "../components/CardHorizontal"
-import SkeletonLoader from "../components/SkeletonLoader"
-import TopNav from "../components/TopNav"
-import Typography from "../components/Typography"
-import { fetchSunNews } from "../services/sunNewsService"
+'use client';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, ScrollView, StatusBar } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '../theme/ThemeProvider';
+import CardCatchUp from '../components/CardCatchUp';
+import CardHero from '../components/CardHero';
+import CardHorizontal from '../components/CardHorizontal';
+import SkeletonLoader from '../components/SkeletonLoader';
+import TopNav from '../components/TopNav';
+import Typography from '../components/Typography';
+import { fetchSunNews } from '../services/sunNewsService';
 
 // Simplified component without animations
 const TodayScreen = ({ navigation }) => {
-  const theme = useTheme()
-  const [news, setNews] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const theme = useTheme();
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Use useFocusEffect instead of useEffect to avoid potential memory leaks
   useFocusEffect(
     useCallback(() => {
-      let isMounted = true
+      let isMounted = true;
 
       const loadArticles = async () => {
-        if (!isMounted) return
+        if (!isMounted) return;
 
-        setLoading(true)
+        setLoading(true);
 
         try {
-          const data = await fetchSunNews()
+          const data = await fetchSunNews();
           if (isMounted) {
-            setNews(data)
-            setLoading(false)
-            setError(null)
+            setNews(data);
+            setLoading(false);
+            setError(null);
           }
         } catch (err) {
-          console.error("Error loading articles:", err)
+          console.error('Error loading articles:', err);
           if (isMounted) {
-            setError("Failed to load articles")
-            setLoading(false)
+            setError('Failed to load articles');
+            setLoading(false);
             // Set empty array to prevent undefined errors
-            setNews([])
+            setNews([]);
           }
         }
-      }
+      };
 
-      loadArticles()
+      loadArticles();
 
       return () => {
-        isMounted = false
-      }
+        isMounted = false;
+      };
     }, []),
-  )
+  );
 
-  const handleCatchUpPress = (item) => {
-    if (item.id === "daily-digest") {
+  const handleCatchUpPress = item => {
+    if (item.id === 'daily-digest') {
       // Navigate to the ArticleSwipeScreen with the first 10 articles
-      navigation.navigate("ArticleSwipeScreen", {
+      navigation.navigate('ArticleSwipeScreen', {
         articles: news.slice(0, 10), // Pass the first 10 articles
-      })
-    } else if (item.id === "sport") {
-      navigation.navigate("AllNewsCategory", {
-        category: { name: "Sport" },
-        source: "Today",
-      })
-    } else if (item.id === "showbiz") {
-      navigation.navigate("AllNewsCategory", {
-        category: { name: "Showbiz" },
-        source: "Today",
-      })
+      });
+    } else if (item.id === 'sport') {
+      navigation.navigate('AllNewsCategory', {
+        category: { name: 'Sport' },
+        source: 'Today',
+      });
+    } else if (item.id === 'showbiz') {
+      navigation.navigate('AllNewsCategory', {
+        category: { name: 'Showbiz' },
+        source: 'Today',
+      });
     }
-  }
+  };
 
-  const handleArticlePress = (article) => {
-    navigation.navigate("TodayArticle", { article })
-  }
+  const handleArticlePress = article => {
+    navigation.navigate('TodayArticle', { article });
+  };
 
-  const handleBookmark = (id) => {
-    console.log("Bookmark article:", id)
-  }
+  const handleBookmark = id => {
+    console.log('Bookmark article:', id);
+  };
 
-  const handleShare = (id) => {
-    console.log("Share article:", id)
-  }
+  const handleShare = id => {
+    console.log('Share article:', id);
+  };
 
   const handleProfilePress = () => {
-    console.log("Profile pressed")
-  }
+    console.log('Profile pressed');
+  };
 
   // Create catch-up items based on categories
   const catchUpItems = React.useMemo(() => {
-    if (!news || news.length === 0) return []
+    if (!news || news.length === 0) return [];
 
     return [
       {
-        id: "daily-digest",
-        title: "Daily Digest",
-        subtitle: "All of the recent updates from the news today",
-        imageUrl: news[0]?.imageUrl || "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+        id: 'daily-digest',
+        title: 'Daily Digest',
+        subtitle: 'All of the recent updates from the news today',
+        imageUrl:
+          news[0]?.imageUrl ||
+          'https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png',
         count: news.length,
       },
       {
-        id: "sport",
-        title: "Sport",
-        subtitle: "Football, cricket, F1 and more",
+        id: 'sport',
+        title: 'Sport',
+        subtitle: 'Football, cricket, F1 and more',
         imageUrl:
-          news.find((a) => a.category.toLowerCase().includes("sport"))?.imageUrl ||
-          "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
-        count: news.filter((a) => a.category.toLowerCase().includes("sport")).length,
+          news.find(a => a.category.toLowerCase().includes('sport'))?.imageUrl ||
+          'https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png',
+        count: news.filter(a => a.category.toLowerCase().includes('sport')).length,
       },
       {
-        id: "showbiz",
-        title: "Showbiz",
-        subtitle: "Celebrity news and entertainment",
+        id: 'showbiz',
+        title: 'Showbiz',
+        subtitle: 'Celebrity news and entertainment',
         imageUrl:
-          news.find((a) => a.category.toLowerCase().includes("showbiz") || a.category.toLowerCase().includes("tv"))
-            ?.imageUrl || "https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png",
+          news.find(
+            a =>
+              a.category.toLowerCase().includes('showbiz') ||
+              a.category.toLowerCase().includes('tv'),
+          )?.imageUrl || 'https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png',
         count: news.filter(
-          (a) => a.category.toLowerCase().includes("showbiz") || a.category.toLowerCase().includes("tv"),
+          a =>
+            a.category.toLowerCase().includes('showbiz') || a.category.toLowerCase().includes('tv'),
         ).length,
       },
-    ]
-  }, [news])
+    ];
+  }, [news]);
 
   // Get top stories and all stories
-  const topStories = React.useMemo(() => news.slice(0, 3), [news])
-  const allStories = React.useMemo(() => news.slice(3, 10), [news])
+  const topStories = React.useMemo(() => news.slice(0, 3), [news]);
+  const allStories = React.useMemo(() => news.slice(3, 10), [news]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
@@ -140,7 +146,7 @@ const TodayScreen = ({ navigation }) => {
         variant="explore"
         rightButtons={[
           {
-            label: "Profile",
+            label: 'Profile',
             onPress: handleProfilePress,
           },
         ]}
@@ -154,7 +160,11 @@ const TodayScreen = ({ navigation }) => {
       ) : error ? (
         // Error state
         <View style={[styles.container, styles.centerContainer]}>
-          <Typography variant="subtitle-01" color={theme.colors.Error.Resting} style={{ marginBottom: 16 }}>
+          <Typography
+            variant="subtitle-01"
+            color={theme.colors.Error.Resting}
+            style={{ marginBottom: 16 }}
+          >
             {error}
           </Typography>
           <Typography variant="body-01" color={theme.colors.Text.Secondary}>
@@ -176,7 +186,7 @@ const TodayScreen = ({ navigation }) => {
               style={styles.catchUpScroll}
               contentContainerStyle={styles.catchUpScrollContent}
             >
-              {catchUpItems.map((item) => (
+              {catchUpItems.map(item => (
                 <CardCatchUp
                   key={item.id}
                   title={item.title}
@@ -211,7 +221,7 @@ const TodayScreen = ({ navigation }) => {
               )}
 
               {/* Other Top Stories */}
-              {topStories.slice(1).map((story) => (
+              {topStories.slice(1).map(story => (
                 <CardHorizontal
                   key={story.id}
                   id={story.id}
@@ -234,7 +244,7 @@ const TodayScreen = ({ navigation }) => {
               All Stories
             </Typography>
 
-            {allStories.map((story) => (
+            {allStories.map(story => (
               <CardHorizontal
                 key={story.id}
                 id={story.id}
@@ -255,17 +265,28 @@ const TodayScreen = ({ navigation }) => {
         </ScrollView>
       )}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8F8F8",
+  bottomPadding: {
+    height: 24,
+  },
+  catchUpScroll: {
+    marginLeft: -16,
+    paddingLeft: 16,
+  },
+  catchUpScrollContent: {
+    gap: 12,
+    paddingRight: 16,
   },
   centerContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  container: {
+    backgroundColor: '#F8F8F8',
+    flex: 1,
   },
   scrollView: {
     flex: 1,
@@ -277,28 +298,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: 16,
   },
-  stackContainer: {
-    flexDirection: "row",
-    overflow: "scroll",
-    marginHorizontal: -16,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  catchUpScroll: {
-    marginLeft: -16,
-    paddingLeft: 16,
-  },
-  catchUpScrollContent: {
-    paddingRight: 16,
-    gap: 12,
-  },
-  cardWrapper: {
-    marginRight: 12,
-    width: 280, // Match the width of CardCatchUp
-  },
-  bottomPadding: {
-    height: 24,
-  },
-})
+});
 
-export default TodayScreen
+export default TodayScreen;

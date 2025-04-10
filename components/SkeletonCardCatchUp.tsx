@@ -1,5 +1,5 @@
-import { View, StyleSheet } from "react-native"
-import Skeleton from "./Skeleton"
+import { View, StyleSheet } from 'react-native';
+import Skeleton from './Skeleton';
 
 const SkeletonCardCatchUp = () => {
   return (
@@ -14,33 +14,32 @@ const SkeletonCardCatchUp = () => {
         <Skeleton width={80} height={14} />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    width: 280,
-    height: 160,
     borderRadius: 12,
-    overflow: "hidden",
+    height: 160,
     marginRight: 12,
-    position: "relative",
+    overflow: 'hidden',
+    position: 'relative',
+    width: 280,
   },
   overlay: {
-    position: "absolute",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     bottom: 0,
     left: 0,
-    right: 0,
     padding: 16,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  title: {
-    marginBottom: 4,
+    position: 'absolute',
+    right: 0,
   },
   subtitle: {
     marginBottom: 8,
   },
-})
+  title: {
+    marginBottom: 4,
+  },
+});
 
-export default SkeletonCardCatchUp
-
+export default SkeletonCardCatchUp;

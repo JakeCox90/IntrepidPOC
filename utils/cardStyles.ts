@@ -1,24 +1,24 @@
-import { StyleSheet } from "react-native"
-import { Dimensions } from "react-native"
+import { StyleSheet } from 'react-native';
+import { Dimensions } from 'react-native';
 
-const { width } = Dimensions.get("window")
+const { width } = Dimensions.get('window');
 
 export const cardStyles = StyleSheet.create({
   // Common card styles
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
 
   // Hero card specific
   heroContainer: {
-    width: width - 32,
     marginBottom: 16,
+    width: width - 32,
   },
   heroImage: {
-    width: "100%",
     height: 200,
+    width: '100%',
   },
   heroContent: {
     padding: 16,
@@ -26,11 +26,11 @@ export const cardStyles = StyleSheet.create({
 
   // Article card specific
   articleContainer: {
-    paddingVertical: 16,
     borderBottomWidth: 1,
+    paddingVertical: 16,
   },
   articleContent: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 12,
   },
   articleTextContent: {
@@ -38,9 +38,9 @@ export const cardStyles = StyleSheet.create({
     marginRight: 12,
   },
   articleImage: {
-    width: 100,
-    height: 100,
     borderRadius: 8,
+    height: 100,
+    width: 100,
   },
 
   // Horizontal card specific
@@ -49,14 +49,14 @@ export const cardStyles = StyleSheet.create({
     marginBottom: 16,
   },
   horizontalCardContent: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
     padding: 16,
-    flexDirection: "row",
-    alignItems: "flex-start",
   },
   horizontalImage: {
-    width: 100,
     height: 100,
     marginRight: 16,
+    width: 100,
   },
   horizontalTextContent: {
     flex: 1,
@@ -64,23 +64,23 @@ export const cardStyles = StyleSheet.create({
 
   // CatchUp card specific
   catchUpContainer: {
-    width: 280,
-    height: 160,
     borderRadius: 12,
+    height: 160,
     marginRight: 12,
+    width: 280,
   },
   catchUpImageContainer: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
+    height: '100%',
+    position: 'relative',
+    width: '100%',
   },
   catchUpOverlay: {
-    position: "absolute",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     bottom: 0,
     left: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 16,
+    position: 'absolute',
+    right: 0,
   },
 
   // Common text elements
@@ -99,19 +99,19 @@ export const cardStyles = StyleSheet.create({
 
   // Footer elements
   footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   readTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   readTime: {
     marginLeft: 6,
   },
   actions: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   actionButton: {
     marginLeft: 16,
@@ -120,12 +120,11 @@ export const cardStyles = StyleSheet.create({
 
   // Title elements
   titleContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
   },
   prefix: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: 4,
   },
-})
-
+});

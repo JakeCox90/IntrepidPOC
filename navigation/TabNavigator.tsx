@@ -1,45 +1,35 @@
-"use client"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { useTheme } from "../theme/ThemeProvider"
-import { useState, useCallback, useEffect } from "react"
-import { Platform, View, Text } from "react-native"
-import { 
-  ParamListBase, 
-  RouteProp, 
-  useNavigation, 
-  useRoute,
-  getFocusedRouteNameFromRoute,
+'use client';
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useTheme } from '../theme/ThemeProvider';
+import { useState, useCallback, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import {
+  ParamListBase,
+  RouteProp,
   NavigationState,
   TabNavigationState,
-  EventMapBase,
-  EventListenerCallback,
-  NavigationHelpers
-} from "@react-navigation/native"
-import type { 
-  BottomTabNavigationProp, 
-  BottomTabScreenProps,
+  NavigationHelpers,
+} from '@react-navigation/native';
+import type {
   BottomTabNavigationOptions,
   BottomTabBarProps,
-  BottomTabNavigationEventMap
-} from "@react-navigation/bottom-tabs"
-import type { 
-  NativeStackNavigationProp, 
-  NativeStackScreenProps 
-} from "@react-navigation/native-stack"
-import { ErrorBoundary } from "react-error-boundary"
-import Typography from "../components/Typography"
+  BottomTabNavigationEventMap,
+} from '@react-navigation/bottom-tabs';
+import { ErrorBoundary } from 'react-error-boundary';
+import Typography from '../components/Typography';
 
-import ForYouScreen from "../screens/ForYouScreen"
-import TodayScreen from "../screens/TodayScreen"
-import AllNewsScreen from "../screens/AllNewsScreen"
-import SearchScreen from "../screens/SearchScreen"
-import SavedScreen from "../screens/SavedScreen"
-import ArticleScreen from "../screens/ArticleScreen"
-import ArticleStackScreen from "../screens/ArticleStackScreen"
-import ArticleSwipeScreen from "../screens/ArticleSwipeScreen"
-import CategoryScreen from "../screens/CategoryScreen"
-import BottomNav from "../components/BottomNav"
+import ForYouScreen from '../screens/ForYouScreen';
+import TodayScreen from '../screens/TodayScreen';
+import AllNewsScreen from '../screens/AllNewsScreen';
+import SearchScreen from '../screens/SearchScreen';
+import SavedScreen from '../screens/SavedScreen';
+import ArticleScreen from '../screens/ArticleScreen';
+import ArticleStackScreen from '../screens/ArticleStackScreen';
+import ArticleSwipeScreen from '../screens/ArticleSwipeScreen';
+import CategoryScreen from '../screens/CategoryScreen';
+import BottomNav from '../components/BottomNav';
 
 // Define navigation types
 type ArticleParamList = {
@@ -108,30 +98,28 @@ const SavedStack = createNativeStackNavigator<SavedStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 // ErrorFallback component for navigation errors
-function NavigationErrorFallback({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }) {
+function NavigationErrorFallback({
+  error,
+  resetErrorBoundary,
+}: {
+  error: Error;
+  resetErrorBoundary: () => void;
+}) {
   const theme = useTheme();
-  const errorTextColor = theme?.colors?.Error?.Text || "#DC2626";
-  const errorButtonBgColor = theme?.colors?.Primary?.Resting || "#E03A3A";
-  const errorButtonTextColor = theme?.colors?.Surface?.Primary || "#FFFFFF";
-  
+  const errorTextColor = theme?.colors?.Error?.Text || '#DC2626';
+  const errorButtonBgColor = theme?.colors?.Primary?.Resting || '#E03A3A';
+  const errorButtonTextColor = theme?.colors?.Surface?.Primary || '#FFFFFF';
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-      <Typography variant="body-01" style={{ marginBottom: 20, textAlign: 'center' }}>
+    <View style={styles.errorContainer}>
+      <Typography variant="body-01" style={styles.errorMessage}>
         Something went wrong with navigation. Please try again.
       </Typography>
-      <Typography variant="body-02" color={errorTextColor} style={{ marginBottom: 20 }}>
-        {error?.message || "Unknown navigation error"}
+      <Typography variant="body-02" color={errorTextColor} style={styles.errorDetails}>
+        {error?.message || 'Unknown navigation error'}
       </Typography>
-      <View style={{ 
-        padding: 10, 
-        backgroundColor: errorButtonBgColor, 
-        borderRadius: 8 
-      }}>
-        <Typography 
-          variant="button"
-          color={errorButtonTextColor}
-          onPress={resetErrorBoundary}
-        >
+      <View style={[styles.errorButton, { backgroundColor: errorButtonBgColor }]}>
+        <Typography variant="button" color={errorButtonTextColor} onPress={resetErrorBoundary}>
           Try Again
         </Typography>
       </View>
@@ -141,6 +129,15 @@ function NavigationErrorFallback({ error, resetErrorBoundary }: { error: Error, 
 // Define valid tab names as a type for type checking
 type ValidTabName = 'Today' | 'ForYou' | 'AllNews' | 'Search' | 'Saved';
 
+// Define the valid tab names as a constant to avoid typos and improve type safety
+const TAB_NAMES = {
+  TODAY: 'Today',
+  FOR_YOU: 'ForYou',
+  ALL_NEWS: 'AllNews',
+  SEARCH: 'Search',
+  SAVED: 'Saved',
+};
+
 // Type guard functions to improve navigation safety
 // Type guard to check if a value is a valid tab name
 function isValidTabName(name: unknown): name is ValidTabName {
@@ -149,59 +146,56 @@ function isValidTabName(name: unknown): name is ValidTabName {
 }
 
 // Type guard to check if a navigation object has required methods
-function isValidNavigation(nav: any): nav is NavigationType {
-  return nav && 
-    typeof nav.navigate === 'function' && 
-    typeof nav.reset === 'function';
+function isValidNavigation(nav: unknown): nav is NavigationType {
+  return (
+    !!nav && 
+    typeof nav === 'object' &&
+    nav !== null &&
+    typeof (nav as NavigationType).navigate === 'function' &&
+    typeof (nav as NavigationType).reset === 'function'
+  );
 }
 
 // Type guard to check if an object is a valid navigation state
-function isValidNavigationState(state: any): state is NavigationState {
-  return state && 
-    typeof state === 'object' && 
-    typeof state.index === 'number' && 
-    Array.isArray(state.routeNames) &&
-    state.routeNames.length > 0 &&
-    state.routeNames.every((name: string) => typeof name === 'string');
+function isValidNavigationState(state: unknown): state is NavigationState {
+  return (
+    !!state &&
+    typeof state === 'object' &&
+    'index' in state &&
+    typeof (state as NavigationState).index === 'number' &&
+    'routeNames' in state &&
+    Array.isArray((state as NavigationState).routeNames) &&
+    (state as NavigationState).routeNames.length > 0 &&
+    (state as NavigationState).routeNames.every((name: string) => typeof name === 'string')
+  );
 }
-// Type definition for focus event
-interface FocusEvent {
+// Define a type for the focus event to improve type safety
+type FocusEvent = {
   target?: string;
   type?: string;
-  data?: any;
-}
-
-// Type guard for focus event
-function isValidFocusEvent(e: any): e is FocusEvent {
-  return e && typeof e === 'object' && (typeof e.target === 'string' || e.target === undefined);
-}
-
-// Error message formatter helper for consistent error messages
-function formatErrorMessage(error: unknown): string {
-  return error instanceof Error 
-    ? error.message 
-    : typeof error === 'string'
-      ? error
-      : "Unknown error";
+  data?: Record<string, unknown>;
 }
 
 // Define a reusable navigation type for consistent usage throughout the file
 interface NavigationType {
   navigate: (name: string, params?: object) => void;
   reset: (state: { index: number; routes: { name: string; params?: object }[] }) => void;
-  emit?: (event: string, ...args: any[]) => void;
+  emit?: (event: string, ...args: unknown[]) => void;
 }
 
 // Type definition for the tab bar props from React Navigation
 interface TypedBottomTabBarProps extends BottomTabBarProps {
   state: TabNavigationState<ParamListBase>;
   navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>;
-  descriptors: Record<string, {
-    options: BottomTabNavigationOptions;
-    navigation: any;
-    route: RouteProp<ParamListBase, string>;
-    render: () => React.ReactElement;
-  }>;
+  descriptors: Record<
+    string,
+    {
+      options: BottomTabNavigationOptions;
+      navigation: NavigationType;
+      route: RouteProp<ParamListBase, string>;
+      render: () => React.ReactElement;
+    }
+  >;
 }
 
 // Today Tab Stack
@@ -213,7 +207,7 @@ function TodayStackScreen() {
       <TodayStack.Screen name="TodayCategory" component={CategoryScreen} />
       <TodayStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </TodayStack.Navigator>
-  )
+  );
 }
 
 // For You Tab Stack
@@ -226,7 +220,7 @@ function ForYouStackScreen() {
       <ForYouStack.Screen name="ForYouCategory" component={CategoryScreen} />
       <ForYouStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </ForYouStack.Navigator>
-  )
+  );
 }
 
 // All News Tab Stack
@@ -238,7 +232,7 @@ function AllNewsStackScreen() {
       <AllNewsStack.Screen name="AllNewsCategory" component={CategoryScreen} />
       <AllNewsStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </AllNewsStack.Navigator>
-  )
+  );
 }
 
 // Search Tab Stack
@@ -250,7 +244,7 @@ function SearchStackScreen() {
       <SearchStack.Screen name="SearchCategory" component={CategoryScreen} />
       <SearchStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </SearchStack.Navigator>
-  )
+  );
 }
 
 // Saved Tab Stack
@@ -262,48 +256,41 @@ function SavedStackScreen() {
       <SavedStack.Screen name="SavedCategory" component={CategoryScreen} />
       <SavedStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
     </SavedStack.Navigator>
-  )
+  );
 }
 
 export default function TabNavigator() {
   // Use a default empty object with the correct shape to avoid null checks
   const theme = useTheme() || {
     colors: {
-      Primary: { Resting: "#E03A3A" },
-      Text: { Secondary: "#717171" },
-      Surface: { Primary: "#FFFFFF" }
+      Primary: { Resting: '#E03A3A' },
+      Text: { Secondary: '#717171' },
+      Surface: { Primary: '#FFFFFF' },
     },
     space: {},
-    typography: { fontFamily: {} }
+    typography: { fontFamily: {} },
   };
-  
+
   // Enhanced error handler for navigation operations
   const handleNavigationError = (error: Error) => {
-    console.error("Navigation error:", error.message);
-    
+    console.error('Navigation error:', error.message);
+
     // You could add additional error logging or reporting here
     // For example, sending to a monitoring service or analytics
-    
+
     // Return true to indicate the error was handled
     return true;
   };
-  const [activeTab, setActiveTab] = useState("Today")
+  const [activeTab, setActiveTab] = useState('Today');
   const [tabHistory, setTabHistory] = useState<Record<string, boolean>>({
     Today: false,
     ForYou: false,
     AllNews: false,
     Search: false,
     Saved: false,
-  })
+  });
 
-  // Define the valid tab names as a constant to avoid typos and improve type safety
-  const TAB_NAMES = {
-    TODAY: "Today",
-    FOR_YOU: "ForYou",
-    ALL_NEWS: "AllNews",
-    SEARCH: "Search",
-    SAVED: "Saved"
-  }
+  // Using the TAB_NAMES constant defined outside the component
 
   // Reset tab history when component mounts to ensure clean state
   useEffect(() => {
@@ -327,47 +314,51 @@ export default function TabNavigator() {
 
       // If we're already on this tab, do nothing
       if (tabName === activeTab) return;
-      
+
       // Update tab history - mark the current tab as visited
-      setTabHistory((prev) => ({
+      setTabHistory(prev => ({
         ...prev,
         [activeTab]: true,
       }));
-      
+
       // Update the active tab
       setActiveTab(tabName);
     },
-    [activeTab],
+    [activeTab], // TAB_NAMES is defined outside the component and won't change
   );
-  
+
   // Separate hook for handling tab reset logic
-  const handleTabReset = useCallback((tabName: string, navigation: NavigationType) => {
-    if (!isValidTabName(tabName)) {
-      return;
-    }
-    
-    // Check if tab has been visited before
-    if (tabHistory[tabName]) {
-      // Reset stack to root screen, using a safer reset configuration
-      try {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: tabName }],
-        });
-      } catch (error) {
-        console.error("Failed to reset tab navigation:", 
-          error instanceof Error ? error.message : String(error)
-        );
+  const handleTabReset = useCallback(
+    (tabName: string, navigation: NavigationType) => {
+      if (!isValidTabName(tabName)) {
+        return;
       }
-    }
-  }, [tabHistory]);
+
+      // Check if tab has been visited before
+      if (tabHistory[tabName]) {
+        // Reset stack to root screen, using a safer reset configuration
+        try {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: tabName }],
+          });
+        } catch (error) {
+          console.error(
+            'Failed to reset tab navigation:',
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+      }
+    },
+    [tabHistory],
+  );
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       FallbackComponent={NavigationErrorFallback}
       onError={handleNavigationError}
       onReset={() => {
         // Reset to a clean state when the error boundary resets
-        setActiveTab("Today");
+        setActiveTab('Today');
         setTabHistory({
           Today: false,
           ForYou: false,
@@ -381,38 +372,39 @@ export default function TabNavigator() {
         initialRouteName="Today"
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { display: "none" }, // Hide the default tab bar
-          tabBarActiveTintColor: theme?.colors?.Primary?.Resting || "#E03A3A",
-          tabBarInactiveTintColor: theme?.colors?.Text?.Secondary || "#717171",
+          tabBarStyle: { display: 'none' }, // Hide the default tab bar
+          tabBarActiveTintColor: theme?.colors?.Primary?.Resting || '#E03A3A',
+          tabBarInactiveTintColor: theme?.colors?.Text?.Secondary || '#717171',
           // Improve tabBar prop implementation with better error handling
-          tabBar: (props: any) => {
+          tabBar: (props: BottomTabBarProps) => {
             try {
               // Guard against null or invalid props
               if (!props) {
                 return null;
               }
-              
-              // Type-safe approach: cast 'any' to our defined typed interface if it passes basic validation
+
+              // Type-safe approach: cast to our defined typed interface if it passes basic validation
               const typedProps = props as TypedBottomTabBarProps;
-              
+
               // Type check the navigation state
               if (!isValidNavigationState(typedProps.state)) {
-                console.warn("Invalid navigation state in tab bar props");
+                console.warn('Invalid navigation state in tab bar props');
                 return null;
               }
-              
+
               // Type check the navigation object
               if (!typedProps.navigation || typeof typedProps.navigation.navigate !== 'function') {
-                console.warn("Invalid navigation object in tab bar props");
+                console.warn('Invalid navigation object in tab bar props');
                 return null;
               }
-              
+
               // Safely extract the current route name with better validation
-              let currentRoute: ValidTabName = "Today"; // Default to Today
-              
-              if (typedProps.state.index >= 0 && 
-                  typedProps.state.routeNames.length > typedProps.state.index) {
-                
+              let currentRoute: ValidTabName = 'Today'; // Default to Today
+
+              if (
+                typedProps.state.index >= 0 &&
+                typedProps.state.routeNames.length > typedProps.state.index
+              ) {
                 const possibleRoute = typedProps.state.routeNames[typedProps.state.index];
                 if (isValidTabName(possibleRoute)) {
                   currentRoute = possibleRoute;
@@ -420,7 +412,7 @@ export default function TabNavigator() {
                   console.warn(`Invalid route name found in state: ${possibleRoute}`);
                 }
               }
-              
+
               return (
                 <BottomNav
                   activeTab={currentRoute}
@@ -431,27 +423,31 @@ export default function TabNavigator() {
                         console.warn(`Invalid tab name requested: ${tabName}`);
                         return;
                       }
-                      
+
                       // Validate navigation is available with better type checking
-                      if (!typedProps.navigation || typeof typedProps.navigation.navigate !== 'function') {
-                        console.warn("Navigation object is unavailable or invalid");
+                      if (
+                        !typedProps.navigation ||
+                        typeof typedProps.navigation.navigate !== 'function'
+                      ) {
+                        console.warn('Navigation object is unavailable or invalid');
                         return;
                       }
-                      
+
                       // Update our internal tab tracking
                       handleTabPress(tabName);
-                      
+
                       // Navigate to the selected tab
                       typedProps.navigation.navigate(tabName);
                     } catch (error) {
                       // Unified error handling
-                      const errorMessage = error instanceof Error 
-                        ? error.message 
-                        : typeof error === 'string'
-                          ? error
-                          : "Unknown navigation error";
-                          
-                      console.error("Tab navigation error:", errorMessage);
+                      const errorMessage =
+                        error instanceof Error
+                          ? error.message
+                          : typeof error === 'string'
+                            ? error
+                            : 'Unknown navigation error';
+
+                      console.error('Tab navigation error:', errorMessage);
                       // Prevent app crashes by handling errors here
                     }
                   }}
@@ -459,43 +455,49 @@ export default function TabNavigator() {
                 />
               );
             } catch (error) {
-              console.error("Error rendering tab bar:", error);
+              console.error('Error rendering tab bar:', error);
               // Provide a fallback tab bar in case of error
-              const fallbackBgColor = theme?.colors?.Surface?.Primary || "#FFFFFF";
-              const fallbackBorderColor = theme?.colors?.Border?.["Border-Primary"] || "#E5E5E5";
-              
+              const fallbackBgColor = theme?.colors?.Surface?.Primary || '#FFFFFF';
+              const fallbackBorderColor = theme?.colors?.Border?.['Border-Primary'] || '#E5E5E5';
               return (
-                <View style={{ 
-                  backgroundColor: fallbackBgColor, 
-                  height: 50, 
-                  borderTopWidth: 1, 
-                  borderTopColor: fallbackBorderColor 
-                }} />
+                <View
+                  style={[
+                    styles.fallbackTabBar,
+                    {
+                      backgroundColor: fallbackBgColor,
+                      borderTopColor: fallbackBorderColor,
+                    },
+                  ]}
+                />
               );
             }
-          }
-        } as any}
-        screenListeners={({ navigation, route }: { 
-          navigation: NavigationType; 
-          route: RouteProp<ParamListBase, string> 
+          },
+        }}
+        screenListeners={({
+          navigation,
+          route,
+        }: {
+          navigation: NavigationType;
+          route: RouteProp<ParamListBase, string>;
         }) => ({
-          focus: (e: any) => {
+          focus: (e: { target?: string; type?: string; data?: Record<string, unknown> }) => {
             try {
               // Simple validation of key elements
               if (!e?.target || !route?.name) {
                 return;
               }
-              
+
               const tabName = route.name;
-              
+
               // Call the tab reset handler
               handleTabReset(tabName, navigation);
             } catch (error) {
-              console.error("Error in tab focus handler:", 
-                error instanceof Error ? error.message : String(error)
+              console.error(
+                'Error in tab focus handler:',
+                error instanceof Error ? error.message : String(error),
               );
             }
-          }
+          },
         })}
       >
         <Tab.Screen name="Today" component={TodayStackScreen} />
@@ -505,5 +507,30 @@ export default function TabNavigator() {
         <Tab.Screen name="Saved" component={SavedStackScreen} />
       </Tab.Navigator>
     </ErrorBoundary>
-  )
+  );
 }
+
+// Define styles for components
+const styles = StyleSheet.create({
+  errorButton: {
+    borderRadius: 8,
+    padding: 10,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  errorDetails: {
+    marginBottom: 20,
+  },
+  errorMessage: {
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  fallbackTabBar: {
+    borderTopWidth: 1,
+    height: 50,
+  },
+});

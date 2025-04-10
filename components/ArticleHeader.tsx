@@ -1,88 +1,89 @@
-"use client"
-import { View, StyleSheet, Dimensions } from "react-native"
-import { Feather } from "@expo/vector-icons"
-import { useTheme } from "../theme/ThemeProvider"
-import Typography from "./Typography"
-import Flag from "./Flag"
-import LazyImage from "./LazyImage"
+'use client';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeProvider';
+import Typography from './Typography';
+import Flag from './Flag';
+import LazyImage from './LazyImage';
 
 // Add the COMMON_FLAGS constant
 // Common flags used by The Sun
 const COMMON_FLAGS = [
-  "EXCLUSIVE",
-  "BREAKING",
-  "REVEALED",
-  "PICTURED",
-  "WATCH",
-  "UPDATED",
-  "LIVE",
-  "SHOCK",
-  "TRAGIC",
-  "HORROR",
-  "URGENT",
-  "WARNING",
-]
+  'EXCLUSIVE',
+  'BREAKING',
+  'REVEALED',
+  'PICTURED',
+  'WATCH',
+  'UPDATED',
+  'LIVE',
+  'SHOCK',
+  'TRAGIC',
+  'HORROR',
+  'URGENT',
+  'WARNING',
+];
 
 interface ArticleHeaderProps {
-  title: string
-  subtitle?: string
-  category?: string
-  flag?: string
-  readTime?: string
-  author?: string
-  timestamp?: string
-  imageUrl?: string
+  title: string;
+  subtitle?: string;
+  category?: string;
+  flag?: string;
+  readTime?: string;
+  author?: string;
+  timestamp?: string;
+  imageUrl?: string;
 }
 
-const { width } = Dimensions.get("window")
-const imageHeight = (width * 2) / 3 // 3:2 ratio
+const { width } = Dimensions.get('window');
+const imageHeight = (width * 2) / 3; // 3:2 ratio
 
 const ArticleHeader = ({
   title,
   subtitle,
   category,
   flag,
-  readTime = "3 min read",
+  readTime = '3 min read',
   author,
   timestamp,
   imageUrl,
 }: ArticleHeaderProps) => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   // Get the border radius from theme
-  const borderRadius = theme?.radius?.["radius-default"] || 8
+  const borderRadius = theme?.radius?.['radius-default'] || 8;
 
-  // In the component, add this before the return statement:
+  // All themed styles with proper theme values
   const themedStyles = {
-    tagsContainer: {
-      marginBottom: theme?.space?.["20"] || 8,
-    },
-    flag: {
-      marginRight: theme?.space?.["20"] || 8,
-    },
-    title: {
-      marginBottom: theme?.space?.["20"] || 8,
-    },
-    subtitle: {
-      marginBottom: theme?.space?.["30"] || 12,
-    },
-    readingTimeContainer: {
-      marginBottom: theme?.space?.["20"] || 8,
-    },
-    readingTime: {
-      marginLeft: theme?.space?.["10"] || 4,
+    articleImage: {
+      backgroundColor:
+        theme?.colors?.Border?.['Border-Primary'] || theme?.colors?.Surface?.Secondary,
+      borderRadius: borderRadius,
+      height: imageHeight,
+      marginBottom: theme?.space?.['40'] || 16,
+      overflow: 'hidden',
     },
     authorContainer: {
-      marginBottom: theme?.space?.["40"] || 16,
+      marginBottom: theme?.space?.['40'] || 16,
     },
-    articleImage: {
-      height: imageHeight,
-      backgroundColor: theme?.colors?.Border?.["Border-Primary"] || "#E5E5E5",
-      marginBottom: theme?.space?.["40"] || 16,
-      borderRadius: borderRadius,
-      overflow: "hidden", // This is crucial to make the border follow the border radius
+    flag: {
+      marginRight: theme?.space?.['20'] || 8,
     },
-  }
+    readingTime: {
+      marginLeft: theme?.space?.['10'] || 4,
+    },
+    readingTimeContainer: {
+      marginBottom: theme?.space?.['20'] || 8,
+    },
+    subtitle: {
+      marginBottom: theme?.space?.['30'] || 12,
+    },
+    tagsContainer: {
+      marginBottom: theme?.space?.['20'] || 8,
+    },
+    title: {
+      marginBottom: theme?.space?.['20'] || 8,
+    },
+  };
 
   return (
     <View style={baseStyles.container}>
@@ -92,13 +93,22 @@ const ArticleHeader = ({
           <Flag text={flag} style={[baseStyles.flag, themedStyles.flag]} variant="filled" />
         )}
         {category && (
-          <Flag text={category} category={category} style={[baseStyles.flag, themedStyles.flag]} variant="minimal" />
+          <Flag
+            text={category}
+            category={category}
+            style={[baseStyles.flag, themedStyles.flag]}
+            variant="minimal"
+          />
         )}
       </View>
 
       {/* Title */}
-      <Typography variant="h3" color={theme.colors.Text.Primary} style={[baseStyles.title, themedStyles.title]}>
-        {title || "No title available"}
+      <Typography
+        variant="h3"
+        color={theme.colors.Text.Primary}
+        style={[baseStyles.title, themedStyles.title]}
+      >
+        {title || 'No title available'}
       </Typography>
 
       {/* Subtitle */}
@@ -127,10 +137,10 @@ const ArticleHeader = ({
       {/* Author info */}
       <View style={[baseStyles.authorContainer, themedStyles.authorContainer]}>
         <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-          {author || "The Sun"}
+          {author || 'The Sun'}
         </Typography>
         <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-          Published {timestamp || "Recently"}
+          Published {timestamp || 'Recently'}
         </Typography>
       </View>
 
@@ -140,61 +150,55 @@ const ArticleHeader = ({
           baseStyles.articleImage,
           themedStyles.articleImage,
           {
-            borderWidth: theme.borderWidth["10"],
-            borderColor: theme.colors.Border["Border-Primary"],
+            borderWidth: theme.borderWidth['10'],
+            borderColor: theme.colors.Border['Border-Primary'],
           },
         ]}
       >
         {imageUrl ? (
           <LazyImage
             source={{ uri: imageUrl }}
-            style={{ width: "100%", height: "100%", borderRadius: borderRadius - 1 }}
+            style={[baseStyles.image, { borderRadius: borderRadius - 1 }]}
             resizeMode="cover"
           />
         ) : (
-          <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+          <View style={styles.placeholderImage}>
+            <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+          </View>
         )}
       </View>
     </View>
-  )
-}
+  );
+};
 
 // Base styles that don't depend on theme
 const baseStyles = StyleSheet.create({
+  articleImage: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    width: '100%',
+  },
   container: {
-    width: "100%",
+    width: '100%',
   },
-  tagsContainer: {
-    flexDirection: "row",
-    marginBottom: 8, // Will be replaced by themed value
+  image: {
+    height: '100%',
+    width: '100%',
   },
-  flag: {
-    marginRight: 8, // Will be replaced by themed value
-  },
-  title: {
-    marginBottom: 8, // Will be replaced by themed value
-  },
-  subtitle: {
-    marginBottom: 12, // Will be replaced by themed value
+  placeholderImage: {
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+    width: '100%',
   },
   readingTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8, // Will be replaced by themed value
+    alignItems: 'center',
+    flexDirection: 'row',
   },
-  readingTime: {
-    marginLeft: 4, // Will be replaced by themed value
+  tagsContainer: {
+    flexDirection: 'row',
   },
-  authorContainer: {
-    marginBottom: 16, // Will be replaced by themed value
-  },
-  articleImage: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16, // Will be replaced by themed value
-    overflow: "hidden", // Added to make the border follow the border radius
-  },
-})
+});
 
-export default ArticleHeader
+export default ArticleHeader;

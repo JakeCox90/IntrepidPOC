@@ -1,19 +1,24 @@
-"use client"
+'use client';
 
-import React from "react"
-import { View, StyleSheet, Animated, Easing } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
+import React from 'react';
+import { View, StyleSheet, Animated, Easing, StyleProp, ViewStyle } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
 
 interface SkeletonProps {
-  width?: number | string
-  height?: number | string
-  borderRadius?: number
-  style?: any
+  width?: number | string;
+  height?: number | string;
+  borderRadius?: number;
+  style?: StyleProp<ViewStyle>;
 }
 
-const Skeleton: React.FC<SkeletonProps> = ({ width = "100%", height = 20, borderRadius = 4, style }) => {
-  const theme = useTheme()
-  const animatedValue = React.useRef(new Animated.Value(0)).current
+const Skeleton: React.FC<SkeletonProps> = ({
+  width = '100%',
+  height = 20,
+  borderRadius = 4,
+  style,
+}) => {
+  const theme = useTheme();
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
     Animated.loop(
@@ -23,13 +28,13 @@ const Skeleton: React.FC<SkeletonProps> = ({ width = "100%", height = 20, border
         easing: Easing.bezier(0.4, 0.0, 0.6, 1),
         useNativeDriver: true,
       }),
-    ).start()
-  }, [animatedValue])
+    ).start();
+  }, [animatedValue]);
 
   const translateX = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [-350, 350],
-  })
+  });
 
   return (
     <View
@@ -39,8 +44,7 @@ const Skeleton: React.FC<SkeletonProps> = ({ width = "100%", height = 20, border
           width,
           height,
           borderRadius,
-          backgroundColor: theme.colors.Border["Skeleton-01"],
-          overflow: "hidden",
+          backgroundColor: theme.colors.Border['Skeleton-01'],
         },
         style,
       ]}
@@ -49,26 +53,26 @@ const Skeleton: React.FC<SkeletonProps> = ({ width = "100%", height = 20, border
         style={[
           styles.shimmer,
           {
-            backgroundColor: theme.colors.Border["Skeleton-02"],
+            backgroundColor: theme.colors.Border['Skeleton-02'],
             transform: [{ translateX }],
           },
         ]}
       />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
+    overflow: 'hidden',
+    position: 'relative',
   },
   shimmer: {
-    width: 350,
-    height: "100%",
-    position: "absolute",
+    height: '100%',
     opacity: 0.3,
+    position: 'absolute',
+    width: 350,
   },
-})
+});
 
-export default Skeleton
-
+export default Skeleton;

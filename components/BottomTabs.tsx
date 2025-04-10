@@ -1,16 +1,16 @@
-"use client"
-import { View, TouchableOpacity, StyleSheet } from "react-native"
-import { Feather } from "@expo/vector-icons"
-import { useTheme } from "../theme/ThemeProvider"
-import Typography from "./Typography"
+'use client';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeProvider';
+import Typography from './Typography';
 
 interface BottomTabsProps {
-  activeTab: "allNews" | "search" | "saved"
-  onTabPress: (tab: "allNews" | "search" | "saved") => void
+  activeTab: 'allNews' | 'search' | 'saved';
+  onTabPress: (tab: 'allNews' | 'search' | 'saved') => void;
 }
 
 const BottomTabs = ({ activeTab, onTabPress }: BottomTabsProps) => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <View
@@ -18,68 +18,75 @@ const BottomTabs = ({ activeTab, onTabPress }: BottomTabsProps) => {
         styles.container,
         {
           backgroundColor: theme.colors.Surface.Primary,
-          borderTopWidth: theme.borderWidth["10"],
-          borderTopColor: theme.colors.Border["Border-Primary"],
+          borderTopWidth: theme.borderWidth['10'],
+          borderTopColor: theme.colors.Border['Border-Primary'],
         },
       ]}
     >
-      <TouchableOpacity style={styles.tab} onPress={() => onTabPress("allNews")}>
+      <TouchableOpacity style={styles.tab} onPress={() => onTabPress('allNews')}>
         <Feather
           name="grid"
           size={24}
-          color={activeTab === "allNews" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+          color={
+            activeTab === 'allNews' ? theme.colors.Primary.Resting : theme.colors.Text.Secondary
+          }
         />
         <Typography
           variant="annotation"
-          color={activeTab === "allNews" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+          color={
+            activeTab === 'allNews' ? theme.colors.Primary.Resting : theme.colors.Text.Secondary
+          }
         >
           All News
         </Typography>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.tab} onPress={() => onTabPress("search")}>
+      <TouchableOpacity style={styles.tab} onPress={() => onTabPress('search')}>
         <Feather
           name="search"
           size={24}
-          color={activeTab === "search" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+          color={
+            activeTab === 'search' ? theme.colors.Primary.Resting : theme.colors.Text.Secondary
+          }
         />
         <Typography
           variant="annotation"
-          color={activeTab === "search" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+          color={
+            activeTab === 'search' ? theme.colors.Primary.Resting : theme.colors.Text.Secondary
+          }
         >
           Search
         </Typography>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.tab} onPress={() => onTabPress("saved")}>
+      <TouchableOpacity style={styles.tab} onPress={() => onTabPress('saved')}>
         <Feather
           name="bookmark"
           size={24}
-          color={activeTab === "saved" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+          color={activeTab === 'saved' ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
         />
         <Typography
           variant="annotation"
-          color={activeTab === "saved" ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+          color={activeTab === 'saved' ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
         >
           Saved
         </Typography>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 60,
     paddingBottom: 8,
   },
   tab: {
+    alignItems: 'center',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
   },
-})
+});
 
-export default BottomTabs
-
+export default BottomTabs;

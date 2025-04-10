@@ -1,30 +1,47 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Image, View, StyleSheet, ActivityIndicator } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import Skeleton from "../components/Skeleton"
+import React, { useState } from 'react';
+import {
+  Image,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  StyleProp,
+  ImageStyle,
+  ViewStyle,
+} from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
+import Skeleton from '../components/Skeleton';
 
 interface LazyImageProps {
-  source: any
-  style: any
-  showLoader?: boolean
-  useSkeleton?: boolean
+  source: { uri: string } | number;
+  style: StyleProp<ImageStyle>;
+  showLoader?: boolean;
+  useSkeleton?: boolean;
+  resizeMode?: 'cover' | 'contain' | 'stretch' | 'repeat' | 'center';
+  onLoad?: () => void;
+  onError?: () => void;
 }
 
-const LazyImage = ({ source, style, showLoader = true, useSkeleton = true }: LazyImageProps) => {
-  const theme = useTheme()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+const LazyImage: React.FC<LazyImageProps> = ({
+  source,
+  style,
+  showLoader = false,
+  useSkeleton = false,
+  resizeMode = 'cover',
+}) => {
+  const theme = useTheme();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const handleLoad = () => {
-    setLoading(false)
-  }
+  const handleLoad = (): void => {
+    setLoading(false);
+  };
 
-  const handleError = () => {
-    setLoading(false)
-    setError(true)
-  }
+  const handleError = (): void => {
+    setLoading(false);
+    setError(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -35,8 +52,8 @@ const LazyImage = ({ source, style, showLoader = true, useSkeleton = true }: Laz
         </View>
       )}
       {error ? (
-        <View style={styles.errorContainer}>
-          <View style={styles.errorIcon} />
+        <View style={[styles.errorContainer, { backgroundColor: theme.colors.Border.Skeleton }]}>
+          <View style={[styles.errorIcon, { backgroundColor: theme.colors.Border.Disabled }]} />
         </View>
       ) : (
         <Image
@@ -44,40 +61,38 @@ const LazyImage = ({ source, style, showLoader = true, useSkeleton = true }: Laz
           style={[style, loading && styles.hiddenImage]}
           onLoad={handleLoad}
           onError={handleError}
+          resizeMode={resizeMode}
         />
       )}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
+    position: 'relative',
   },
-  loaderContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorIcon: {
+    borderRadius: 20,
+    height: 40,
+    width: 40,
   },
   hiddenImage: {
     opacity: 0,
   },
-  errorContainer: {
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
+  loaderContainer: {
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
   },
-  errorIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#e0e0e0",
-  },
-})
+});
 
-export default LazyImage
-
+export default LazyImage;

@@ -1,32 +1,32 @@
-"use client"
-import { View, StyleSheet, TouchableOpacity } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import { Ionicons } from "@expo/vector-icons"
-import { useNavigation } from "@react-navigation/native"
-import Flag from "./Flag"
-import Typography from "./Typography"
+'use client';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import Flag from './Flag';
+import Typography from './Typography';
 
 interface HeaderButton {
-  label: string
-  onPress: () => void
+  label: string;
+  onPress: () => void;
 }
 
 interface FlagProps {
-  text: string
-  category?: string
+  text: string;
+  category?: string;
 }
 
 interface HeaderProps {
-  title: string
-  showBackButton?: boolean
-  onBackPress?: () => void
-  rightButtons?: HeaderButton[]
-  backgroundColor?: string
-  textColor?: string
-  flag?: FlagProps | null
-  titleStyle?: "default" | "large"
-  showProfileButton?: boolean
-  onProfilePress?: () => void
+  title: string;
+  showBackButton?: boolean;
+  onBackPress?: () => void;
+  rightButtons?: HeaderButton[];
+  backgroundColor?: string;
+  textColor?: string;
+  flag?: FlagProps | null;
+  titleStyle?: 'default' | 'large';
+  showProfileButton?: boolean;
+  onProfilePress?: () => void;
 }
 
 const Header = ({
@@ -37,27 +37,27 @@ const Header = ({
   backgroundColor,
   textColor,
   flag,
-  titleStyle = "default",
+  titleStyle = 'default',
   showProfileButton = false,
   onProfilePress,
 }: HeaderProps) => {
-  const theme = useTheme()
-  const navigation = useNavigation()
+  const theme = useTheme();
+  const navigation = useNavigation();
 
   const handleBackPress = () => {
     if (onBackPress) {
-      onBackPress()
+      onBackPress();
     } else {
-      navigation.goBack()
+      navigation.goBack();
     }
-  }
+  };
 
-  const bgColor = backgroundColor || theme.colors.Surface.Primary
-  const txtColor = textColor || theme.colors.Text.Primary
-  const spacing = theme.space["40"]
-  const smallSpacing = theme.space["20"]
-  const borderWidth = theme.borderWidth["10"]
-  const borderColor = theme.colors.Border["Border-Primary"]
+  const bgColor = backgroundColor || theme.colors.Surface.Primary;
+  const txtColor = textColor || theme.colors.Text.Primary;
+  const spacing = theme.space['40'];
+  const smallSpacing = theme.space['20'];
+  const borderWidth = theme.borderWidth['10'];
+  const borderColor = theme.colors.Border['Border-Primary'];
 
   return (
     <View
@@ -74,7 +74,10 @@ const Header = ({
     >
       <View style={styles.content}>
         {showBackButton && (
-          <TouchableOpacity style={[styles.backButton, { marginRight: smallSpacing }]} onPress={handleBackPress}>
+          <TouchableOpacity
+            style={[styles.backButton, { marginRight: smallSpacing }]}
+            onPress={handleBackPress}
+          >
             <Ionicons name="arrow-back" size={24} color={txtColor} />
           </TouchableOpacity>
         )}
@@ -82,13 +85,15 @@ const Header = ({
         <View style={styles.titleContainer}>
           {flag && (
             <View style={styles.flagContainer}>
-              <Flag text={flag.text} category={flag.category} style={styles.flag} variant="minimal" />
+              <Flag
+                text={flag.text}
+                category={flag.category}
+                style={styles.flag}
+                variant="minimal"
+              />
             </View>
           )}
-          <Typography
-            variant={titleStyle === "large" ? "h1" : "h2"}
-            color={txtColor}
-          >
+          <Typography variant={titleStyle === 'large' ? 'h1' : 'h2'} color={txtColor}>
             {title}
           </Typography>
         </View>
@@ -112,36 +117,35 @@ const Header = ({
         )}
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
+  backButton: {},
   container: {
-    width: "100%",
+    width: '100%',
   },
   content: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  backButton: {},
-  titleContainer: {
-    flex: 1,
-  },
-  flagContainer: {
-    marginBottom: 8,
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   flag: {},
-  rightButtonsContainer: {
-    flexDirection: "row",
-  },
-  rightButton: {
-    marginLeft: 16,
+  flagContainer: {
+    marginBottom: 8,
   },
   profileButton: {
     marginLeft: 16,
     padding: 4,
   },
-})
+  rightButton: {
+    marginLeft: 16,
+  },
+  rightButtonsContainer: {
+    flexDirection: 'row',
+  },
+  titleContainer: {
+    flex: 1,
+  },
+});
 
-export default Header
-
+export default Header;

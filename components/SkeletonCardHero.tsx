@@ -1,10 +1,10 @@
-"use client"
-import { View, StyleSheet } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import Skeleton from "./Skeleton"
+'use client';
+import { View, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
+import Skeleton from './Skeleton';
 
 const SkeletonCardHero = () => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
@@ -36,15 +36,24 @@ const SkeletonCardHero = () => {
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
+  action: {
+    marginRight: 16,
+  },
+  actions: {
+    flexDirection: 'row',
+  },
+  category: {
+    marginBottom: 8,
+  },
   container: {
-    width: "100%",
     borderRadius: 12,
     marginBottom: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
+    width: '100%',
   },
   content: {
     padding: 16,
@@ -52,28 +61,18 @@ const styles = StyleSheet.create({
   flag: {
     marginBottom: 8,
   },
-  category: {
-    marginBottom: 8,
-  },
-  titleLine: {
-    marginBottom: 8,
+  footer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
   },
   subtitle: {
     marginBottom: 4,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 12,
+  titleLine: {
+    marginBottom: 8,
   },
-  actions: {
-    flexDirection: "row",
-  },
-  action: {
-    marginRight: 16,
-  },
-})
+});
 
-export default SkeletonCardHero
-
+export default SkeletonCardHero;

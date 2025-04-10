@@ -1,18 +1,18 @@
-"use client"
-import { View, StyleSheet } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import Skeleton from "./Skeleton"
+'use client';
+import { View, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
+import Skeleton from './Skeleton';
 
 const SkeletonCardArticle = () => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <View
       style={[
         styles.container,
         {
-          borderBottomColor: theme.colors.Border["Border-Primary"],
-          borderBottomWidth: theme.borderWidth["10"],
+          borderBottomColor: theme.colors.Border['Border-Primary'],
+          borderBottomWidth: theme.borderWidth['10'],
         },
       ]}
     >
@@ -41,42 +41,41 @@ const SkeletonCardArticle = () => {
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
+  action: {
+    marginRight: 16,
+  },
+  actions: {
+    flexDirection: 'row',
+  },
+  category: {
+    marginBottom: 8,
+  },
   container: {
     paddingVertical: 16,
   },
   content: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 12,
+  },
+  flag: {
+    marginBottom: 8,
+  },
+  footer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   textContent: {
     flex: 1,
     marginRight: 12,
   },
-  flag: {
-    marginBottom: 8,
-  },
-  category: {
-    marginBottom: 8,
-  },
   titleLine: {
     marginBottom: 4,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  actions: {
-    flexDirection: "row",
-  },
-  action: {
-    marginRight: 16,
-  },
-})
+});
 
-export default SkeletonCardArticle
-
+export default SkeletonCardArticle;

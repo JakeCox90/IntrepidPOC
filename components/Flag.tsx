@@ -1,36 +1,46 @@
-"use client"
-import { View, type ViewStyle, type TextStyle } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import Typography from "./Typography"
-import { getCategoryColor } from "../utils/categoryColors"
-import { createFlagStyles } from "./styles/Flag.styles"
+'use client';
+import { View, type ViewStyle, type TextStyle } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
+import Typography from './Typography';
+import { getCategoryColor } from '../utils/categoryColors';
+import { createFlagStyles } from './styles/Flag.styles';
 
-type FlagVariant = "minimal" | "filled"
+type FlagVariant = 'minimal' | 'filled';
 
 interface FlagProps {
-  text: string
-  color?: string
-  backgroundColor?: string
-  style?: ViewStyle
-  textStyle?: TextStyle
-  category?: string
-  variant?: FlagVariant
+  text: string;
+  color?: string;
+  backgroundColor?: string;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+  category?: string;
+  variant?: FlagVariant;
 }
 
-const Flag = ({ text, color, backgroundColor, style, textStyle, category, variant = "filled" }: FlagProps) => {
-  const theme = useTheme()
-  const styles = createFlagStyles(theme)
+const Flag = ({
+  text,
+  color,
+  backgroundColor,
+  style,
+  textStyle,
+  category,
+  variant = 'filled',
+}: FlagProps) => {
+  const theme = useTheme();
+  const styles = createFlagStyles(theme);
 
   // Default colors based on text or category
-  const defaultBgColor = category ? getCategoryColor(category, theme) : getCategoryColor(text, theme)
-  const defaultTextColor = variant === "filled" ? theme.colors.Text.Inverse : defaultBgColor
+  const defaultBgColor = category
+    ? getCategoryColor(category, theme)
+    : getCategoryColor(text, theme);
+  const defaultTextColor = variant === 'filled' ? theme.colors.Text.Inverse : defaultBgColor;
 
-  if (variant === "minimal") {
+  if (variant === 'minimal') {
     return (
-      <Typography variant="overline" color={color || defaultBgColor} style={[textStyle]}>
+      <Typography variant="overline" color={color || defaultBgColor} style={textStyle}>
         {text.toUpperCase()}
       </Typography>
-    )
+    );
   }
 
   return (
@@ -39,7 +49,7 @@ const Flag = ({ text, color, backgroundColor, style, textStyle, category, varian
         {text.toUpperCase()}
       </Typography>
     </View>
-  )
-}
+  );
+};
 
-export default Flag
+export default Flag;

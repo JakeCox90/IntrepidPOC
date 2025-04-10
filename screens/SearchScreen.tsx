@@ -1,153 +1,153 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar } from "react-native"
-import { Feather } from "@expo/vector-icons"
-import Typography from "../components/Typography"
-import { useTheme } from "../theme/ThemeProvider"
-import Header from "../components/Header"
-import CardHorizontal from "../components/CardHorizontal"
-import SkeletonLoader from "../components/SkeletonLoader"
-import { searchNews, type Article } from "../services/sunNewsService"
-import type { NativeStackScreenProps } from "@react-navigation/native-stack"
+import { useState } from 'react';
+import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import Typography from '../components/Typography';
+import { useTheme } from '../theme/ThemeProvider';
+import Header from '../components/Header';
+import CardHorizontal from '../components/CardHorizontal';
+import SkeletonLoader from '../components/SkeletonLoader';
+import { searchNews, type Article } from '../services/sunNewsService';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type SearchStackParamList = {
-  SearchMain: undefined
-  SearchArticle: { article: Article }
-}
+  SearchMain: undefined;
+  SearchArticle: { article: Article };
+};
 
-type Props = NativeStackScreenProps<SearchStackParamList, "SearchMain">
+type Props = NativeStackScreenProps<SearchStackParamList, 'SearchMain'>;
 
 const SearchScreen = ({ navigation }: Props) => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState<Article[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const theme = useTheme()
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Article[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const theme = useTheme();
 
   const styles = StyleSheet.create({
     container: {
+      backgroundColor: '#FFFFFF',
       flex: 1,
-      backgroundColor: "#FFFFFF",
+    },
+    errorContainer: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20,
+    },
+    errorSubtext: {
+      fontSize: 16,
+      textAlign: 'center',
+    },
+    errorText: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 8,
+    },
+    searchButton: {
+      borderRadius: 8,
+      height: 44,
+      justifyContent: 'center',
+      paddingHorizontal: 16,
     },
     searchContainer: {
-      flexDirection: "row",
+      borderBottomColor: '#EEEEEE',
+      borderBottomWidth: 1,
+      flexDirection: 'row',
       paddingHorizontal: 16,
       paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: "#EEEEEE",
-    },
-    searchInputContainer: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      marginRight: 8,
-      height: 44,
     },
     searchIcon: {
       marginRight: 8,
     },
     searchInput: {
       flex: 1,
+      fontFamily: theme.typography.fontFamily[theme.typography.variants['input-text'].weight],
+      fontSize: theme.typography.scale[theme.typography.variants['input-text'].scale],
       height: 44,
-      fontSize: theme.typography.scale[theme.typography.variants["input-text"].scale],
-      fontFamily: theme.typography.fontFamily[theme.typography.variants["input-text"].weight],
-      lineHeight: theme.typography.lineHeight[theme.typography.variants["input-text"].scale],
+      lineHeight: theme.typography.lineHeight[theme.typography.variants['input-text'].scale],
     },
-    searchButton: {
+    searchInputContainer: {
+      alignItems: 'center',
       borderRadius: 8,
-      justifyContent: "center",
-      paddingHorizontal: 16,
+      flex: 1,
+      flexDirection: 'row',
       height: 44,
+      marginRight: 8,
+      paddingHorizontal: 12,
     },
     searchResults: {
       padding: 16,
     },
-    trendingContainer: {
-      padding: 16,
-      flex: 1,
-    },
-    trendingTitle: {
-      marginBottom: 16,
-    },
-    trendingList: {
-      paddingBottom: 16,
-    },
     trendingColumns: {
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
       marginBottom: 12,
+    },
+    trendingContainer: {
+      flex: 1,
+      padding: 16,
     },
     trendingItem: {
       borderRadius: 8,
       padding: 12,
-      width: "48%",
+      width: '48%',
     },
-    errorContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 20,
+    trendingList: {
+      paddingBottom: 16,
     },
-    errorText: {
-      fontSize: 18,
-      fontWeight: "600",
-      marginBottom: 8,
+    trendingTitle: {
+      marginBottom: 16,
     },
-    errorSubtext: {
-      fontSize: 16,
-      textAlign: "center",
-    },
-  })
+  });
 
   const handleSearch = async () => {
     if (searchQuery.trim()) {
       try {
-        setIsSearching(true)
-        setError(null)
-        const results = await searchNews(searchQuery)
-        setSearchResults(results)
+        setIsSearching(true);
+        setError(null);
+        const results = await searchNews(searchQuery);
+        setSearchResults(results);
       } catch (err) {
-        setError("Failed to search articles")
-        console.error(err)
+        setError('Failed to search articles');
+        console.error(err);
       } finally {
-        setIsSearching(false)
+        setIsSearching(false);
       }
     }
-  }
+  };
 
   const handleClearSearch = () => {
-    setSearchQuery("")
-    setSearchResults([])
-    setError(null)
-  }
+    setSearchQuery('');
+    setSearchResults([]);
+    setError(null);
+  };
 
   const handleArticlePress = (article: Article) => {
-    navigation.navigate("SearchArticle", { article })
-  }
+    navigation.navigate('SearchArticle', { article });
+  };
 
   const handleBookmark = (id: string) => {
-    console.log("Bookmark article:", id)
-  }
+    console.log('Bookmark article:', id);
+  };
 
   const handleShare = (id: string) => {
-    console.log("Share article:", id)
-  }
+    console.log('Share article:', id);
+  };
 
   const renderTrendingItem = ({ item }: { item: string }) => (
     <TouchableOpacity
       style={[styles.trendingItem, { backgroundColor: theme.colors.Surface.Secondary }]}
       onPress={() => {
-        setSearchQuery(item)
-        handleSearch()
+        setSearchQuery(item);
+        handleSearch();
       }}
     >
       <Typography variant="body-02" color={theme.colors.Text.Primary}>
         {item}
       </Typography>
     </TouchableOpacity>
-  )
+  );
 
   return (
     <View style={styles.container}>
@@ -156,8 +156,15 @@ const SearchScreen = ({ navigation }: Props) => {
       <Header title="Search" backgroundColor="#FFFFFF" />
 
       <View style={styles.searchContainer}>
-        <View style={[styles.searchInputContainer, { backgroundColor: theme.colors.Surface.Secondary }]}>
-          <Feather name="search" size={20} color={theme.colors.Text.Secondary} style={styles.searchIcon} />
+        <View
+          style={[styles.searchInputContainer, { backgroundColor: theme.colors.Surface.Secondary }]}
+        >
+          <Feather
+            name="search"
+            size={20}
+            color={theme.colors.Text.Secondary}
+            style={styles.searchIcon}
+          />
           <TextInput
             style={[styles.searchInput, { color: theme.colors.Text.Primary }]}
             placeholder="Search for news..."
@@ -194,7 +201,11 @@ const SearchScreen = ({ navigation }: Props) => {
           <Typography variant="body-01" color={theme.colors.Error.Resting} style={styles.errorText}>
             {error}
           </Typography>
-          <Typography variant="body-02" color={theme.colors.Text.Secondary} style={styles.errorSubtext}>
+          <Typography
+            variant="body-02"
+            color={theme.colors.Text.Secondary}
+            style={styles.errorSubtext}
+          >
             Please try again.
           </Typography>
         </View>
@@ -202,7 +213,7 @@ const SearchScreen = ({ navigation }: Props) => {
         // Actual content
         <FlatList
           data={searchResults}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <CardHorizontal
               id={item.id}
@@ -223,8 +234,15 @@ const SearchScreen = ({ navigation }: Props) => {
             Trending Searches
           </Typography>
           <FlatList
-            data={["Premier League", "Royal Family", "Cost of Living", "Ukraine War", "Climate Change", "US Election"]}
-            keyExtractor={(item) => item}
+            data={[
+              'Premier League',
+              'Royal Family',
+              'Cost of Living',
+              'Ukraine War',
+              'Climate Change',
+              'US Election',
+            ]}
+            keyExtractor={item => item}
             renderItem={renderTrendingItem}
             numColumns={2}
             columnWrapperStyle={styles.trendingColumns}
@@ -233,8 +251,7 @@ const SearchScreen = ({ navigation }: Props) => {
         </View>
       )}
     </View>
-  )
-}
+  );
+};
 
-export default SearchScreen
-
+export default SearchScreen;

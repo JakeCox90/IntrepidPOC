@@ -8,5 +8,4 @@ export const zIndex = {
   modal: 1300,
   popover: 1400,
   toast: 1500,
-}
-
+};

@@ -1,33 +1,33 @@
-import { StyleSheet } from "react-native"
-import type { ThemeType } from "../../theme/ThemeProvider"
-import { cardStyles } from "../../utils/cardStyles"
+import { StyleSheet } from 'react-native';
+import type { ThemeType } from '../../theme/ThemeProvider';
+import { cardStyles } from '../../utils/cardStyles';
 
 export const createCardHeroStyles = (theme: ThemeType) => {
   return StyleSheet.create({
+    category: {
+      marginBottom: 4,
+    },
     container: {
       ...cardStyles.container,
       ...cardStyles.heroContainer,
-      borderWidth: theme.borderWidth["10"],
-      borderColor: theme.colors.Border["Border-Primary"],
+      borderColor: theme.colors.Border['Border-Primary'],
+      borderWidth: theme.borderWidth['10'],
+    },
+    flagContainer: {
+      flexDirection: 'row',
+      marginBottom: 8,
     },
     heroContent: {
       padding: 16,
     },
-    flagContainer: {
-      marginBottom: 8,
-      flexDirection: "row",
-    },
-    category: {
-      marginBottom: 4,
-    },
-    title: {
-      marginBottom: 8,
+    image: {
+      ...cardStyles.heroImage,
     },
     subtitle: {
       marginBottom: 12,
     },
-    image: {
-      ...cardStyles.heroImage,
+    title: {
+      marginBottom: 8,
     },
-  })
-}
+  });
+};

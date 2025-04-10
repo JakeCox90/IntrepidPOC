@@ -1,11 +1,9 @@
-"use client"
-import { View, StyleSheet } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
-import Skeleton from "./Skeleton"
+'use client';
+import { View, StyleSheet } from 'react-native';
+// import { useTheme } from '../theme/ThemeProvider';
+import Skeleton from './Skeleton';
 
 const SkeletonArticle = () => {
-  const theme = useTheme()
-
   return (
     <View style={styles.container}>
       {/* Header skeleton */}
@@ -49,27 +47,16 @@ const SkeletonArticle = () => {
         <Skeleton height={18} width="85%" style={styles.paragraph} />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
+  articleContent: {
+    marginBottom: 24,
   },
-  tagsContainer: {
-    flexDirection: "row",
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  title: {
-    marginBottom: 8,
-  },
-  subtitle: {
-    marginBottom: 12,
-  },
-  readingTimeContainer: {
-    marginBottom: 8,
+  articleImage: {
+    borderRadius: 4,
+    marginBottom: 16,
   },
   authorContainer: {
     marginBottom: 16,
@@ -77,17 +64,27 @@ const styles = StyleSheet.create({
   authorName: {
     marginBottom: 4,
   },
-  articleImage: {
-    marginBottom: 16,
-    borderRadius: 4,
-  },
-  articleContent: {
-    marginBottom: 24,
+  container: {
+    flex: 1,
+    padding: 16,
   },
   paragraph: {
     marginBottom: 12,
   },
-})
+  readingTimeContainer: {
+    marginBottom: 8,
+  },
+  subtitle: {
+    marginBottom: 12,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    marginTop: 16,
+  },
+  title: {
+    marginBottom: 8,
+  },
+});
 
-export default SkeletonArticle
-
+export default SkeletonArticle;

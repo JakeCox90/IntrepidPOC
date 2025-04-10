@@ -1,18 +1,19 @@
-"use client"
-import { View, StyleSheet } from "react-native"
-import { useTheme } from "../theme/ThemeProvider"
+'use client';
+import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { useTheme } from '../theme/ThemeProvider';
 
 interface StepperProps {
-  totalSteps: number
-  currentStep: number
-  style?: any
+  totalSteps: number;
+  currentStep: number;
+  style?: StyleProp<ViewStyle>;
 }
 
 const Stepper = ({ totalSteps, currentStep, style }: StepperProps) => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   // Ensure currentStep is within bounds
-  const safeCurrentStep = Math.max(0, Math.min(currentStep, totalSteps - 1))
+  // Ensure currentStep is within bounds
+  const safeCurrentStep = Math.max(0, Math.min(currentStep, totalSteps - 1));
 
   return (
     <View style={[styles.container, style]}>
@@ -21,30 +22,35 @@ const Stepper = ({ totalSteps, currentStep, style }: StepperProps) => {
           key={index}
           style={[
             styles.step,
+            index < totalSteps - 1 && styles.stepSpacer,
             {
               backgroundColor:
-                index === safeCurrentStep ? theme.colors.Text.Primary : theme.colors.Border["Border-Primary"],
-              flex: 1,
-              marginRight: index < totalSteps - 1 ? 4 : 0,
+                index === safeCurrentStep
+                  ? theme.colors.Text.Primary
+                  : theme.colors.Border['Border-Primary'],
             },
           ]}
         />
       ))}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    width: "100%",
+    alignItems: 'center',
+    flexDirection: 'row',
     height: 4,
-    alignItems: "center",
+    width: '100%',
   },
   step: {
-    height: 4,
     borderRadius: 2,
+    flex: 1,
+    height: 4,
   },
-})
+  stepSpacer: {
+    marginRight: 4,
+  },
+});
 
-export default Stepper
+export default Stepper;
