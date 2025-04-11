@@ -52,5 +52,13 @@ export const createAccordionStyles = (theme: ThemeType) => {
     expandedContent: {
       height: 'auto',
     },
+    
+    // Group: Content styles
+    keyPointsContainer: {
+      paddingVertical: 8,
+    },
+    keyPoint: {
+      marginBottom: 8,
+    },
   });
 }; 

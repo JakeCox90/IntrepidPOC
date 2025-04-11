@@ -12,6 +12,7 @@ import TopNav from '../components/TopNav';
 import ArticleHeader from '../components/ArticleHeader';
 import AudioPlayer from '../components/AudioPlayer';
 import { Accordion } from '../components/Accordion';
+import { createAccordionStyles } from '../components/styles/Accordion.styles';
 
 const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
   const { article: routeArticle } = route.params || {};
@@ -20,6 +21,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
   const [error, setError] = useState(null);
 
   const theme = useTheme();
+  const accordionStyles = createAccordionStyles(theme);
 
   useFocusEffect(
     useCallback(() => {
@@ -203,26 +205,26 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
           {/* Accordion Component */}
           <View style={styles.accordionContainer}>
             <Accordion title="Key Points" initialExpanded={true}>
-              <View style={styles.keyPointsContainer}>
+              <View style={accordionStyles.keyPointsContainer}>
                 <Typography
-                  variant="body-01"
+                  variant="body-02"
                   color={theme.colors.Text.Secondary}
-                  style={styles.keyPoint}
+                  style={accordionStyles.keyPoint}
                 >
                   • {article.title.split(' ').slice(0, 5).join(' ')}...
                 </Typography>
                 <Typography
-                  variant="body-01"
+                  variant="body-02"
                   color={theme.colors.Text.Secondary}
-                  style={styles.keyPoint}
+                  style={accordionStyles.keyPoint}
                 >
                   • {contentParagraphs[0].split('.')[0]}.
                 </Typography>
                 {contentParagraphs.length > 1 && (
                   <Typography
-                    variant="body-01"
+                    variant="body-02"
                     color={theme.colors.Text.Secondary}
-                    style={styles.keyPoint}
+                    style={accordionStyles.keyPoint}
                   >
                     • {contentParagraphs[1].split('.')[0]}.
                   </Typography>
@@ -293,12 +295,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-  },
-  keyPoint: {
-    marginBottom: 8,
-  },
-  keyPointsContainer: {
-    paddingVertical: 8,
   },
   paragraph: {
     marginBottom: 16,

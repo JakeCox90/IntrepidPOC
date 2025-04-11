@@ -49,7 +49,11 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children }) => {
           isExpanded ? styles.expandedContent : null,
         ]}
       >
-        {isExpanded && <View style={styles.content}>{children}</View>}
+        {isExpanded && (
+          <View style={styles.content}>
+            {children}
+          </View>
+        )}
       </View>
     </View>
   );
