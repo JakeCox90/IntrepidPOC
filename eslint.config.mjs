@@ -13,10 +13,10 @@ export default [
   {
     ignores: ['node_modules/**', 'build/**', 'dist/**'],
   },
-  
+
   // Apply eslint recommended rules to all JavaScript files
   eslint.configs.recommended,
-  
+
   // TypeScript configuration
   {
     files: ['**/*.{ts,tsx}'],
@@ -27,7 +27,7 @@ export default [
       ...typescriptPlugin.configs.recommended.rules,
     },
   },
-  
+
   // React configuration
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -59,7 +59,7 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
     },
   },
-  
+
   // React Native configuration
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -79,7 +79,7 @@ export default [
       'react-native/no-raw-text': 'off',
     },
   },
-  
+
   // TypeScript files configuration
   {
     files: ['**/*.{ts,tsx}'],
@@ -94,7 +94,7 @@ export default [
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
-  
+
   // Prettier configuration
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -105,8 +105,8 @@ export default [
       'prettier/prettier': 'error',
     },
   },
-  
+
   // Apply prettier at the end to override any conflicting rules
-  prettierConfig,
+  eslintConfigPrettier,
 ];
 

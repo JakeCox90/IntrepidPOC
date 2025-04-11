@@ -179,7 +179,7 @@ const SearchScreen = ({ navigation }: Props) => {
               title={item.title}
               imageUrl={item.imageUrl}
               category={item.category}
-              timestamp={item.publishDate}
+              timestamp={item.timestamp}
               readTime={item.readTime}
               onPress={() => handleArticlePress(item)}
               onBookmark={() => handleBookmark(item.id)}

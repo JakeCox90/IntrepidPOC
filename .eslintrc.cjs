@@ -42,13 +42,12 @@ module.exports = {
     },
   },
   ignorePatterns: [
-    'node_modules/', 
-    'build/', 
-    'dist/', 
+    'node_modules/',
+    'build/',
+    'dist/',
     '*.config.js',
     '.eslintrc.cjs',
     '.prettierrc.cjs',
     'babel.config.cjs',
   ],
 };
-
