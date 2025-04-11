@@ -17,14 +17,15 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   cardsContainer: {
-    alignItems: 'center',
     flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
   },
   cardsStack: {
-    height: height * 0.6,
-    position: 'relative',
-    width: width - 32,
+    width: width,
+    height: height * 0.7,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   categoryContainer: {
     marginBottom: 8,
@@ -50,9 +51,16 @@ export const styles = StyleSheet.create({
   flagContainer: {
     marginBottom: 8,
   },
+  flagsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  flagItem: {
+    marginRight: 8,
+  },
   header: {
     alignItems: 'center',
-    borderBottomWidth: 1,
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -90,15 +98,17 @@ export const styles = StyleSheet.create({
 export const createDynamicStyles = (_theme: ThemeType) => {
   return StyleSheet.create({
     card: {
-      flex: 1,
-      position: 'relative',
+      position: 'absolute',
+      width: width - 32,
+      height: height * 0.7,
     },
     cardContainer: {
       borderRadius: 16,
-      height: height * 0.6,
+      height: height * 0.7,
+      width: width - 32,
       overflow: 'hidden',
       position: 'absolute',
-      width: width - 32,
+      left: 16,
     },
     cardContent: {
       bottom: 0,

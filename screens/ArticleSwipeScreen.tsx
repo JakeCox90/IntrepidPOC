@@ -117,8 +117,8 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
       },
       onPanResponderGrant: () => {
         position.setOffset({
-          x: (position.x as any)._value,
-          y: (position.y as any)._value,
+          x: position.x._value,
+          y: position.y._value,
         });
         position.setValue({ x: 0, y: 0 });
       },
@@ -347,17 +347,19 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
 
           {/* Card content */}
           <View style={dynamicStyles.cardContent}>
-            {article.category && (
-              <View style={styles.categoryContainer}>
-                <Flag text={article.category} category={article.category} variant="filled" />
-              </View>
-            )}
+            <View style={styles.flagsContainer}>
+              {article.category && (
+                <View style={styles.flagItem}>
+                  <Flag text={article.category} category={article.category} variant="filled" />
+                </View>
+              )}
 
-            {article.flag && COMMON_FLAGS.includes(article.flag.toUpperCase()) && (
-              <View style={styles.flagContainer}>
-                <Flag text={article.flag} variant="filled" />
-              </View>
-            )}
+              {article.flag && COMMON_FLAGS.includes(article.flag.toUpperCase()) && (
+                <View style={styles.flagItem}>
+                  <Flag text={article.flag} variant="filled" />
+                </View>
+              )}
+            </View>
 
             <Typography
               variant="h5"
@@ -447,7 +449,7 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
       
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
-        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary, borderBottomWidth: 0 }]}>
+        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary, borderBottomWidth: 0, paddingTop: Platform.OS === 'ios' ? 0 : 16 }]}>
           <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
             <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
           </TouchableOpacity>
@@ -489,7 +491,7 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
                         backgroundColor:
                           index < currentIndex
                             ? theme.colors.Primary.Resting
-                            : theme.colors.Border.Primary,
+                            : theme.colors.Border['Border-Primary'],
                       },
                     ]}
                   />

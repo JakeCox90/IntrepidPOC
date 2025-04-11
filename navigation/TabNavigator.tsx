@@ -371,6 +371,15 @@ export default function TabNavigator() {
               return null;
             }
 
+            // Check if we're in a stack navigator and the current screen is ArticleSwipeScreen
+            const currentStackState = props.state.routes[props.state.index].state;
+            if (currentStackState && currentStackState.routes) {
+              const currentScreen = currentStackState.routes[currentStackState.index]?.name;
+              if (currentScreen === 'ArticleSwipeScreen') {
+                return null; // Hide tab bar when ArticleSwipeScreen is active
+              }
+            }
+
             return (
               <BottomNav
                 activeTab={currentRoute}
