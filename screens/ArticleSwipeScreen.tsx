@@ -447,7 +447,7 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
       
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
-        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
+        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary, borderBottomWidth: 0 }]}>
           <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
             <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
           </TouchableOpacity>
