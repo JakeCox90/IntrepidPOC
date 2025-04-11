@@ -31,6 +31,7 @@ export const baseStyles = StyleSheet.create({
   },
   tagsContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   flag: {
     marginRight: 8,

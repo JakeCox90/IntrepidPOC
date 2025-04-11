@@ -35,17 +35,24 @@ const Flag = ({
     : getCategoryColor(text, theme);
   const defaultTextColor = variant === 'filled' ? theme.colors.Text.Inverse : defaultBgColor;
 
+  const sharedTextStyle = [
+    styles.text,
+    textStyle,
+  ];
+
   if (variant === 'minimal') {
     return (
-      <Typography variant="overline" color={color || defaultBgColor} style={textStyle}>
-        {text.toUpperCase()}
-      </Typography>
+      <View style={[styles.minimalContainer, style]}>
+        <Typography variant="overline" color={color || defaultBgColor} style={sharedTextStyle}>
+          {text.toUpperCase()}
+        </Typography>
+      </View>
     );
   }
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor || defaultBgColor }, style]}>
-      <Typography variant="overline" color={color || defaultTextColor} style={textStyle}>
+      <Typography variant="overline" color={color || defaultTextColor} style={sharedTextStyle}>
         {text.toUpperCase()}
       </Typography>
     </View>
