@@ -10,15 +10,7 @@ import SkeletonLoader from '../components/SkeletonLoader';
 import TopNav from '../components/TopNav';
 import Typography from '../components/Typography';
 import { fetchSunNews } from '../services/sunNewsService';
-
-interface Article {
-  id: string | number;
-  title: string;
-  imageUrl: string;
-  category: string;
-  flag?: string;
-  readTime?: string;
-}
+import { Article } from '../types/article';
 
 type RootStackParamList = {
   TodayArticle: { article: Article };
@@ -118,7 +110,7 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
         subtitle: 'All of the recent updates from the news today',
         imageUrl:
           news[0]?.imageUrl ||
-          'https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png',
+          'https://images.pexels.com/photos/518543/pexels-photo-518543.jpeg',
         count: news.length,
       },
       {
@@ -127,7 +119,7 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
         subtitle: 'Football, cricket, F1 and more',
         imageUrl:
           news.find(a => a.category.toLowerCase().includes('sport'))?.imageUrl ||
-          'https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png',
+          'https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg',
         count: news.filter(a => a.category.toLowerCase().includes('sport')).length,
       },
       {
@@ -139,7 +131,7 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
             a =>
               a.category.toLowerCase().includes('showbiz') ||
               a.category.toLowerCase().includes('tv'),
-          )?.imageUrl || 'https://www.thesun.co.uk/wp-content/uploads/2023/01/the-sun-masthead.png',
+          )?.imageUrl || 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg',
         count: news.filter(
           a =>
             a.category.toLowerCase().includes('showbiz') || a.category.toLowerCase().includes('tv'),
@@ -295,7 +287,6 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
   },
   catchUpScrollContent: {
-    gap: 12,
     paddingRight: 16,
   },
   centerContainer: {
@@ -313,10 +304,11 @@ const styles = StyleSheet.create({
   },
   section: {
     padding: 16,
-    paddingBottom: 0,
+    paddingBottom: 24,
   },
   sectionTitle: {
     marginBottom: 16,
+    fontWeight: '700',
   },
 });
 

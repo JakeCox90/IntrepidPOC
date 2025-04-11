@@ -1,16 +1,16 @@
 export interface Article {
-  id: string;
+  id: string | number;
   title: string;
   content: string;
   author: string;
   date: string;
-  imageUrl?: string;
+  imageUrl: string;
   category: string;
   subcategory?: string;
-  flag?: 'Featured' | 'Trending' | 'Analysis' | 'Breaking' | 'Exclusive';
+  flag?: string;
   readTime?: string;
   timestamp: string;
-  summary?: string;
+  summary: string;
   tags?: string[];
-  relatedArticles?: string[];
+  relatedArticles?: Article[];
 } 

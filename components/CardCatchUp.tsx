@@ -18,18 +18,20 @@ const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpP
     <Card onPress={onPress} style={cardStyles.catchUpContainer}>
       <View style={cardStyles.catchUpImageContainer}>
         <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
-        <View style={cardStyles.catchUpOverlay}>
-          <Typography variant="subtitle-01" color="#FFFFFF" style={styles.title}>
-            {title}
-          </Typography>
-          <Typography variant="body-02" color="#FFFFFF" style={styles.subtitle} numberOfLines={2}>
-            {subtitle}
-          </Typography>
-          {count !== undefined && (
-            <Typography variant="annotation" color="#FFFFFF" style={styles.count}>
-              {count} stories
+        <View style={[cardStyles.catchUpOverlay, styles.overlay]}>
+          <View style={styles.content}>
+            <Typography variant="h5" color="#FFFFFF" style={styles.title}>
+              {title}
             </Typography>
-          )}
+            <Typography variant="body-02" color="#FFFFFF" style={styles.subtitle} numberOfLines={2}>
+              {subtitle}
+            </Typography>
+            {count !== undefined && (
+              <Typography variant="annotation" color="#FFFFFF" style={styles.count}>
+                {count} stories
+              </Typography>
+            )}
+          </View>
         </View>
       </View>
     </Card>
@@ -37,13 +39,21 @@ const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpP
 };
 
 const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   count: {
     fontWeight: '600',
+    opacity: 0.8,
   },
   image: {
     borderRadius: 12,
     height: '100%',
     width: '100%',
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   subtitle: {
     marginBottom: 8,
@@ -51,6 +61,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 4,
+    fontWeight: '700',
   },
 });
 

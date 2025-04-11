@@ -43,23 +43,22 @@ export const cardStyles = StyleSheet.create({
   //-------------------------
   catchUpContainer: {
     borderRadius: 12,
-    height: 160,
+    height: 200,
     marginRight: 12,
-    width: 280,
+    width: 320,
   },
   catchUpImageContainer: {
     height: '100%',
     position: 'relative',
     width: '100%',
   },
-  // eslint-disable-next-line react-native/no-color-literals
   catchUpOverlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     bottom: 0,
     left: 0,
     padding: 16,
     position: 'absolute',
     right: 0,
+    height: '100%',
   },
 
   category: {
