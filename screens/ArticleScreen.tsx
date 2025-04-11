@@ -198,7 +198,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
           {/* Top Navigation */}
           <TopNav
-            title={article?.category || 'Article'}
+            title=""
             showBackButton
             onBackPress={() => navigation.goBack()}
             backgroundColor="#F5F5F5"
