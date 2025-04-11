@@ -1,10 +1,11 @@
 'use client';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import Flag from './Flag';
 import LazyImage from './LazyImage';
+import { baseStyles, getThemedStyles } from './styles/ArticleHeaderStyles';
 
 // Add the COMMON_FLAGS constant
 // Common flags used by The Sun
@@ -34,9 +35,6 @@ interface ArticleHeaderProps {
   imageUrl?: string;
 }
 
-const { width } = Dimensions.get('window');
-const imageHeight = (width * 2) / 3; // 3:2 ratio
-
 const ArticleHeader = ({
   title,
   subtitle,
@@ -48,41 +46,9 @@ const ArticleHeader = ({
   imageUrl,
 }: ArticleHeaderProps) => {
   const theme = useTheme();
-
-  // Get the border radius from theme
-  const borderRadius = theme?.radius?.['radius-default'] || 8;
-
-  // All themed styles with proper theme values
-  const themedStyles = {
-    articleImage: {
-      backgroundColor: theme?.colors?.Border?.Skeleton01 || theme?.colors?.Surface?.Secondary,
-      borderRadius: borderRadius,
-      height: imageHeight,
-      marginBottom: theme?.space?.['40'] || 16,
-      overflow: 'hidden',
-    },
-    authorContainer: {
-      marginBottom: theme?.space?.['40'] || 16,
-    },
-    flag: {
-      marginRight: theme?.space?.['20'] || 8,
-    },
-    readingTime: {
-      marginLeft: theme?.space?.['10'] || 4,
-    },
-    readingTimeContainer: {
-      marginBottom: theme?.space?.['20'] || 8,
-    },
-    subtitle: {
-      marginBottom: theme?.space?.['30'] || 12,
-    },
-    tagsContainer: {
-      marginBottom: theme?.space?.['20'] || 8,
-    },
-    title: {
-      marginBottom: theme?.space?.['20'] || 8,
-    },
-  };
+  
+  // Get themed styles
+  const themedStyles = getThemedStyles(theme);
 
   return (
     <View style={baseStyles.container}>
@@ -144,24 +110,11 @@ const ArticleHeader = ({
       </View>
 
       {/* Article Image */}
-      <View
-        style={[
-          baseStyles.articleImage,
-          {
-            backgroundColor: theme?.colors?.Border?.Skeleton01 || theme?.colors?.Surface?.Secondary,
-            borderRadius: theme?.radius?.['radius-default'] || 8,
-            height: imageHeight,
-            marginBottom: theme?.space?.['40'] || 16,
-            overflow: 'hidden' as const,
-            borderWidth: theme.borderWidth['10'],
-            borderColor: theme.colors.Border.Primary,
-          },
-        ]}
-      >
+      <View style={[baseStyles.articleImage, themedStyles.imageContainer]}>
         {imageUrl ? (
           <LazyImage
             source={{ uri: imageUrl }}
-            style={[baseStyles.image, { borderRadius: borderRadius - 1 }]}
+            style={[baseStyles.image, themedStyles.image]}
             resizeMode="cover"
           />
         ) : (
@@ -173,50 +126,5 @@ const ArticleHeader = ({
     </View>
   );
 };
-
-// Base styles that don't depend on theme
-const baseStyles = StyleSheet.create({
-  articleImage: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    width: '100%',
-  },
-  container: {
-    width: '100%',
-  },
-  image: {
-    height: '100%',
-    width: '100%',
-  },
-  placeholderImage: {
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  readingTimeContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  tagsContainer: {
-    flexDirection: 'row',
-  },
-  flag: {
-    marginRight: 8,
-  },
-  title: {
-    marginBottom: 8,
-  },
-  subtitle: {
-    marginBottom: 12,
-  },
-  readingTime: {
-    marginLeft: 4,
-  },
-  authorContainer: {
-    marginBottom: 16,
-  },
-});
 
 export default ArticleHeader;
