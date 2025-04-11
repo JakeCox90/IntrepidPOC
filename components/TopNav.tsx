@@ -17,6 +17,7 @@ interface TopNavProps {
     onPress: () => void;
   }>;
   variant?: 'default' | 'explore';
+  hasStepper?: boolean;
 }
 
 const TopNav = ({
@@ -27,6 +28,7 @@ const TopNav = ({
   textColor,
   rightButtons = [],
   variant = 'default',
+  hasStepper = false,
 }: TopNavProps) => {
   const theme = useTheme();
   const navigation = useNavigation();
@@ -84,10 +86,10 @@ const TopNav = ({
           paddingHorizontal: spacing,
           borderBottomColor: borderColor,
         },
-        styles.borderBottom,
+        !hasStepper && styles.borderBottom,
       ]}
     >
-      <View style={styles.content}>
+      <View style={[styles.content, hasStepper && styles.contentWithStepper]}>
         {showBackButton && (
           <TouchableOpacity
             style={[styles.backButton, { marginRight: smallSpacing }]}
@@ -134,6 +136,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 48,
     paddingVertical: 8,
+  },
+  contentWithStepper: {
+    height: 64,
+    paddingVertical: 12,
   },
   exploreContainer: {
     paddingBottom: 16,

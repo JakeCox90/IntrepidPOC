@@ -7,6 +7,7 @@ import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
 import Stepper from '../components/Stepper';
 import ArticleScreen from './ArticleScreen';
+import TopNav from '../components/TopNav';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Article as ArticleType } from '../types/article';
@@ -159,22 +160,15 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
         <StatusBar barStyle="dark-content" backgroundColor={theme.colors.Surface.Secondary} />
-        {/* Header */}
-        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
-          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-            <View
-              style={[styles.backButtonCircle, { backgroundColor: theme.colors.Surface.Secondary }]}
-            >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
-            </View>
-          </TouchableOpacity>
-
-          <View style={styles.titleContainer}>
-            <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={1}>
-              {title}
-            </Typography>
-          </View>
-        </View>
+        
+        {/* Replace custom header with TopNav component */}
+        <TopNav
+          title={title}
+          showBackButton
+          onBackPress={handleBackPress}
+          backgroundColor={theme.colors.Surface.Primary}
+          textColor={theme.colors.Text.Primary}
+        />
 
         {/* Error message */}
         <View style={styles.errorContainer}>
@@ -197,25 +191,19 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.Surface.Secondary} />
-      {/* Custom header with stepper */}
-      <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-          <View
-            style={[styles.backButtonCircle, { backgroundColor: theme.colors.Surface.Secondary }]}
-          >
-            <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.titleContainer}>
-          <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={1}>
-            {title}
-          </Typography>
-        </View>
-      </View>
+      
+      {/* Replace custom header with TopNav component */}
+      <TopNav
+        title={title}
+        showBackButton
+        onBackPress={handleBackPress}
+        backgroundColor={theme.colors.Surface.Primary}
+        textColor={theme.colors.Text.Primary}
+        hasStepper={true}
+      />
 
       {/* Stepper component */}
-      <View style={styles.stepperContainer}>
+      <View style={[styles.stepperContainer, { borderBottomWidth: 1, borderBottomColor: theme.colors.Border.Primary }]}>
         <Stepper totalSteps={articles.length} currentStep={currentIndex} />
       </View>
 
