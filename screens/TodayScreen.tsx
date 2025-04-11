@@ -269,7 +269,7 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
         }
       >
         {/* White Content Area */}
-        <View style={[styles.contentContainer, { backgroundColor: theme.colors.Surface.Primary }]}>
+        <View style={[styles.contentContainer, { backgroundColor: theme.colors.Surface.Secondary }]}>
           {renderContent()}
         </View>
       </ScrollView>
@@ -294,6 +294,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    zIndex: 2,
   },
   scrollViewContent: {
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 2,
+    zIndex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerContent: {
@@ -320,6 +321,14 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     paddingTop: 24,
     marginTop: -16,
+    ...Platform.select({
+      ios: {
+        zIndex: 2,
+      },
+      android: {
+        elevation: 1,
+      },
+    }),
   },
   section: {
     marginBottom: 24,
