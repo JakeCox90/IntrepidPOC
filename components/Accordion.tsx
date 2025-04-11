@@ -1,16 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Animated, LayoutChangeEvent } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
+import { createAccordionStyles } from './styles/Accordion.styles';
 
 interface AccordionProps {
   title: string;
   children: React.ReactNode;
-  initialExpanded?: boolean;
 }
 
 /**
@@ -18,113 +17,40 @@ interface AccordionProps {
  *
  * @param title - The title displayed in the header
  * @param children - The content to show when expanded
- * @param initialExpanded - Whether the accordion starts expanded (default: false)
  */
-export default function Accordion({ title, children, initialExpanded = false }: AccordionProps) {
+export const Accordion: React.FC<AccordionProps> = ({ title, children }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const theme = useTheme();
-  const [expanded, setExpanded] = useState(initialExpanded);
-  const animatedHeight = useRef(new Animated.Value(initialExpanded ? 1 : 0)).current;
-  const contentHeight = useRef(0);
-
-  useEffect(() => {
-    Animated.timing(animatedHeight, {
-      toValue: expanded ? 1 : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [expanded, animatedHeight]);
+  const styles = createAccordionStyles(theme);
 
   const toggleAccordion = () => {
-    setExpanded(!expanded);
+    setIsExpanded(!isExpanded);
   };
-
-  const onContentLayout = (event: LayoutChangeEvent) => {
-    if (contentHeight.current === 0) {
-      contentHeight.current = event.nativeEvent.layout.height;
-    }
-  };
-
-  const height = animatedHeight.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, contentHeight.current],
-  });
 
   return (
-    <View
-      style={[
-        styles.wrapper,
-        {
-          backgroundColor: theme.colors.Surface.Primary,
-          borderWidth: theme.borderWidth['10'],
-          borderRadius: theme.radius['radius-default'],
-        },
-      ]}
-    >
+    <View style={styles.wrapper}>
       <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={toggleAccordion}
         style={[
           styles.header,
-          {
-            backgroundColor: theme.colors.Surface.Primary,
-            borderBottomColor: expanded
-              ? theme.colors.Primary.Resting
-              : theme.colors.Border.Primary,
-          },
-          expanded ? styles.expandedHeader : styles.collapsedHeader,
+          isExpanded ? styles.expandedHeader : styles.collapsedHeader,
         ]}
+        onPress={toggleAccordion}
       >
-        <Typography variant="h6" color={theme.colors.Text.Primary}>
-          {title}
-        </Typography>
-        <Ionicons name={expanded ? 'remove' : 'add'} size={24} color={theme.colors.Text.Primary} />
+        <Typography variant="h6">{title}</Typography>
+        <Feather
+          name={isExpanded ? 'chevron-up' : 'chevron-down'}
+          size={24}
+          color={theme.colors.Text.Primary}
+        />
       </TouchableOpacity>
-
-      <Animated.View
+      <View
         style={[
           styles.contentContainer,
-          {
-            opacity: animatedHeight,
-            backgroundColor: theme.colors.Surface.Primary,
-          },
-          expanded ? styles.expandedContent : { height },
+          isExpanded ? styles.expandedContent : null,
         ]}
       >
-        <View style={styles.content} onLayout={onContentLayout}>
-          {children}
-        </View>
-      </Animated.View>
+        {isExpanded && <View style={styles.content}>{children}</View>}
+      </View>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  collapsedHeader: {
-    borderBottomWidth: 0,
-    borderRadius: 0,
-  },
-  content: {
-    padding: 16,
-  },
-  contentContainer: {
-    overflow: 'hidden',
-  },
-  expandedContent: {
-    height: 'auto',
-  },
-  expandedHeader: {
-    borderBottomWidth: 1,
-    borderRadius: 0,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    height: 68,
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  wrapper: {
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-});
+};

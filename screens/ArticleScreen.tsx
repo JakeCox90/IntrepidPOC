@@ -11,7 +11,7 @@ import { fetchArticleById } from '../services/sunNewsService';
 import TopNav from '../components/TopNav';
 import ArticleHeader from '../components/ArticleHeader';
 import AudioPlayer from '../components/AudioPlayer';
-import Accordion from '../components/Accordion';
+import { Accordion } from '../components/Accordion';
 
 const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
   const { article: routeArticle } = route.params || {};
