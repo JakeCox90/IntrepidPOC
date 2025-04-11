@@ -7,6 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   StatusBar,
+  SafeAreaView,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
@@ -115,8 +117,8 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
       },
       onPanResponderGrant: () => {
         position.setOffset({
-          x: position.x._value,
-          y: position.y._value,
+          x: (position.x as any)._value,
+          y: (position.y as any)._value,
         });
         position.setValue({ x: 0, y: 0 });
       },
@@ -442,59 +444,61 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+      
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* Header */}
+        <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+            <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
+          </TouchableOpacity>
 
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
-        </TouchableOpacity>
-
-        <View style={styles.titleContainer}>
-          <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={1}>
-            Daily Digest
-          </Typography>
-        </View>
-      </View>
-
-      {/* Cards */}
-      <View style={styles.cardsContainer}>{renderCards()}</View>
-
-      {/* Progress indicator and swipe instruction below cards */}
-      {!allSwiped && articles.length > 0 && (
-        <View style={styles.bottomContainer}>
-          {/* Swipe instruction */}
-          <View style={styles.swipeInstructionContainer}>
-            <Typography
-              variant="body-02"
-              color={theme.colors.Text.Secondary}
-              style={styles.swipeInstructionText}
-            >
-              Swipe cards left or right to browse articles
+          <View style={styles.titleContainer}>
+            <Typography variant="subtitle-01" color={theme.colors.Text.Primary} numberOfLines={1}>
+              Daily Digest
             </Typography>
           </View>
+        </View>
 
-          {/* Progress indicator */}
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              {articles.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.progressDot,
-                    index === currentIndex ? styles.activeDot : null,
-                    {
-                      backgroundColor:
-                        index < currentIndex
-                          ? theme.colors.Primary.Resting
-                          : theme.colors.Border['Border-Primary'],
-                    },
-                  ]}
-                />
-              ))}
+        {/* Cards */}
+        <View style={styles.cardsContainer}>{renderCards()}</View>
+
+        {/* Progress indicator and swipe instruction below cards */}
+        {!allSwiped && articles.length > 0 && (
+          <View style={styles.bottomContainer}>
+            {/* Swipe instruction */}
+            <View style={styles.swipeInstructionContainer}>
+              <Typography
+                variant="body-02"
+                color={theme.colors.Text.Secondary}
+                style={styles.swipeInstructionText}
+              >
+                Swipe cards left or right to browse articles
+              </Typography>
+            </View>
+
+            {/* Progress indicator */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                {articles.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.progressDot,
+                      index === currentIndex ? styles.activeDot : null,
+                      {
+                        backgroundColor:
+                          index < currentIndex
+                            ? theme.colors.Primary.Resting
+                            : theme.colors.Border.Primary,
+                      },
+                    ]}
+                  />
+                ))}
+              </View>
             </View>
           </View>
-        </View>
-      )}
+        )}
+      </SafeAreaView>
     </View>
   );
 };
