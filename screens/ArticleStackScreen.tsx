@@ -1,41 +1,32 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
 import Stepper from '../components/Stepper';
 import ArticleScreen from './ArticleScreen';
 import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Article as ArticleType } from '../types/article';
 
 const { width } = Dimensions.get('window');
 
 // Define types for route params
-interface Article {
-  id?: string | number;
-  title?: string;
-  category?: string;
-  flag?: string;
-  imageUrl?: string;
-  readTime?: string;
-  timestamp?: string;
-  content?: string;
-  author?: string;
+interface ArticleStackParams {
+  articles: ArticleType[];
+  initialIndex: number;
+  title: string;
 }
 
-interface ArticleStackParams {
-  articles?: Article[];
-  initialIndex?: number;
-  title?: string;
-}
+// Use the same RootStackParamList as ArticleScreen
+type RootStackParamList = {
+  Article: { articleId: string; article?: ArticleType };
+};
 
 type ArticleStackRouteProp = RouteProp<{ params: ArticleStackParams }, 'params'>;
-type ArticleStackNavigationProp = StackNavigationProp<{
-  ArticleStack: ArticleStackParams;
-  Article: { article: Article };
-}>;
+type ArticleStackNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Article'>;
 
 interface ArticleStackScreenProps {
   route: ArticleStackRouteProp;
@@ -44,14 +35,44 @@ interface ArticleStackScreenProps {
 
 const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
   // Extract and validate params with defaults
-  const params = route.params || {};
-  const articles = Array.isArray(params.articles) ? params.articles : [];
-  const initialIndex = typeof params.initialIndex === 'number' ? params.initialIndex : 0;
-  const title = params.title || 'Top stories';
+  const params = route.params;
+  const articles = params.articles;
+  const initialIndex = params.initialIndex;
+  const title = params.title;
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const flatListRef = useRef(null);
+  const flatListRef = useRef<FlatList>(null);
   const theme = useTheme();
+
+  // Add getItemLayout function to calculate item dimensions
+  const getItemLayout = useCallback(
+    (_: any, index: number) => ({
+      length: width,
+      offset: width * index,
+      index,
+    }),
+    [width]
+  );
+
+  // Handle scroll to index failures
+  const handleScrollToIndexFailed = useCallback(
+    (info: {
+      index: number;
+      highestMeasuredFrameIndex: number;
+      averageItemLength: number;
+    }) => {
+      const wait = new Promise(resolve => setTimeout(resolve, 500));
+      wait.then(() => {
+        if (flatListRef.current) {
+          flatListRef.current.scrollToOffset({
+            offset: info.index * width,
+            animated: true,
+          });
+        }
+      });
+    },
+    [width]
+  );
 
   // Scroll to the initial article when the component mounts
   useEffect(() => {
@@ -79,7 +100,7 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
   }, [initialIndex, articles.length]);
 
   const handleScroll = useCallback(
-    event => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       try {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
         const newIndex = Math.round(contentOffsetX / width);
@@ -92,22 +113,19 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
         console.error('Error handling scroll:', error);
       }
     },
-    [currentIndex, articles.length], // width is a constant outside component, doesn't need to be in dependencies
+    [currentIndex, articles.length],
   );
 
   const handleBackPress = () => {
     navigation.goBack();
   };
-  // Define RenderItem type
-  type RenderItemProps = {
-    item: Article;
-    index: number;
-  };
 
-  const renderArticle = ({ item, index }: RenderItemProps) => {
-    // Ensure the article has all required properties
-    const safeArticle = {
-      id: item.id || `article-${index}`,
+  const renderArticle = ({ item, index }: { item: ArticleType; index: number }) => {
+    // Ensure the article has all required properties and convert id to string
+    const articleId = typeof item.id === 'number' ? `article-${item.id}` : (item.id || `article-${index}`);
+    const safeArticle: ArticleType = {
+      ...item,
+      id: articleId,
       title: item.title || 'Untitled Article',
       category: item.category || '',
       flag: item.flag || '',
@@ -116,14 +134,19 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
       timestamp: item.timestamp || 'Today',
       content: item.content || '',
       author: item.author || 'The Sun',
+      date: item.date || new Date().toISOString(),
+      summary: item.summary || item.title || 'No summary available'
     };
 
-    // Pass the article to the ArticleScreen component
-    // but hide the header since we're providing our own
+    // Pass both articleId and article to the ArticleScreen component
     return (
       <View style={styles.articleContainer}>
         <ArticleScreen
-          route={{ params: { article: safeArticle } }}
+          route={{ 
+            key: `article-${index}`,
+            name: 'Article',
+            params: { articleId, article: safeArticle } 
+          }}
           navigation={navigation}
           hideHeader={true}
         />
@@ -209,6 +232,8 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
         initialNumToRender={1}
         maxToRenderPerBatch={2}
         windowSize={3}
+        getItemLayout={getItemLayout}
+        onScrollToIndexFailed={handleScrollToIndexFailed}
       />
     </View>
   );

@@ -54,6 +54,11 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   const { data: article, loading, error, setData } = useContentCache<Article>(
     `${ARTICLE_CACHE_PREFIX}${articleId}`,
     async () => {
+      // If we have the article in route params, use that instead of fetching
+      if (routeArticle) {
+        return routeArticle;
+      }
+      // Otherwise fetch the article
       const fetchedArticle = await getArticleById(articleId);
       if (!fetchedArticle) {
         throw new Error('Article not found');
@@ -67,17 +72,6 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   useEffect(() => {
     debugNavigation('ArticleScreen', { route, navigation });
   }, [route, navigation]);
-
-  // Fetch article data when the component mounts or articleId changes
-  useEffect(() => {
-    if (articleId && !routeArticle) {
-      getArticleById(articleId).then(fetchedArticle => {
-        if (fetchedArticle) {
-          setData(fetchedArticle);
-        }
-      });
-    }
-  }, [articleId, routeArticle, setData]);
 
   // Determine if we should show the skeleton
   const showSkeleton = loading && !article;

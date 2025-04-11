@@ -92,8 +92,7 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
     try {
       navigation.navigate('ForYouArticle', { 
         articleId: article.id || 'fallback-id',
-        title: article.title,
-        category: article.category 
+        article: article
       });
     } catch (error) {
       console.error('Navigation error in handleArticlePress:', error);
@@ -125,7 +124,10 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
     } catch (error) {
       console.error('Navigation error:', error);
       // Fallback to single article view if stack navigation fails
-      navigation.navigate('ForYouArticle', { article });
+      navigation.navigate('ForYouArticle', { 
+        articleId: article.id || 'fallback-id',
+        article: article
+      });
     }
   };
 
