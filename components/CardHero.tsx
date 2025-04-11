@@ -1,5 +1,5 @@
 'use client';
-import { View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Flag from './Flag';
 import Typography from './Typography';
@@ -7,6 +7,7 @@ import LazyImage from './LazyImage';
 import Card from './Card';
 import { createCardHeroStyles } from './styles/CardHero.styles';
 import { getCategoryColor } from '../utils/categoryColors';
+import { Feather } from '@expo/vector-icons';
 
 interface CardHeroProps {
   title: string;
@@ -138,6 +139,34 @@ const CardHero = ({
             {subtitle}
           </Typography>
         )}
+      </View>
+
+      {/* Footer with read time and actions - moved outside of heroContent */}
+      <View style={styles.footer}>
+        <View style={styles.readTimeContainer}>
+          <Feather name="book-open" size={16} color={theme.colors.Text.Secondary} />
+          <Typography
+            variant="body-02"
+            color={theme.colors.Text.Secondary}
+            style={styles.readTimeText}
+          >
+            {readTime}
+          </Typography>
+        </View>
+
+        <View style={styles.actionsContainer}>
+          {onBookmark && (
+            <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
+              <Feather name="bookmark" size={20} color={theme.colors.Text.Secondary} />
+            </TouchableOpacity>
+          )}
+
+          {onShare && (
+            <TouchableOpacity onPress={onShare} style={styles.actionButton}>
+              <Feather name="share" size={20} color={theme.colors.Text.Secondary} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </Card>
   );

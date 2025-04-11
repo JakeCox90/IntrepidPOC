@@ -37,5 +37,30 @@ export const createCardHeroStyles = (theme: ThemeType) => {
       flexWrap: 'wrap',
       marginBottom: 8,
     },
+    footer: {
+      alignItems: 'center',
+      borderTopColor: theme.colors.Border.Primary,
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingBottom: 8,
+      paddingHorizontal: 16,
+      paddingTop: 8,
+    },
+    readTimeContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    readTimeText: {
+      marginLeft: 6,
+    },
+    actionsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    actionButton: {
+      marginLeft: 16,
+      padding: 4,
+    },
   });
 };
