@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   count: {
-    fontWeight: '600',
     opacity: 0.8,
   },
   image: {
@@ -61,7 +60,6 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 4,
-    fontWeight: '700',
   },
 });
 

@@ -89,13 +89,13 @@ const ArticleHeader = ({
       {/* Tags */}
       <View style={[baseStyles.tagsContainer, themedStyles.tagsContainer]}>
         {flag && COMMON_FLAGS.includes(flag.toUpperCase()) && (
-          <Flag text={flag} style={[baseStyles.flag, themedStyles.flag]} variant="filled" />
+          <Flag text={flag} style={baseStyles.flag} variant="filled" />
         )}
         {category && (
           <Flag
             text={category}
             category={category}
-            style={[baseStyles.flag, themedStyles.flag]}
+            style={baseStyles.flag}
             variant="minimal"
           />
         )}
@@ -147,8 +147,12 @@ const ArticleHeader = ({
       <View
         style={[
           baseStyles.articleImage,
-          themedStyles.articleImage,
           {
+            backgroundColor: theme?.colors?.Border?.Skeleton01 || theme?.colors?.Surface?.Secondary,
+            borderRadius: theme?.radius?.['radius-default'] || 8,
+            height: imageHeight,
+            marginBottom: theme?.space?.['40'] || 16,
+            overflow: 'hidden' as const,
             borderWidth: theme.borderWidth['10'],
             borderColor: theme.colors.Border.Primary,
           },
@@ -190,13 +194,28 @@ const baseStyles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     width: '100%',
-  }, // This style is used on line 165
+  },
   readingTimeContainer: {
     alignItems: 'center',
     flexDirection: 'row',
   },
   tagsContainer: {
     flexDirection: 'row',
+  },
+  flag: {
+    marginRight: 8,
+  },
+  title: {
+    marginBottom: 8,
+  },
+  subtitle: {
+    marginBottom: 12,
+  },
+  readingTime: {
+    marginLeft: 4,
+  },
+  authorContainer: {
+    marginBottom: 16,
   },
 });
 

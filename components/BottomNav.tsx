@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     marginTop: 4,
-    fontSize: 12,
   },
   errorContainer: {
     alignItems: 'center',
@@ -174,7 +173,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   errorButtonText: {
-    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

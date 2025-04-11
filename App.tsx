@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
-import { ActivityIndicator, View, LogBox, Platform, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, View, LogBox, Platform, StyleSheet } from 'react-native';
 import InterRegular from './assets/fonts/Inter-Regular.ttf';
 import InterMedium from './assets/fonts/Inter-Medium.ttf';
 import InterSemiBold from './assets/fonts/Inter-SemiBold.ttf';
@@ -10,6 +10,7 @@ import InterBold from './assets/fonts/Inter-Bold.ttf';
 import TabNavigator from './navigation/TabNavigator';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { colors } from './design-system/Foundations/colors';
+import Typography from './components/Typography';
 // Ignore specific warnings that might be related to third-party libraries
 LogBox.ignoreLogs([
   'Reanimated 2',
@@ -47,13 +48,18 @@ function LoadingScreen({ error }: LoadingScreenProps) {
     <View style={styles.loadingContainer}>
       {error ? (
         <>
-          <Text style={styles.errorText}>Error loading fonts</Text>
-          <Text style={styles.errorMessageText}>{error.message}</Text>
+          <Typography variant="heading3" color="Error.Text">Error loading fonts</Typography>
+          <Typography variant="body2" color="Text.Primary" style={styles.errorMessageText}>{error.message}</Typography>
         </>
       ) : (
         <>
           <ActivityIndicator size="large" color={colors.Primary.Resting} />
-          <Text style={styles.loadingMessageText}>Loading fonts...</Text>
+          <Typography variant="h3" style={styles.loadingText}>
+            Loading...
+          </Typography>
+          <Typography variant="body-02" style={styles.loadingSubtext}>
+            Please wait while we prepare your experience
+          </Typography>
         </>
       )}
     </View>
@@ -85,24 +91,17 @@ export default function App(): React.ReactElement {
 
 const styles = StyleSheet.create({
   errorMessageText: {
-    color: colors.Text.Primary,
-    fontSize: 14,
     marginTop: 10,
-  },
-  errorText: {
-    color: colors.Error.Text,
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
   },
   loadingContainer: {
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
   },
-  loadingMessageText: {
-    color: colors.Text.Primary,
-    fontSize: 14,
+  loadingText: {
+    marginTop: 10,
+  },
+  loadingSubtext: {
     marginTop: 10,
   },
 });

@@ -151,11 +151,6 @@ export const cardStyles = StyleSheet.create({
   //-------------------------
   // Other elements
   //-------------------------
-  prefix: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
   titleContainer: {
     flexDirection: 'column',
   },
