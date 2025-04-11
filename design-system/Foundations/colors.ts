@@ -4,7 +4,7 @@ import { palette } from '../primitives';
 export const colors = {
   // Brand colors
   Primary: {
-    Resting: palette.blue[60],
+    Resting: palette.red[60],
     Disabled: palette.grey[30],
     Pressed: palette.blue[80],
     Selected: palette.blue[100],

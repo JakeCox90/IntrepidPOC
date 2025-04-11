@@ -37,7 +37,7 @@ export const palette = {
     30: '#ffdede',
     40: '#ffb0b1',
     50: '#ff7b7d',
-    60: '#ff494b',
+    60: '#EB1701',
     70: '#d43a3c',
     80: '#a82c2d',
     90: '#7d1f20',
