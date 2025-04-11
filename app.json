@@ -11,19 +11,28 @@
       "resizeMode": "contain",
       "backgroundColor": "#E03A3A"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.sunnewsapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#E03A3A"
-      }
+      },
+      "package": "com.anonymous.sunnewsapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "f73b20be-bb61-4572-9c89-b97d8793302c"
+      }
+    }
   }
 }

@@ -15,7 +15,7 @@ import {
   typographyVariants,
 } from '../design-system/typography';
 
-// Define the theme type
+// Define the theme type with strict typing
 export type ThemeType = {
   colors: {
     Primary: {
@@ -156,88 +156,43 @@ export type ThemeType = {
   toggleTheme: () => void;
 };
 
-// Ensure all required properties exist in the theme objects
-const ensureThemeProperties = (theme: Partial<ThemeType>): ThemeType => {
-  // Make sure colors exist with all required properties
-  if (!theme.colors) {
-    theme.colors = colors;
+// Theme validation function
+const validateTheme = (theme: Partial<ThemeType>): boolean => {
+  // Check required color properties
+  if (!theme.colors?.Primary?.Resting ||
+      !theme.colors?.Text?.Primary ||
+      !theme.colors?.Surface?.Primary ||
+      !theme.colors?.Border?.Primary) {
+    console.error('Missing required theme color properties');
+    return false;
   }
 
-  // Make sure typography exists with all required properties
-  if (!theme.typography) {
-    theme.typography = {
-      fontFamily: {
-        regular: 'Inter-Regular',
-        medium: 'Inter-Medium',
-        semiBold: 'Inter-SemiBold',
-        bold: 'Inter-Bold',
-      },
-      scale: typographyScale,
-      lineHeight: typographyLineHeight,
-      variants: typographyVariants,
-    };
-  }
-
-  // Make sure other properties exist
-  if (!theme.space) theme.space = space;
-  if (!theme.radius) theme.radius = radius;
-  if (!theme.borderWidth) theme.borderWidth = borderWidth;
-  if (!theme.opacity) theme.opacity = opacity;
-  if (!theme.shadows) theme.shadows = shadows;
-  if (!theme.zIndex) theme.zIndex = zIndex;
-  if (theme.toggleTheme === undefined) theme.toggleTheme = () => {};
-  if (theme.isDark === undefined) theme.isDark = false;
-
-  return theme as ThemeType;
+  return true;
 };
 
 // Create light theme
-const lightTheme: ThemeType = ensureThemeProperties({
-  colors: colors,
-  typography: {
-    fontFamily: {
-      regular: 'Inter-Regular',
-      medium: 'Inter-Medium',
-      semiBold: 'Inter-SemiBold',
-      bold: 'Inter-Bold',
-    },
-    scale: typographyScale,
-    lineHeight: typographyLineHeight,
-    variants: typographyVariants,
-  },
-  space,
-  radius,
-  borderWidth,
-  opacity,
-  shadows,
-  zIndex,
-  isDark: false,
-  toggleTheme: () => {},
-});
-
-// Create dark theme
-const darkTheme: ThemeType = ensureThemeProperties({
+const lightTheme: ThemeType = {
   colors: {
     ...colors,
     Surface: {
-      Primary: '#1d1d1b', // Dark background
-      Secondary: '#313131', // Darker background
-      Disabled: '#4d4d4d',
-      Overlay01: colors.Surface.Overlay01,
-      Overlay02: colors.Surface.Overlay02,
+      Primary: '#FFFFFF',
+      Secondary: '#F5F5F5',
+      Disabled: '#E5E5E5',
+      Overlay01: 'rgba(0, 0, 0, 0.3)',
+      Overlay02: 'rgba(0, 0, 0, 0.5)',
     },
     Text: {
-      Primary: '#ffffff',
-      Secondary: '#a0a0a0',
-      Inverse: '#1d1d1b',
-      Disabled: '#6c6c6c',
+      Primary: '#000000',
+      Secondary: '#717171',
+      Inverse: '#FFFFFF',
+      Disabled: '#A0A0A0',
       Error: colors.Text.Error,
     },
     Border: {
-      Primary: '#ffffff',
-      Secondary: '#a0a0a0',
-      Skeleton01: '#4d4d4d',
-      Skeleton02: '#6c6c6c',
+      Primary: '#E5E5E5',
+      Secondary: '#CCCCCC',
+      Skeleton01: '#F5F5F5',
+      Skeleton02: '#EBEBEB',
       Error: colors.Border.Error,
     },
   },
@@ -258,36 +213,42 @@ const darkTheme: ThemeType = ensureThemeProperties({
   opacity,
   shadows,
   zIndex,
-  isDark: true,
-  toggleTheme: () => {},
-});
-
-// Create a default theme to initialize the context
-const defaultTheme: ThemeType = ensureThemeProperties({
-  colors,
-  typography: {
-    fontFamily: {
-      regular: 'Inter-Regular',
-      medium: 'Inter-Medium',
-      semiBold: 'Inter-SemiBold',
-      bold: 'Inter-Bold',
-    },
-    scale: typographyScale,
-    lineHeight: typographyLineHeight,
-    variants: typographyVariants,
-  },
-  space,
-  radius,
-  borderWidth,
-  opacity,
-  shadows,
-  zIndex,
   isDark: false,
   toggleTheme: () => {},
-});
+};
 
-// Create the theme context with the complete default theme
-const ThemeContext = createContext<ThemeType>(defaultTheme);
+// Create dark theme
+const darkTheme: ThemeType = {
+  ...lightTheme,
+  colors: {
+    ...colors,
+    Surface: {
+      Primary: '#1D1D1B',
+      Secondary: '#313131',
+      Disabled: '#4D4D4D',
+      Overlay01: 'rgba(0, 0, 0, 0.5)',
+      Overlay02: 'rgba(0, 0, 0, 0.7)',
+    },
+    Text: {
+      Primary: '#FFFFFF',
+      Secondary: '#A0A0A0',
+      Inverse: '#1D1D1B',
+      Disabled: '#6C6C6C',
+      Error: colors.Text.Error,
+    },
+    Border: {
+      Primary: '#333333',
+      Secondary: '#4D4D4D',
+      Skeleton01: '#2A2A2A',
+      Skeleton02: '#333333',
+      Error: colors.Border.Error,
+    },
+  },
+  isDark: true,
+};
+
+// Create the theme context
+const ThemeContext = createContext<ThemeType>(lightTheme);
 
 // Hook to use the theme
 export const useTheme = () => useContext(ThemeContext);
@@ -309,18 +270,19 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setIsDark(!isDark);
   };
 
-  // Create a fully formed theme object with proper toggle function
-  const theme: ThemeType = isDark
-    ? {
-        ...darkTheme,
-        toggleTheme,
-        isDark: true,
-      }
-    : {
-        ...lightTheme,
-        toggleTheme,
-        isDark: false,
-      };
+  // Create the theme object
+  const theme: ThemeType = {
+    ...(isDark ? darkTheme : lightTheme),
+    toggleTheme,
+    isDark,
+  };
+
+  // Validate theme before providing it
+  if (!validateTheme(theme)) {
+    console.error('Invalid theme configuration');
+    // Fallback to light theme if validation fails
+    return <ThemeContext.Provider value={lightTheme}>{children}</ThemeContext.Provider>;
+  }
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
 };

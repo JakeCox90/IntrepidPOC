@@ -21,9 +21,9 @@ const ProfileScreen = (): React.ReactElement => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
-        <Typography variant="h5" color={theme.colors.text.primary}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
+      <View style={[styles.header, { borderBottomColor: theme.colors.Border.Primary }]}>
+        <Typography variant="h5" color={theme.colors.Text.Primary}>
           Profile
         </Typography>
       </View>
@@ -99,61 +99,46 @@ const ProfileScreen = (): React.ReactElement => {
         {/* Preferences Section */}
         <View style={styles.section}>
           <Typography
-            variant="overline"
-            color={theme.colors.text.tertiary}
+            variant="subtitle-01"
+            color={theme.colors.Text.Primary}
             style={styles.sectionTitle}
           >
-            PREFERENCES
+            Appearance
           </Typography>
 
-          <View style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
-            <Ionicons
-              name="notifications-outline"
-              size={24}
-              color={theme.colors.text.secondary}
-              style={styles.menuIcon}
-            />
-            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
-              Notifications
-            </Typography>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={setNotificationsEnabled}
-              trackColor={{ false: '#DDDDDD', true: theme.colors.primary }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-
-          <View style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
-            <Ionicons
-              name="moon-outline"
-              size={24}
-              color={theme.colors.text.secondary}
-              style={styles.menuIcon}
-            />
-            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
+          <View style={styles.setting}>
+            <Typography variant="body-01" color={theme.colors.Text.Primary}>
               Dark Mode
             </Typography>
             <Switch
               value={darkModeEnabled}
               onValueChange={toggleDarkMode}
-              trackColor={{ false: '#DDDDDD', true: theme.colors.primary }}
-              thumbColor="#FFFFFF"
+              trackColor={{ false: theme.colors.Border.Primary, true: theme.colors.Primary.Resting }}
+              thumbColor={theme.colors.Surface.Primary}
             />
           </View>
+        </View>
 
-          <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
-            <Ionicons
-              name="language-outline"
-              size={24}
-              color={theme.colors.text.secondary}
-              style={styles.menuIcon}
-            />
-            <Typography variant="body-01" color={theme.colors.text.primary} style={styles.menuText}>
-              Language
+        <View style={styles.section}>
+          <Typography
+            variant="subtitle-01"
+            color={theme.colors.Text.Primary}
+            style={styles.sectionTitle}
+          >
+            Notifications
+          </Typography>
+
+          <View style={styles.setting}>
+            <Typography variant="body-01" color={theme.colors.Text.Primary}>
+              Push Notifications
             </Typography>
-            <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
-          </TouchableOpacity>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
+              trackColor={{ false: theme.colors.Border.Primary, true: theme.colors.Primary.Resting }}
+              thumbColor={theme.colors.Surface.Primary}
+            />
+          </View>
         </View>
 
         {/* Support Section */}
@@ -241,11 +226,11 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    padding: 16,
   },
   header: {
     borderBottomWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: 16,
   },
   menuIcon: {
     marginRight: 16,
@@ -260,11 +245,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   section: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
+    marginBottom: 24,
   },
   sectionTitle: {
     marginBottom: 16,
+  },
+  setting: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   signOutButton: {
     alignItems: 'center',

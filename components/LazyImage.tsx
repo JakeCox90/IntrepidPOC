@@ -61,7 +61,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
             {
               width,
               height,
-              backgroundColor: theme.colors.Border.Skeleton,
+              backgroundColor: theme.colors.Border.Skeleton01,
             },
           ]}
         >
@@ -77,12 +77,11 @@ const LazyImage: React.FC<LazyImageProps> = ({
               width,
               height,
               borderRadius,
-              backgroundColor: theme.colors.Border.Skeleton,
+              backgroundColor: theme.colors.Border.Skeleton01,
             },
           ]}
         >
-          {/* You could use an icon here instead */}
-          <View style={[styles.errorIcon, { backgroundColor: theme.colors.Border.Disabled }]} />
+          <View style={[styles.errorIcon, { backgroundColor: theme.colors.Border.Secondary }]} />
         </View>
       ) : (
         <Image

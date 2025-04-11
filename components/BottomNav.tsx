@@ -1,5 +1,5 @@
 'use client';
-import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator, TextStyle } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,12 +12,12 @@ import Typography from './Typography';
 type ValidTabName = 'Today' | 'ForYou' | 'AllNews' | 'Search' | 'Saved';
 
 // Define the icon names type based on Feather icons
-type FeatherIconName = 'home' | 'user' | 'grid' | 'search' | 'bookmark';
+type IconName = 'home' | 'user' | 'grid' | 'search' | 'bookmark';
 
 // Define tab configuration type
 interface TabConfig {
   name: ValidTabName;
-  icon: FeatherIconName;
+  icon: IconName;
   label?: string;
   disabled?: boolean;
 }
@@ -70,11 +70,7 @@ const BottomNavErrorFallback = ({ error: _error, resetErrorBoundary }: ErrorFall
 };
 
 const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps) => {
-  // Track error state for tab press operations
-  const [tabPressError, setTabPressError] = useState<Error | null>(null);
-
-  // Create a safe theme object with all required properties and fallbacks
-  const theme = useTheme() || {};
+  const theme = useTheme();
   const insets = useSafeAreaInsets();
 
   // Ensure we have fallback values if theme properties are undefined
@@ -83,59 +79,6 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
   const borderColor = theme?.colors?.Border?.Primary || '#E5E5E5';
   const borderWidth = theme?.borderWidth?.['10'] || 1;
   const surfaceColor = theme?.colors?.Surface?.Primary || '#FFFFFF';
-  const errorColor = theme?.colors?.Error?.Resting || '#DC2626';
-
-  // Safe tab press handler with error handling
-  const handleTabPress = useCallback(
-    (tabName: string) => {
-      try {
-        // Reset any previous errors
-        setTabPressError(null);
-
-        // Validate tab name before calling the navigation handler
-        if (!['Today', 'ForYou', 'AllNews', 'Search', 'Saved'].includes(tabName)) {
-          console.warn(`Invalid tab name: ${tabName}`);
-          return;
-        }
-
-        // Call the provided onTabPress function
-        onTabPress(tabName);
-      } catch (error) {
-        // Handle and log any errors
-        console.error('Error pressing tab:', error);
-        setTabPressError(error instanceof Error ? error : new Error('Unknown error'));
-      }
-    },
-    [onTabPress],
-  );
-
-  // If we're in an error state, show an error message
-  if (tabPressError) {
-    return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: surfaceColor,
-            borderTopWidth: borderWidth,
-            borderTopColor: borderColor,
-          },
-        ]}
-      >
-        <Typography variant="body-01" color={errorColor} style={styles.inlineErrorText}>
-          Navigation error. Please try again.
-        </Typography>
-        <TouchableOpacity
-          style={[styles.dismissButton, { backgroundColor: primaryColor }]}
-          onPress={() => setTabPressError(null)}
-        >
-          <Typography variant="button" color={surfaceColor}>
-            Dismiss
-          </Typography>
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   // Define tabs with proper typing
   const tabs: TabConfig[] = [
@@ -146,67 +89,41 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
     { name: 'Saved', icon: 'bookmark' },
   ];
 
-  // Show loading indicator if in loading state
-  if (isLoading) {
-    return (
-      <View
-        style={[
-          styles.container,
-          styles.loadingContainer,
-          {
-            borderTopWidth: borderWidth,
-            borderTopColor: borderColor,
-            paddingBottom: insets.bottom || 0,
-            backgroundColor: surfaceColor,
-          },
-        ]}
-      >
-        <ActivityIndicator size="small" color={primaryColor} />
-      </View>
-    );
-  }
-
   return (
-    <ErrorBoundary
-      FallbackComponent={BottomNavErrorFallback}
-      onError={error => console.error('BottomNav error:', error)}
-      onReset={() => setTabPressError(null)}
+    <View
+      style={[
+        styles.container,
+        {
+          borderTopWidth: borderWidth,
+          borderTopColor: borderColor,
+          paddingBottom: insets.bottom || 0,
+          backgroundColor: surfaceColor,
+        },
+      ]}
     >
-      <View
-        style={[
-          styles.container,
-          {
-            borderTopWidth: borderWidth,
-            borderTopColor: borderColor,
-            paddingBottom: insets.bottom || 0,
-            backgroundColor: surfaceColor,
-          },
-        ]}
-      >
-        {tabs.map(tab => (
-          <TouchableOpacity
-            key={tab.name}
-            style={[styles.tab, tab.disabled && styles.disabledTab]}
-            onPress={() => handleTabPress(tab.name)}
-            disabled={tab.disabled}
-            activeOpacity={0.7}
+      {tabs.map(tab => (
+        <TouchableOpacity
+          key={tab.name}
+          style={[styles.tab, tab.disabled && styles.disabledTab]}
+          onPress={() => onTabPress(tab.name)}
+          disabled={tab.disabled}
+          activeOpacity={0.7}
+        >
+          <Feather
+            name={tab.icon}
+            size={24}
+            color={activeTab === tab.name ? primaryColor : secondaryColor}
+          />
+          <Typography
+            variant="caption"
+            color={activeTab === tab.name ? primaryColor : secondaryColor}
+            style={[styles.tabLabel]}
           >
-            <Feather
-              name={tab.icon}
-              size={24}
-              color={activeTab === tab.name ? primaryColor : secondaryColor}
-            />
-            <Typography
-              variant="caption"
-              color={activeTab === tab.name ? primaryColor : secondaryColor}
-              style={[styles.tabLabel, tab.disabled && styles.disabledElement]}
-            >
-              {tab.label || tab.name}
-            </Typography>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ErrorBoundary>
+            {tab.label || tab.name}
+          </Typography>
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 };
 
@@ -214,26 +131,32 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     width: '100%',
+    backgroundColor: '#FFFFFF',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
   },
-  disabledElement: {
-    opacity: 0.7,
-  } as const,
+  tab: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: 12,
+  },
   disabledTab: {
     opacity: 0.5,
   },
-  dismissButton: {
-    borderRadius: 4,
-    margin: 5,
-    padding: 5,
+  tabLabel: {
+    marginTop: 4,
+    fontSize: 12,
   },
-  errorButton: {
-    borderRadius: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  errorButtonText: {
-    fontWeight: 'bold',
-  } as const,
   errorContainer: {
     alignItems: 'center',
     borderTopWidth: 1,
@@ -244,23 +167,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginBottom: 8,
-  } as const,
-  inlineErrorText: {
-    padding: 10,
-    textAlign: 'center',
   },
-  loadingContainer: {
-    justifyContent: 'center',
+  errorButton: {
+    borderRadius: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  tab: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    paddingVertical: 8,
+  errorButtonText: {
+    fontWeight: 'bold',
   },
-  tabLabel: {
-    marginTop: 4,
-  } as const,
 });
 
 export default BottomNav;

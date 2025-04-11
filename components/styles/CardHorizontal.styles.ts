@@ -70,7 +70,7 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
     },
     placeholderImage: {
       alignItems: 'center',
-      backgroundColor: theme.colors.Border.Primary,
+      backgroundColor: theme.colors.Border.Skeleton01,
       borderRadius: 8,
       height: 100,
       justifyContent: 'center',

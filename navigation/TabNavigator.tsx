@@ -19,6 +19,7 @@ import type {
 } from '@react-navigation/bottom-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
 import Typography from '../components/Typography';
+import { Feather } from '@expo/vector-icons';
 
 import ForYouScreen from '../screens/ForYouScreen';
 import TodayScreen from '../screens/TodayScreen';
@@ -355,106 +356,48 @@ export default function TabNavigator() {
         initialRouteName="Today"
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { display: 'none' }, // Hide the default tab bar
-          tabBarActiveTintColor: theme?.colors?.Primary?.Resting || '#E03A3A',
-          tabBarInactiveTintColor: theme?.colors?.Text?.Secondary || '#717171',
-          // Improve tabBar prop implementation with better error handling
-          tabBar: (props: BottomTabBarProps) => {
-            try {
-              // Guard against null or invalid props
-              if (!props) {
-                return null;
-              }
-
-              // Type-safe approach: cast to our defined typed interface if it passes basic validation
-              const typedProps = props as TypedBottomTabBarProps;
-
-              // Type check the navigation state
-              if (!isValidNavigationState(typedProps.state)) {
-                console.warn('Invalid navigation state in tab bar props');
-                return null;
-              }
-
-              // Type check the navigation object
-              if (!typedProps.navigation || typeof typedProps.navigation.navigate !== 'function') {
-                console.warn('Invalid navigation object in tab bar props');
-                return null;
-              }
-
-              // Safely extract the current route name with better validation
-              let currentRoute: ValidTabName = 'Today'; // Default to Today
-
-              if (
-                typedProps.state.index >= 0 &&
-                typedProps.state.routeNames.length > typedProps.state.index
-              ) {
-                const possibleRoute = typedProps.state.routeNames[typedProps.state.index];
-                if (isValidTabName(possibleRoute)) {
-                  currentRoute = possibleRoute;
-                } else {
-                  console.warn(`Invalid route name found in state: ${possibleRoute}`);
-                }
-              }
-
-              return (
-                <BottomNav
-                  activeTab={currentRoute}
-                  onTabPress={(tabName: string) => {
-                    try {
-                      // Validate the tab name to prevent errors
-                      if (!isValidTabName(tabName)) {
-                        console.warn(`Invalid tab name requested: ${tabName}`);
-                        return;
-                      }
-
-                      // Validate navigation is available with better type checking
-                      if (
-                        !typedProps.navigation ||
-                        typeof typedProps.navigation.navigate !== 'function'
-                      ) {
-                        console.warn('Navigation object is unavailable or invalid');
-                        return;
-                      }
-
-                      // Update our internal tab tracking
-                      handleTabPress(tabName);
-
-                      // Navigate to the selected tab
-                      typedProps.navigation.navigate(tabName);
-                    } catch (error) {
-                      // Unified error handling
-                      const errorMessage =
-                        error instanceof Error
-                          ? error.message
-                          : typeof error === 'string'
-                            ? error
-                            : 'Unknown navigation error';
-
-                      console.error('Tab navigation error:', errorMessage);
-                      // Prevent app crashes by handling errors here
-                    }
-                  }}
-                  isLoading={false}
-                />
-              );
-            } catch (error) {
-              console.error('Error rendering tab bar:', error);
-              // Provide a fallback tab bar in case of error
-              const fallbackBgColor = theme?.colors?.Surface?.Primary || '#FFFFFF';
-              const fallbackBorderColor = theme?.colors?.Border?.Primary || '#E5E5E5';
-              return (
-                <View
-                  style={[
-                    styles.fallbackTabBar,
-                    {
-                      backgroundColor: fallbackBgColor,
-                      borderTopColor: fallbackBorderColor,
-                    },
-                  ]}
-                />
-              );
+        }}
+        tabBar={props => {
+          try {
+            // Guard against null or invalid props
+            if (!props) {
+              return null;
             }
-          },
+
+            // Safely extract the current route name
+            const currentRoute = props.state.routes[props.state.index].name;
+            if (!isValidTabName(currentRoute)) {
+              console.warn(`Invalid route name found in state: ${currentRoute}`);
+              return null;
+            }
+
+            return (
+              <BottomNav
+                activeTab={currentRoute}
+                onTabPress={(tabName: string) => {
+                  try {
+                    // Validate the tab name to prevent errors
+                    if (!isValidTabName(tabName)) {
+                      console.warn(`Invalid tab name requested: ${tabName}`);
+                      return;
+                    }
+
+                    // Update our internal tab tracking
+                    handleTabPress(tabName);
+
+                    // Navigate to the selected tab
+                    props.navigation.navigate(tabName);
+                  } catch (error) {
+                    console.error('Tab navigation error:', error);
+                  }
+                }}
+                isLoading={false}
+              />
+            );
+          } catch (error) {
+            console.error('Error rendering tab bar:', error);
+            return null;
+          }
         }}
         screenListeners={({
           navigation,
