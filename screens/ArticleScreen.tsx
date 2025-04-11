@@ -1,70 +1,86 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
 import Comments from '../components/Comments';
 import SkeletonLoader from '../components/SkeletonLoader';
-import { fetchArticleById } from '../services/sunNewsService';
+import { useContentCache } from '../hooks/useContentCache';
 import TopNav from '../components/TopNav';
 import ArticleHeader from '../components/ArticleHeader';
 import AudioPlayer from '../components/AudioPlayer';
 import { Accordion } from '../components/Accordion';
 import { createAccordionStyles } from '../components/styles/Accordion.styles';
+import { debugNavigation } from '../utils/debugUtils';
+import { RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Share } from 'react-native';
+import { getArticleById } from '../services/mockArticleService';
+import { Article } from '../types/article';
 
-const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
-  const { article: routeArticle } = route.params || {};
-  const [article, setArticle] = useState(routeArticle || null);
-  const [loading, setLoading] = useState(!routeArticle || !routeArticle.content);
-  const [error, setError] = useState(null);
+// Cache key prefix for articles
+const ARTICLE_CACHE_PREFIX = 'article_';
 
+// Define the navigation types
+type RootStackParamList = {
+  Article: { articleId: string; article?: Article };
+  // Add other screens as needed
+};
+
+type ArticleScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Article'>;
+type ArticleScreenRouteProp = RouteProp<RootStackParamList, 'Article'>;
+
+interface ArticleScreenProps {
+  route: ArticleScreenRouteProp;
+  navigation: ArticleScreenNavigationProp;
+  hideHeader?: boolean;
+}
+
+// Define types for comment handlers
+interface Comment {
+  id: string | number;
+  text: string;
+  isLiked?: boolean;
+}
+
+const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenProps) => {
   const theme = useTheme();
+  const { articleId, article: routeArticle } = route.params || {};
   const accordionStyles = createAccordionStyles(theme);
 
-  useFocusEffect(
-    useCallback(() => {
-      let isMounted = true;
-
-      // If we don't have a full article from the route params, fetch it
-      if (!routeArticle || !routeArticle.content) {
-        const fetchArticle = async () => {
-          if (!isMounted) return;
-
-          setLoading(true);
-
-          try {
-            if (routeArticle?.id) {
-              const fullArticle = await fetchArticleById(routeArticle.id);
-              if (isMounted) {
-                setArticle(fullArticle);
-                setLoading(false);
-                setError(null);
-              }
-            } else {
-              if (isMounted) {
-                setError('No article ID provided');
-                setLoading(false);
-              }
-            }
-          } catch (err) {
-            console.error(err);
-            if (isMounted) {
-              setError('Failed to load article');
-              setLoading(false);
-            }
-          }
-        };
-
-        fetchArticle();
+  // Use the useContentCache hook to manage article data
+  const { data: article, loading, error, setData } = useContentCache<Article>(
+    `${ARTICLE_CACHE_PREFIX}${articleId}`,
+    async () => {
+      const fetchedArticle = await getArticleById(articleId);
+      if (!fetchedArticle) {
+        throw new Error('Article not found');
       }
-
-      return () => {
-        isMounted = false;
-      };
-    }, [routeArticle]),
+      return fetchedArticle;
+    },
+    routeArticle // Use the article passed in route params as initial data if available
   );
+
+  // Debug navigation and caching
+  useEffect(() => {
+    debugNavigation('ArticleScreen', { route, navigation });
+  }, [route, navigation]);
+
+  // Fetch article data when the component mounts or articleId changes
+  useEffect(() => {
+    if (articleId && !routeArticle) {
+      getArticleById(articleId).then(fetchedArticle => {
+        if (fetchedArticle) {
+          setData(fetchedArticle);
+        }
+      });
+    }
+  }, [articleId, routeArticle, setData]);
+
+  // Determine if we should show the skeleton
+  const showSkeleton = loading && !article;
 
   // Mock comments data with replies
   const comments = [
@@ -101,22 +117,23 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
     },
   ];
 
-  const handleSubmitComment = text => {
+  // Handler functions with proper type annotations
+  const handleSubmitComment = (text: string): void => {
     console.log('New comment:', text);
     // In a real app, you would add the comment to the comments array
   };
 
-  const handleLikeComment = (commentId, isLiked) => {
+  const handleLikeComment = (commentId: string | number, isLiked: boolean): void => {
     console.log('Comment liked:', commentId, 'Liked status:', isLiked);
     // In a real app, you would update the likes count on the server
   };
 
-  const handleReplyComment = commentId => {
+  const handleReplyComment = (commentId: string | number): void => {
     console.log('Reply to comment:', commentId);
     // In a real app, you would show a reply input or navigate to a reply screen
   };
 
-  const handleViewReplies = commentId => {
+  const handleViewReplies = (commentId: string | number): void => {
     console.log('View replies for comment:', commentId);
     // In a real app, you would expand the replies or navigate to a replies screen
   };
@@ -134,6 +151,52 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
   const subtitle = contentParagraphs[0] || '';
   const remainingParagraphs = contentParagraphs.slice(1) || [];
 
+  // Handler functions with proper type annotations
+  const handleShare = (text: string): void => {
+    Share.share({ message: text });
+  };
+
+  const handleLike = (commentId: string, isLiked: boolean): void => {
+    // Update comment like status
+    console.log('Like comment:', commentId, isLiked);
+  };
+
+  const handleReply = (commentId: string): void => {
+    // Handle reply to comment
+    console.log('Reply to comment:', commentId);
+  };
+
+  const handleDelete = (commentId: string): void => {
+    // Delete comment
+    console.log('Delete comment:', commentId);
+  };
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Typography variant="body-01" color="error">
+          Error loading article: {error.message}
+        </Typography>
+      </View>
+    );
+  }
+
+  if (showSkeleton) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={theme?.colors?.Primary?.Resting || '#E03A3A'} />
+      </View>
+    );
+  }
+
+  if (!article) {
+    return (
+      <View style={styles.container}>
+        <Typography variant="body-01">Article not found</Typography>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {!hideHeader && (
@@ -149,119 +212,96 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }) => {
         </>
       )}
 
-      {loading ? (
-        // Skeleton loading state using SkeletonLoader
-        <ScrollView style={styles.scrollView}>
-          <SkeletonLoader type="article" />
-        </ScrollView>
-      ) : error || !article ? (
-        // Error state
-        <View style={styles.errorContainer}>
-          <Typography variant="h5" color={theme.colors.Text.Primary}>
-            {error || 'Article not found'}
-          </Typography>
-          <TouchableOpacity
-            style={[styles.backToHomeButton, { backgroundColor: theme.colors.Primary.Resting }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Typography variant="button" color={theme.colors.Text.Inverse}>
-              Go Back
-            </Typography>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        // Actual content
-        <ScrollView
-          style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
-          contentContainerStyle={[
-            styles.scrollViewContent,
-            { paddingHorizontal: theme.space['40'] },
-          ]}
-        >
-          {/* Article Header Component */}
-          <ArticleHeader
+      <ScrollView
+        style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
+        contentContainerStyle={[
+          styles.scrollViewContent,
+          { paddingHorizontal: theme.space['40'] },
+        ]}
+      >
+        {/* Article Header Component */}
+        <ArticleHeader
+          title={article.title}
+          subtitle={subtitle}
+          category={article.category}
+          flag={article.flag}
+          readTime={article.readTime || '3 min read'}
+          author={article.author}
+          timestamp={article.timestamp}
+          imageUrl={article.imageUrl}
+        />
+
+        {/* Audio Player Component */}
+        <View style={styles.audioPlayerContainer}>
+          <AudioPlayer
             title={article.title}
-            subtitle={subtitle}
             category={article.category}
-            flag={article.flag}
-            readTime={article.readTime || '3 min read'}
-            author={article.author}
-            timestamp={article.timestamp}
-            imageUrl={article.imageUrl}
+            duration={321} // Default duration in seconds (5m 21s)
+            onPlay={() => console.log('Audio started playing')}
+            onPause={() => console.log('Audio paused')}
+            onComplete={() => console.log('Audio playback completed')}
           />
+        </View>
 
-          {/* Audio Player Component */}
-          <View style={styles.audioPlayerContainer}>
-            <AudioPlayer
-              title={article.title}
-              category={article.category}
-              duration={321} // Default duration in seconds (5m 21s)
-              onPlay={() => console.log('Audio started playing')}
-              onPause={() => console.log('Audio paused')}
-              onComplete={() => console.log('Audio playback completed')}
-            />
-          </View>
-
-          {/* Accordion Component */}
-          <View style={styles.accordionContainer}>
-            <Accordion title="Key Points" initialExpanded={true}>
-              <View style={accordionStyles.keyPointsContainer}>
-                <Typography
-                  variant="body-02"
-                  color={theme.colors.Text.Secondary}
-                  style={accordionStyles.keyPoint}
-                >
-                  • {article.title.split(' ').slice(0, 5).join(' ')}...
-                </Typography>
-                <Typography
-                  variant="body-02"
-                  color={theme.colors.Text.Secondary}
-                  style={accordionStyles.keyPoint}
-                >
-                  • {contentParagraphs[0].split('.')[0]}.
-                </Typography>
-                {contentParagraphs.length > 1 && (
-                  <Typography
-                    variant="body-02"
-                    color={theme.colors.Text.Secondary}
-                    style={accordionStyles.keyPoint}
-                  >
-                    • {contentParagraphs[1].split('.')[0]}.
-                  </Typography>
-                )}
-              </View>
-            </Accordion>
-          </View>
-
-          {/* Article content */}
-          <View style={styles.articleContent}>
-            {remainingParagraphs.map((paragraph, index) => (
+        {/* Accordion Component */}
+        <View style={styles.accordionContainer}>
+          <Accordion title="Key Points" initialExpanded={true}>
+            <View style={accordionStyles.keyPointsContainer}>
               <Typography
-                key={index}
-                variant="body-01"
+                variant="body-02"
                 color={theme.colors.Text.Secondary}
-                style={styles.paragraph}
+                style={accordionStyles.keyPoint}
               >
-                {paragraph}
+                • {article.title.split(' ').slice(0, 5).join(' ')}...
               </Typography>
-            ))}
-          </View>
+              <Typography
+                variant="body-02"
+                color={theme.colors.Text.Secondary}
+                style={accordionStyles.keyPoint}
+              >
+                • {contentParagraphs[0].split('.')[0]}.
+              </Typography>
+              {contentParagraphs.length > 1 && (
+                <Typography
+                  variant="body-02"
+                  color={theme.colors.Text.Secondary}
+                  style={accordionStyles.keyPoint}
+                >
+                  • {contentParagraphs[1].split('.')[0]}.
+                </Typography>
+              )}
+            </View>
+          </Accordion>
+        </View>
 
-          {/* Comments Section using Comments component */}
-          <Comments
-            comments={comments}
-            totalComments={8}
-            onShowAllPress={handleShowAllComments}
-            onSubmitComment={handleSubmitComment}
-            onLikeComment={handleLikeComment}
-            onReplyComment={handleReplyComment}
-            onViewReplies={handleViewReplies}
-          />
+        {/* Article content */}
+        <View style={styles.articleContent}>
+          {remainingParagraphs.map((paragraph, index) => (
+            <Typography
+              key={index}
+              variant="body-01"
+              color={theme.colors.Text.Secondary}
+              style={styles.paragraph}
+            >
+              {paragraph}
+            </Typography>
+          ))}
+        </View>
 
-          {/* Bottom spacing */}
-          <View style={styles.bottomSpacing} />
-        </ScrollView>
-      )}
+        {/* Comments Section using Comments component */}
+        <Comments
+          comments={comments}
+          totalComments={8}
+          onShowAllPress={handleShowAllComments}
+          onSubmitComment={handleSubmitComment}
+          onLikeComment={handleLikeComment}
+          onReplyComment={handleReplyComment}
+          onViewReplies={handleViewReplies}
+        />
+
+        {/* Bottom spacing */}
+        <View style={styles.bottomSpacing} />
+      </ScrollView>
     </View>
   );
 };

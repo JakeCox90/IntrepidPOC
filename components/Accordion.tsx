@@ -10,6 +10,7 @@ import { createAccordionStyles } from './styles/Accordion.styles';
 interface AccordionProps {
   title: string;
   children: React.ReactNode;
+  initialExpanded?: boolean;
 }
 
 /**
@@ -17,9 +18,10 @@ interface AccordionProps {
  *
  * @param title - The title displayed in the header
  * @param children - The content to show when expanded
+ * @param initialExpanded - Whether the accordion should be expanded initially
  */
-export const Accordion: React.FC<AccordionProps> = ({ title, children }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+export const Accordion: React.FC<AccordionProps> = ({ title, children, initialExpanded = false }) => {
+  const [isExpanded, setIsExpanded] = useState(initialExpanded);
   const theme = useTheme();
   const styles = createAccordionStyles(theme);
 
