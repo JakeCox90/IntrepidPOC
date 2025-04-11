@@ -89,5 +89,9 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       flex: 1,
       justifyContent: 'flex-start',
     },
+    title: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
   });
 };

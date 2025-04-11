@@ -32,5 +32,10 @@ export const createCardHeroStyles = (theme: ThemeType) => {
     title: {
       marginBottom: 8,
     },
+    titleContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: 8,
+    },
   });
 };
