@@ -167,21 +167,6 @@ interface NavigationType {
   emit?: (event: string, ...args: unknown[]) => void;
 }
 
-// Type definition for the tab bar props from React Navigation
-interface TypedBottomTabBarProps extends BottomTabBarProps {
-  state: TabNavigationState<ParamListBase>;
-  navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>;
-  descriptors: Record<
-    string,
-    {
-      options: BottomTabNavigationOptions;
-      navigation: NavigationType;
-      route: RouteProp<ParamListBase, string>;
-      render: () => React.ReactElement;
-    }
-  >;
-}
-
 // Today Tab Stack
 function TodayStackScreen() {
   return (

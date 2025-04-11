@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
+import { View, TouchableOpacity, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
+import Flag from './Flag';
+import { createAudioPlayerStyles } from './styles/AudioPlayer.styles';
 
 interface AudioPlayerProps {
   title: string;
@@ -30,6 +32,7 @@ const AudioPlayer = ({
   onComplete,
 }: AudioPlayerProps) => {
   const theme = useTheme();
+  const styles = createAudioPlayerStyles(theme);
   const [isPlaying, setIsPlaying] = useState(false);
   const [remainingTime, setRemainingTime] = useState(duration);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,17 +106,7 @@ const AudioPlayer = ({
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          borderColor: theme.colors.Border.Primary,
-          borderWidth: theme.borderWidth['10'],
-          borderRadius: theme.radius['radius-default'],
-          backgroundColor: theme.colors.Surface.Primary,
-        },
-      ]}
-    >
+    <View style={styles.container}>
       <View style={styles.contentContainer}>
         <View
           style={styles.leftSection}
@@ -135,9 +128,7 @@ const AudioPlayer = ({
                   setContentWidth(event.nativeEvent.layout.width);
                 }}
               >
-                <Typography variant="subtitle-02" color={theme.colors.Primary.Resting}>
-                  {category}
-                </Typography>
+                <Flag text={category} category={category} variant="minimal" />
                 <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
                   {' ' + title}
                 </Typography>
@@ -151,13 +142,7 @@ const AudioPlayer = ({
                 setContentWidth(event.nativeEvent.layout.width);
               }}
             >
-              <Typography
-                variant="subtitle-02"
-                color={theme.colors.Primary.Resting}
-                numberOfLines={1}
-              >
-                {category}
-              </Typography>
+              <Flag text={category} category={category} variant="minimal" />
               <Typography
                 variant="subtitle-02"
                 color={theme.colors.Text.Primary}
@@ -192,58 +177,5 @@ const AudioPlayer = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    height: 68,
-    justifyContent: 'space-between',
-    overflow: 'hidden',
-    width: '100%',
-  },
-  contentContainer: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  duration: {
-    marginLeft: 4,
-  },
-  durationContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  leftSection: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  playButton: {
-    alignItems: 'center',
-    borderRadius: 20,
-    height: 40,
-    justifyContent: 'center',
-    marginLeft: 16,
-    width: 40,
-  },
-  staticTextContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginBottom: 4,
-  },
-  tickerContainer: {
-    marginBottom: 4,
-    overflow: 'hidden',
-  },
-  tickerContent: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  truncatedTitle: {
-    flex: 1,
-  },
-});
 
 export default AudioPlayer;
