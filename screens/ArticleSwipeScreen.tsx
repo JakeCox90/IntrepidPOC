@@ -443,7 +443,7 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+      <StatusBar barStyle="dark-content" backgroundColor="white" translucent={true} />
       
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
