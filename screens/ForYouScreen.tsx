@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   horizontalRailContainer: {
-    marginTop: 16, // Set to 16 as requested for spacing between hero card and stack
+    marginTop: 0, // Reduced from 16 to 8 to halve the space between hero card and stack
     paddingBottom: 16,
   },
   scrollView: {
