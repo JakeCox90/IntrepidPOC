@@ -26,7 +26,7 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       flexDirection: 'row',
     },
     categoryText: {
-      marginBottom: 4,
+      marginBottom: 0,
     },
     container: {
       backgroundColor: theme.colors.Surface.Primary,

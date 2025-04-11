@@ -1,6 +1,15 @@
 'use client';
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, StatusBar } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  StatusBar,
+  RefreshControl,
+  Platform,
+  SafeAreaView,
+  Image,
+} from 'react-native';
 import { useFocusEffect, NavigationProp } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import CardCatchUp from '../components/CardCatchUp';
@@ -27,42 +36,46 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadArticles = async (isRefreshing = false) => {
+    if (!isRefreshing) {
+      setLoading(true);
+    }
+
+    try {
+      const data = await fetchSunNews();
+      setNews(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading articles:', err);
+      setError('Failed to load articles');
+      setNews([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   // Use useFocusEffect instead of useEffect to avoid potential memory leaks
   useFocusEffect(
     useCallback(() => {
       let isMounted = true;
 
-      const loadArticles = async () => {
-        if (!isMounted) return;
-
-        setLoading(true);
-
-        try {
-          const data = await fetchSunNews();
-          if (isMounted) {
-            setNews(data);
-            setLoading(false);
-            setError(null);
-          }
-        } catch (err) {
-          console.error('Error loading articles:', err);
-          if (isMounted) {
-            setError('Failed to load articles');
-            setLoading(false);
-            // Set empty array to prevent undefined errors
-            setNews([]);
-          }
-        }
-      };
-
-      loadArticles();
+      if (isMounted) {
+        loadArticles();
+      }
 
       return () => {
         isMounted = false;
       };
     }, []),
   );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadArticles(true);
+  }, []);
 
   const handleCatchUpPress = (item: { id: string }) => {
     if (item.id === 'daily-digest') {
@@ -143,31 +156,13 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   // Get top stories and all stories
   const topStories = React.useMemo(() => news.slice(0, 8), [news]);
 
-  return (
-    <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+  const renderContent = () => {
+    if (loading && !refreshing) {
+      return <SkeletonLoader type="today" count={4} />;
+    }
 
-      {/* Header - replaced with TopNav */}
-      <TopNav
-        title="Welcome, Jake"
-        backgroundColor={theme.colors.Surface.Secondary}
-        textColor={theme.colors.Text.Primary}
-        variant="explore"
-        rightButtons={[
-          {
-            label: 'Profile',
-            onPress: handleProfilePress,
-          },
-        ]}
-      />
-
-      {loading ? (
-        // Show loading state using the SkeletonLoader component
-        <ScrollView style={styles.scrollView}>
-          <SkeletonLoader type="today" count={4} />
-        </ScrollView>
-      ) : error ? (
-        // Error state
+    if (error) {
+      return (
         <View style={[styles.container, styles.centerContainer]}>
           <Typography
             variant="subtitle-01"
@@ -180,112 +175,176 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
             Please check your connection and try again.
           </Typography>
         </View>
-      ) : (
-        // Actual content
-        <ScrollView style={styles.scrollView}>
-          {/* Today's Catch Up Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Today&apos;s Catch Up
-            </Typography>
+      );
+    }
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.catchUpScroll}
-              contentContainerStyle={styles.catchUpScrollContent}
-            >
-              {catchUpItems.map(item => (
-                <CardCatchUp
-                  key={item.id}
-                  title={item.title}
-                  subtitle={item.subtitle}
-                  imageUrl={item.imageUrl}
-                  count={item.count}
-                  onPress={() => handleCatchUpPress(item)}
-                />
-              ))}
-            </ScrollView>
-          </View>
+    return (
+      <>
+        {/* Today's Catch Up Section */}
+        <View style={styles.section}>
+          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+            Today&apos;s Catch Up
+          </Typography>
 
-          {/* Top Stories Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Top Stories
-            </Typography>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.catchUpScroll}
+            contentContainerStyle={styles.catchUpScrollContent}
+          >
+            {catchUpItems.map(item => (
+              <CardCatchUp
+                key={item.id}
+                title={item.title}
+                subtitle={item.subtitle}
+                imageUrl={item.imageUrl}
+                count={item.count}
+                onPress={() => handleCatchUpPress(item)}
+              />
+            ))}
+          </ScrollView>
+        </View>
 
-            <>
-              {/* Hero Card */}
-              {topStories.length > 0 && (
-                <CardHero
-                  title={topStories[0].title}
-                  imageUrl={topStories[0].imageUrl}
-                  flag={topStories[0].flag}
-                  category={topStories[0].category}
-                  readTime={topStories[0].readTime}
-                  onPress={() => handleArticlePress(topStories[0])}
-                  onBookmark={() => handleBookmark(topStories[0].id)}
-                  onShare={() => handleShare(topStories[0].id)}
-                />
-              )}
+        {/* Top Stories Section */}
+        <View style={styles.section}>
+          <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+            Top Stories
+          </Typography>
 
-              {/* Other Top Stories */}
-              {topStories.slice(1).map(story => (
-                <CardHorizontal
-                  key={story.id}
-                  id={story.id}
-                  title={story.title}
-                  imageUrl={story.imageUrl}
-                  category={story.category}
-                  flag={story.flag}
-                  readTime={story.readTime}
-                  onPress={() => handleArticlePress(story)}
-                  onBookmark={() => handleBookmark(story.id)}
-                  onShare={() => handleShare(story.id)}
-                />
-              ))}
-            </>
-          </View>
+          <>
+            {/* Hero Card */}
+            {topStories.length > 0 && (
+              <CardHero
+                title={topStories[0].title}
+                imageUrl={topStories[0].imageUrl}
+                flag={topStories[0].flag}
+                category={topStories[0].category}
+                readTime={topStories[0].readTime}
+                onPress={() => handleArticlePress(topStories[0])}
+                onBookmark={() => handleBookmark(topStories[0].id)}
+                onShare={() => handleShare(topStories[0].id)}
+              />
+            )}
 
-          {/* Bottom padding */}
-          <View style={styles.bottomPadding} />
-        </ScrollView>
-      )}
+            {/* Other Top Stories */}
+            {topStories.slice(1).map(story => (
+              <CardHorizontal
+                key={story.id}
+                id={story.id}
+                title={story.title}
+                imageUrl={story.imageUrl}
+                category={story.category}
+                flag={story.flag}
+                readTime={story.readTime}
+                onPress={() => handleArticlePress(story)}
+                onBookmark={() => handleBookmark(story.id)}
+                onShare={() => handleShare(story.id)}
+              />
+            ))}
+          </>
+        </View>
+
+        {/* Bottom padding */}
+        <View style={styles.bottomPadding} />
+      </>
+    );
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.Primary.Resting }]}>
+      <StatusBar barStyle="light-content" />
+      
+      {/* Scrollable Content Area */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.Text.Primary}
+            progressBackgroundColor="transparent"
+            style={{ backgroundColor: 'transparent' }}
+          />
+        }
+      >
+        {/* White Content Area */}
+        <View style={[styles.contentContainer, { backgroundColor: theme.colors.Surface.Primary }]}>
+          {renderContent()}
+        </View>
+      </ScrollView>
+
+      {/* Fixed Logo Area */}
+      <SafeAreaView style={[styles.header, { backgroundColor: 'transparent' }]}>
+        <View style={styles.headerContent}>
+          <Image
+            source={require('../assets/Logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  bottomPadding: {
-    height: 24,
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingTop: Platform.OS === 'ios' ? 120 : 100,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 2,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  headerContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  logo: {
+    width: 85,
+    height: 36,
+  },
+  contentContainer: {
+    flex: 1,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingTop: 24,
+    marginTop: -16,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    marginBottom: 16,
+    paddingHorizontal: 16,
   },
   catchUpScroll: {
-    marginLeft: -16,
-    paddingLeft: 16,
+    marginLeft: 16,
   },
   catchUpScrollContent: {
     paddingRight: 16,
   },
   centerContainer: {
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
+    alignItems: 'center',
+    padding: 16,
   },
   errorText: {
-    marginBottom: 16,
+    marginBottom: 8,
+    textAlign: 'center',
   },
-  scrollView: {
-    flex: 1,
-  },
-  section: {
-    padding: 16,
-    paddingBottom: 24,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-    fontWeight: '700',
+  bottomPadding: {
+    height: 24,
   },
 });
 
