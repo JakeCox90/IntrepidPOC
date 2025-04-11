@@ -1,9 +1,11 @@
 'use client';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import LazyImage from './LazyImage';
 import Typography from './Typography';
 import Card from './Card';
 import { cardStyles } from '../utils/cardStyles';
+import { useTheme } from '../theme/ThemeProvider';
+import { palette } from '../design-system/primitives';
 
 interface CardCatchUpProps {
   title: string;
@@ -14,11 +16,18 @@ interface CardCatchUpProps {
 }
 
 const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpProps) => {
+  const theme = useTheme();
+  const isDailyDigest = title === 'Daily Digest';
+
   return (
     <Card onPress={onPress} style={cardStyles.catchUpContainer}>
       <View style={cardStyles.catchUpImageContainer}>
-        <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
-        <View style={[cardStyles.catchUpOverlay, styles.overlay]}>
+        {isDailyDigest ? (
+          <Image source={require('../assets/DigestBg.png')} style={styles.image} resizeMode="cover" />
+        ) : (
+          <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+        )}
+        <View style={[cardStyles.catchUpOverlay, { backgroundColor: palette.blackTint[10] }]}>
           <View style={styles.content}>
             <Typography variant="h5" color="#FFFFFF" style={styles.title}>
               {title}
@@ -49,9 +58,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: '100%',
     width: '100%',
-  },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   subtitle: {
     marginBottom: 8,
