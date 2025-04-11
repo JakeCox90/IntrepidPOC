@@ -7,6 +7,8 @@ import { SvgProps } from 'react-native-svg';
 import SvgIcon from './SvgIcon';
 import TodayResting from '../assets/TodayResting.svg';
 import TodaySelected from '../assets/TodaySelected.svg';
+import ForYouResting from '../assets/ForYouResting.svg';
+import ForYouSelected from '../assets/ForYouSelected.svg';
 import SearchResting from '../assets/SearchResting.svg';
 import SearchSelected from '../assets/SearchSelected.svg';
 import AllNewsResting from '../assets/AllNewsResting.svg';
@@ -57,11 +59,16 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
     
     switch (tabName) {
       case 'Today':
+        return isActive ? (
+          <SvgIcon source={TodaySelected} width={24} height={24} color={color} />
+        ) : (
+          <SvgIcon source={TodayResting} width={24} height={24} color={color} />
+        );
       case 'ForYou':
         return isActive ? (
-          <SvgIcon source={TodaySelected} width={24} height={24} />
+          <SvgIcon source={ForYouSelected} width={24} height={24} />
         ) : (
-          <SvgIcon source={TodayResting} width={24} height={24} />
+          <SvgIcon source={ForYouResting} width={24} height={24} />
         );
       case 'AllNews':
         return isActive ? (

@@ -3,15 +3,22 @@ import { View, ViewStyle } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
 interface SvgIconProps extends Omit<SvgProps, 'width' | 'height'> {
-  source: React.ComponentType<SvgProps>;
-  width?: number | string;
-  height?: number | string;
+  source: React.FC<SvgProps>;  // More explicit type definition
+  width?: number;
+  height?: number;
+  color?: string;
 }
 
-const SvgIcon: React.FC<SvgIconProps> = ({ source: SvgComponent, width = 24, height = 24, ...props }) => {
+const SvgIcon: React.FC<SvgIconProps> = ({ 
+  source: SvgComponent, 
+  width = 24, 
+  height = 24, 
+  color,
+  ...props 
+}) => {
   const containerStyle: ViewStyle = {
-    width: typeof width === 'number' ? width : 24,
-    height: typeof height === 'number' ? height : 24,
+    width,
+    height,
     justifyContent: 'center',
     alignItems: 'center',
   };
@@ -19,9 +26,10 @@ const SvgIcon: React.FC<SvgIconProps> = ({ source: SvgComponent, width = 24, hei
   return (
     <View style={containerStyle}>
       <SvgComponent 
-        {...props} 
-        width={width !== undefined ? String(width) : '24'} 
-        height={height !== undefined ? String(height) : '24'} 
+        width={width} 
+        height={height}
+        color={color}
+        {...props}
       />
     </View>
   );
