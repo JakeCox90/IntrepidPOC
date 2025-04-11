@@ -323,16 +323,16 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
     marginBottom: 16,
-    paddingHorizontal: 16,
   },
   catchUpScroll: {
-    marginLeft: 16,
+    marginHorizontal: -16,
   },
   catchUpScrollContent: {
-    paddingRight: 16,
+    paddingHorizontal: 16,
   },
   centerContainer: {
     justifyContent: 'center',
