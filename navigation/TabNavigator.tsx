@@ -145,17 +145,6 @@ function isValidTabName(name: unknown): name is ValidTabName {
   return ['Today', 'ForYou', 'AllNews', 'Search', 'Saved'].includes(name);
 }
 
-// Type guard to check if a navigation object has required methods
-function isValidNavigation(nav: unknown): nav is NavigationType {
-  return (
-    !!nav && 
-    typeof nav === 'object' &&
-    nav !== null &&
-    typeof (nav as NavigationType).navigate === 'function' &&
-    typeof (nav as NavigationType).reset === 'function'
-  );
-}
-
 // Type guard to check if an object is a valid navigation state
 function isValidNavigationState(state: unknown): state is NavigationState {
   return (
@@ -168,12 +157,6 @@ function isValidNavigationState(state: unknown): state is NavigationState {
     (state as NavigationState).routeNames.length > 0 &&
     (state as NavigationState).routeNames.every((name: string) => typeof name === 'string')
   );
-}
-// Define a type for the focus event to improve type safety
-type FocusEvent = {
-  target?: string;
-  type?: string;
-  data?: Record<string, unknown>;
 }
 
 // Define a reusable navigation type for consistent usage throughout the file
@@ -458,7 +441,7 @@ export default function TabNavigator() {
               console.error('Error rendering tab bar:', error);
               // Provide a fallback tab bar in case of error
               const fallbackBgColor = theme?.colors?.Surface?.Primary || '#FFFFFF';
-              const fallbackBorderColor = theme?.colors?.Border?.['Border-Primary'] || '#E5E5E5';
+              const fallbackBorderColor = theme?.colors?.Border?.Primary || '#E5E5E5';
               return (
                 <View
                   style={[

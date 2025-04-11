@@ -41,8 +41,8 @@ export type ThemeType = {
       Primary: string;
       Secondary: string;
       Disabled: string;
-      'Overlay-01': string;
-      'Overlay-02': string;
+      Overlay01: string;
+      Overlay02: string;
     };
     Error: {
       Resting: string;
@@ -63,10 +63,10 @@ export type ThemeType = {
       Disabled: string;
     };
     Border: {
-      'Border-Primary': string;
-      'Border-Secondary': string;
-      'Skeleton-01': string;
-      'Skeleton-02': string;
+      Primary: string;
+      Secondary: string;
+      Skeleton01: string;
+      Skeleton02: string;
       Error: string;
     };
     Section: {
@@ -80,13 +80,13 @@ export type ThemeType = {
       Tech: string;
       Motors: string;
       Health: string;
-      'UK News': string;
-      'World News': string;
-      'Irish News': string;
-      'Scottish News': string;
+      UKNews: string;
+      WorldNews: string;
+      IrishNews: string;
+      ScottishNews: string;
       Politics: string;
-      'Royal Family': string;
-      'US News': string;
+      RoyalFamily: string;
+      USNews: string;
       Opinion: string;
       Football: string;
       Boxing: string;
@@ -98,10 +98,10 @@ export type ThemeType = {
       Golf: string;
       Tennis: string;
       NFL: string;
-      'Dream Team': string;
+      DreamTeam: string;
       Soaps: string;
-      'Reality TV': string;
-      'TV News': string;
+      RealityTV: string;
+      TVNews: string;
       Celebrity: string;
       Music: string;
       Film: string;
@@ -113,26 +113,26 @@ export type ThemeType = {
       Bills: string;
       Banking: string;
       Pensions: string;
-      'Beach Holidays': string;
-      'UK Holidays': string;
-      'City Breaks': string;
+      BeachHolidays: string;
+      UKHolidays: string;
+      CityBreaks: string;
       Cruises: string;
       Phones: string;
       Gaming: string;
       Science: string;
-      'New Cars': string;
-      'Used Cars': string;
+      NewCars: string;
+      UsedCars: string;
       Fitness: string;
       Diet: string;
-      'Health News': string;
+      HealthNews: string;
       Puzzles: string;
-      'Dear Deidre': string;
-      'Sun Bingo': string;
-      'Sun Vegas': string;
-      'Sun Savers': string;
-      'Sun Casino': string;
-      'Sun Win': string;
-      'Sun Selects': string;
+      DearDeidre: string;
+      SunBingo: string;
+      SunVegas: string;
+      SunSavers: string;
+      SunCasino: string;
+      SunWin: string;
+      SunSelects: string;
     };
   };
   typography: {
@@ -185,7 +185,7 @@ const ensureThemeProperties = (theme: Partial<ThemeType>): ThemeType => {
   if (!theme.opacity) theme.opacity = opacity;
   if (!theme.shadows) theme.shadows = shadows;
   if (!theme.zIndex) theme.zIndex = zIndex;
-  if (theme.toggleTheme === undefined) theme.toggleTheme = () => {}; 
+  if (theme.toggleTheme === undefined) theme.toggleTheme = () => {};
   if (theme.isDark === undefined) theme.isDark = false;
 
   return theme as ThemeType;
@@ -223,8 +223,8 @@ const darkTheme: ThemeType = ensureThemeProperties({
       Primary: '#1d1d1b', // Dark background
       Secondary: '#313131', // Darker background
       Disabled: '#4d4d4d',
-      'Overlay-01': colors.Surface['Overlay-01'],
-      'Overlay-02': '#313131',
+      Overlay01: colors.Surface.Overlay01,
+      Overlay02: colors.Surface.Overlay02,
     },
     Text: {
       Primary: '#ffffff',
@@ -234,10 +234,10 @@ const darkTheme: ThemeType = ensureThemeProperties({
       Error: colors.Text.Error,
     },
     Border: {
-      'Border-Primary': '#ffffff',
-      'Border-Secondary': '#a0a0a0',
-      'Skeleton-01': '#4d4d4d',
-      'Skeleton-02': '#6c6c6c',
+      Primary: '#ffffff',
+      Secondary: '#a0a0a0',
+      Skeleton01: '#4d4d4d',
+      Skeleton02: '#6c6c6c',
       Error: colors.Border.Error,
     },
   },
@@ -311,15 +311,15 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   // Create a fully formed theme object with proper toggle function
   const theme: ThemeType = isDark
-    ? { 
-        ...darkTheme, 
+    ? {
+        ...darkTheme,
         toggleTheme,
-        isDark: true
+        isDark: true,
       }
-    : { 
+    : {
         ...lightTheme,
         toggleTheme,
-        isDark: false
+        isDark: false,
       };
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;

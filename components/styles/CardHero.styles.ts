@@ -10,12 +10,15 @@ export const createCardHeroStyles = (theme: ThemeType) => {
     container: {
       ...cardStyles.container,
       ...cardStyles.heroContainer,
-      borderColor: theme.colors.Border['Border-Primary'],
+      borderColor: theme.colors.Border.Primary,
       borderWidth: theme.borderWidth['10'],
     },
     flagContainer: {
       flexDirection: 'row',
       marginBottom: 8,
+    },
+    flag: {
+      marginRight: 8,
     },
     heroContent: {
       padding: 16,

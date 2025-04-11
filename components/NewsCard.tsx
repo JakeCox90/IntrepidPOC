@@ -1,6 +1,6 @@
 'use client';
 
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
 import Flag from './Flag';
@@ -14,7 +14,6 @@ interface NewsCardProps {
   onPress: () => void;
 }
 
-const { width } = Dimensions.get('window');
 const cardWidth = 200; // Width for horizontal scrolling cards
 
 const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardProps) => {
@@ -22,7 +21,15 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
 
   return (
     <TouchableOpacity
-      style={styles.container(theme)}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.Surface.Primary,
+          borderRadius: theme.radius['radius-default'],
+          borderWidth: theme.borderWidth['10'],
+          borderColor: theme.colors.Border.Primary,
+        },
+      ]}
       onPress={onPress}
       activeOpacity={0.9}
       testID="news-card-touchable"
@@ -61,15 +68,12 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
   );
 };
 
+// Create standard StyleSheet with static styles
 const styles = StyleSheet.create({
-  container: (theme: any) => ({
-    width: cardWidth,
-    backgroundColor: theme.colors.Surface.Primary,
-    borderRadius: theme.radius['radius-default'],
-    borderWidth: theme.borderWidth['10'],
-    borderColor: theme.colors.Border['Border-Primary'],
+  container: {
     overflow: 'hidden',
-  }),
+    width: cardWidth,
+  },
   content: {
     padding: 12,
   },

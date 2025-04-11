@@ -25,7 +25,7 @@ export const getCategoryColor = (category: string, theme: ThemeType): string => 
     normalizedCategory.includes('UFC') ||
     normalizedCategory.includes('NFL') ||
     normalizedCategory.includes('RACING') ||
-    normalizedCategory.includes('DREAM TEAM')
+    normalizedCategory.includes('DREAMTEAM')
   ) {
     return theme.colors.Section.Sport;
   }
@@ -47,7 +47,7 @@ export const getCategoryColor = (category: string, theme: ThemeType): string => 
     normalizedCategory.includes('CELEBRITY') ||
     normalizedCategory.includes('MUSIC') ||
     normalizedCategory.includes('FILM') ||
-    normalizedCategory.includes('DEAR DEIDRE')
+    normalizedCategory.includes('DEARDEIDRE')
   ) {
     return theme.colors.Section.Showbiz;
   }
@@ -68,7 +68,7 @@ export const getCategoryColor = (category: string, theme: ThemeType): string => 
     normalizedCategory.includes('HOLIDAY') ||
     normalizedCategory.includes('BEACH') ||
     normalizedCategory.includes('CRUISE') ||
-    normalizedCategory.includes('SUN BINGO')
+    normalizedCategory.includes('SUNBINGO')
   ) {
     return theme.colors.Section.Travel;
   }
@@ -114,16 +114,16 @@ export const getCategoryColor = (category: string, theme: ThemeType): string => 
     return theme.colors.Section.Fabulous;
   }
 
-  // News categories (including Royal Family)
+  // News categories (including RoyalFamily)
   if (
-    normalizedCategory.includes('NEWS') ||
-    normalizedCategory.includes('UK NEWS') ||
-    normalizedCategory.includes('WORLD NEWS') ||
-    normalizedCategory.includes('US NEWS') ||
-    normalizedCategory.includes('IRISH NEWS') ||
-    normalizedCategory.includes('SCOTTISH NEWS') ||
-    normalizedCategory.includes('OPINION') ||
-    normalizedCategory.includes('ROYAL')
+    normalizedCategory.includes('UKNEWS') ||
+    normalizedCategory.includes('WORLDNEWS') ||
+    normalizedCategory.includes('USNEWS') ||
+    normalizedCategory.includes('IRISHNEWS') ||
+    normalizedCategory.includes('SCOTTISHNEWS') ||
+    normalizedCategory.includes('POLITICS') ||
+    normalizedCategory.includes('ROYALFAMILY') ||
+    normalizedCategory.includes('OPINION')
   ) {
     return theme.colors.Section.News;
   }
@@ -139,16 +139,16 @@ export const getCategoryColor = (category: string, theme: ThemeType): string => 
 
   // Sun branded sections
   if (
-    normalizedCategory.includes('SUN VEGAS') ||
-    normalizedCategory.includes('SUN SAVERS') ||
-    normalizedCategory.includes('SUN CASINO') ||
-    normalizedCategory.includes('SUN WIN')
+    normalizedCategory.includes('SUNVEGAS') ||
+    normalizedCategory.includes('SUNSAVERS') ||
+    normalizedCategory.includes('SUNCASINO') ||
+    normalizedCategory.includes('SUNWIN')
   ) {
-    return '#FFD700'; // Gold
+    return theme.colors.Section.SunVegas;
   }
 
-  if (normalizedCategory.includes('SUN SELECTS')) {
-    return theme.colors.Section.News;
+  if (normalizedCategory.includes('SUNSELECTS')) {
+    return theme.colors.Section.SunSelects;
   }
 
   // Default to News if no match

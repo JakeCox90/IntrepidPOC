@@ -10,7 +10,6 @@ interface TabsProps {
   onTabPress: (tab: string) => void;
   variant?: 'primary' | 'secondary';
   backgroundColor?: string;
-  indicatorColor?: string;
   activeTextColor?: string;
   inactiveTextColor?: string;
   textVariant?: 'overline' | 'body-02' | 'subtitle-02';
@@ -23,7 +22,6 @@ const Tabs = ({
   onTabPress,
   variant = 'primary',
   backgroundColor,
-  indicatorColor,
   activeTextColor,
   inactiveTextColor,
   textVariant = 'overline',
@@ -35,15 +33,14 @@ const Tabs = ({
   // Refs for scrolling and position tracking
   const scrollViewRef = useRef<ScrollView>(null);
   const tabPositions = useRef<Record<string, { x: number; width: number }>>({});
-  
+
   // Animation values
   const animatedPosition = useRef(new Animated.Value(0)).current;
   const animatedWidth = useRef(new Animated.Value(0)).current;
-  
+
   // Constants for animations and opacity values
   const ANIMATION_DURATION = 300;
   const ACTIVE_TAB_OPACITY = 0.7;
-  const INDICATOR_OPACITY = 0.2;
 
   // Default colors based on variant
   const defaultBgColor =
@@ -61,12 +58,6 @@ const Tabs = ({
     variant === 'primary'
       ? inactiveTextColor || `rgba(255, 255, 255, ${ACTIVE_TAB_OPACITY})`
       : inactiveTextColor || theme.colors.Text.Secondary;
-
-  const defaultIndicatorColor =
-    indicatorColor ||
-    (variant === 'primary'
-      ? `rgba(255, 255, 255, ${INDICATOR_OPACITY})`
-      : theme.colors.Primary.Resting);
 
   // Border radius from theme
   const borderRadius = theme.radius['radius-pill'] || 9999;
@@ -118,7 +109,7 @@ const Tabs = ({
         { backgroundColor: defaultBgColor },
         variant === 'secondary' && {
           borderBottomWidth: theme.borderWidth['10'],
-          borderBottomColor: theme.colors.Border['Border-Primary'],
+          borderBottomColor: theme.colors.Border.Primary,
         },
       ]}
     >
@@ -137,12 +128,12 @@ const Tabs = ({
               {
                 borderRadius: borderRadius,
               },
+              activeTab === tab && styles.activeTab,
               activeTab === tab && {
-                borderWidth: 1,
                 borderColor:
                   variant === 'primary'
                     ? theme.colors.Text.Inverse
-                    : theme.colors.Border['Border-Primary'],
+                    : theme.colors.Border.Primary,
               },
             ]}
             onPress={() => onTabPress(tab)}
@@ -168,6 +159,9 @@ const Tabs = ({
 };
 
 const styles = StyleSheet.create({
+  activeTab: {
+    borderWidth: 1,
+  },
   activeTabText: {
     fontWeight: '700',
   },
@@ -194,3 +188,5 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
 });
+
+export default Tabs;

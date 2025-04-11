@@ -19,7 +19,7 @@ const BottomTabs = ({ activeTab, onTabPress }: BottomTabsProps) => {
         {
           backgroundColor: theme.colors.Surface.Primary,
           borderTopWidth: theme.borderWidth['10'],
-          borderTopColor: theme.colors.Border['Border-Primary'],
+          borderTopColor: theme.colors.Border.Primary,
         },
       ]}
     >

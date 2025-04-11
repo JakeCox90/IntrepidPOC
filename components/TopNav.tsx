@@ -45,7 +45,7 @@ const TopNav = ({
   const txtColor = textColor || theme?.colors?.Text?.Primary || '#1D1D1B';
   const spacing = theme?.space?.['40'] || 16;
   const smallSpacing = theme?.space?.['20'] || 8;
-  const borderColor = theme?.colors?.Border?.['Border-Primary'] || '#E5E5E5';
+  const borderColor = theme?.colors?.Border?.Primary || '#E5E5E5';
 
   if (variant === 'explore') {
     return (
@@ -82,9 +82,9 @@ const TopNav = ({
           backgroundColor: bgColor,
           paddingTop: insets.top || (Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0),
           paddingHorizontal: spacing,
-          borderBottomWidth: 1,
           borderBottomColor: borderColor,
         },
+        styles.borderBottom,
       ]}
     >
       <View style={styles.content}>
@@ -120,6 +120,12 @@ const TopNav = ({
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    padding: 4,
+  },
+  borderBottom: {
+    borderBottomWidth: 1,
+  },
   container: {
     width: '100%',
   },
@@ -129,20 +135,6 @@ const styles = StyleSheet.create({
     height: 48,
     paddingVertical: 8,
   },
-  backButton: {
-    padding: 4,
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  title: {},
-  rightButtonsContainer: {
-    flexDirection: 'row',
-  },
-  rightButton: {
-    marginLeft: 16,
-  },
-  // New styles for explore variant
   exploreContainer: {
     paddingBottom: 16,
     width: '100%',
@@ -150,6 +142,16 @@ const styles = StyleSheet.create({
   exploreTitle: {
     marginBottom: 8,
     marginTop: 24,
+  },
+  rightButton: {
+    marginLeft: 16,
+  },
+  rightButtonsContainer: {
+    flexDirection: 'row',
+  },
+  title: {},
+  titleContainer: {
+    flex: 1,
   },
 });
 

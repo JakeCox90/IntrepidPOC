@@ -54,11 +54,7 @@ const CardHorizontal = ({
 
   const categoryText = category || '';
 
-  // Check if the flag is a common flag type
-  const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase());
-
-  // If no flag is provided, try to extract it from the title
-  let extractedFlag = null;
+  // If no flag is provided, use the title directly
   let mainTitle = title || '';
 
   if (!flag) {
@@ -69,14 +65,14 @@ const CardHorizontal = ({
       // Check if the first word is a common flag
       const firstWord = titleParts[0].toUpperCase();
       if (COMMON_FLAGS.includes(firstWord)) {
-        extractedFlag = firstWord;
+        // First word is a flag, remove it from the title
         mainTitle = titleParts.slice(1).join(' ');
       }
       // Check if first two words are a common flag (like "BREAKING NEWS")
       else if (titleParts.length > 2) {
         const firstTwoWords = `${titleParts[0]} ${titleParts[1]}`.toUpperCase();
         if (COMMON_FLAGS.some(f => firstTwoWords.includes(f))) {
-          extractedFlag = firstTwoWords;
+          // First two words contain a flag, remove them from the title
           mainTitle = titleParts.slice(2).join(' ');
         }
       }

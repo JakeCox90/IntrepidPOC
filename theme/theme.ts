@@ -2,7 +2,6 @@ import {
   typographyScale,
   typographyLineHeight,
   typographyVariants,
-  type TypographyVariant,
 } from '../design-system/typography';
 
 // Design system tokens based on your foundations

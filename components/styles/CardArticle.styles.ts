@@ -6,8 +6,8 @@ export const createCardArticleStyles = (theme: ThemeType) => {
   return StyleSheet.create({
     container: {
       ...cardStyles.articleContainer,
-      borderBottomColor: theme.colors.Border['Border-Primary'],
-      borderColor: theme.colors.Border['Border-Primary'],
+      borderBottomColor: theme.colors.Border.Primary,
+      borderColor: theme.colors.Border.Primary,
       borderWidth: theme.borderWidth['10'],
       paddingVertical: 16,
     },

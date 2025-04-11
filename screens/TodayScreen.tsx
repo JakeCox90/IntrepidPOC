@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, StatusBar } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, NavigationProp } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import CardCatchUp from '../components/CardCatchUp';
 import CardHero from '../components/CardHero';
@@ -11,12 +11,30 @@ import TopNav from '../components/TopNav';
 import Typography from '../components/Typography';
 import { fetchSunNews } from '../services/sunNewsService';
 
-// Simplified component without animations
-const TodayScreen = ({ navigation }) => {
+interface Article {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  category: string;
+  flag?: string;
+  readTime?: string;
+}
+
+type RootStackParamList = {
+  TodayArticle: { article: Article };
+  ArticleSwipeScreen: { articles: Article[] };
+  AllNewsCategory: { category: { name: string }; source: string };
+};
+
+interface TodayScreenProps {
+  navigation: NavigationProp<RootStackParamList>;
+}
+
+const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   const theme = useTheme();
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Use useFocusEffect instead of useEffect to avoid potential memory leaks
   useFocusEffect(
@@ -54,7 +72,7 @@ const TodayScreen = ({ navigation }) => {
     }, []),
   );
 
-  const handleCatchUpPress = item => {
+  const handleCatchUpPress = (item: { id: string }) => {
     if (item.id === 'daily-digest') {
       // Navigate to the ArticleSwipeScreen with the first 10 articles
       navigation.navigate('ArticleSwipeScreen', {
@@ -73,15 +91,15 @@ const TodayScreen = ({ navigation }) => {
     }
   };
 
-  const handleArticlePress = article => {
+  const handleArticlePress = (article: Article) => {
     navigation.navigate('TodayArticle', { article });
   };
 
-  const handleBookmark = id => {
+  const handleBookmark = (id: string | number) => {
     console.log('Bookmark article:', id);
   };
 
-  const handleShare = id => {
+  const handleShare = (id: string | number) => {
     console.log('Share article:', id);
   };
 
@@ -163,7 +181,7 @@ const TodayScreen = ({ navigation }) => {
           <Typography
             variant="subtitle-01"
             color={theme.colors.Error.Resting}
-            style={{ marginBottom: 16 }}
+            style={styles.errorText}
           >
             {error}
           </Typography>
@@ -285,8 +303,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   container: {
-    backgroundColor: '#F8F8F8',
     flex: 1,
+  },
+  errorText: {
+    marginBottom: 16,
   },
   scrollView: {
     flex: 1,

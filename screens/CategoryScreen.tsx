@@ -4,37 +4,86 @@ import CardHorizontal from '../components/CardHorizontal';
 import { mockNews } from '../services/newsService';
 import { useTheme } from '../theme/ThemeProvider';
 import Header from '../components/Header';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+// Define interfaces for type safety
+interface Article {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  category?: string;
+  timestamp?: string;
+  readTime?: string;
+  content?: string;
+}
 
-const CategoryScreen = ({ route, navigation }) => {
+interface CategoryParams {
+  category: {
+    id: string | number;
+    name: string;
+  };
+  source?: string;
+}
+
+type CategoryScreenRouteProp = RouteProp<{ params: CategoryParams }, 'params'>;
+type CategoryScreenNavigationProp = StackNavigationProp<{
+  Category: CategoryParams;
+  TodayArticle: { article: Article };
+}>;
+
+interface CategoryScreenProps {
+  route: CategoryScreenRouteProp;
+  navigation: CategoryScreenNavigationProp;
+}
+
+/**
+ * Screen that displays articles for a specific category
+ */
+const CategoryScreen = ({ route, navigation }: CategoryScreenProps) => {
   const { category, source } = route.params;
   const theme = useTheme();
 
-  const handleNewsPress = article => {
-    // Determine which article screen to navigate to based on source
-    const articleRoute = source ? `${source}Article` : 'TodayArticle';
-
-    navigation.navigate(articleRoute, { article });
+  /**
+   * Handle press on a news article
+   * @param article The article to display
+   */
+  const handleNewsPress = (article: Article) => {
+    try {
+      // Determine which article screen to navigate to based on source
+      const articleRoute = source ? `${source}Article` : 'TodayArticle';
+      navigation.navigate(articleRoute, { article });
+    } catch (error) {
+      console.error('Error navigating to article:', error);
+    }
   };
 
-  const handleBookmark = id => {
+  /**
+   * Handle bookmark action
+   * @param id ID of the article to bookmark
+   */
+  const handleBookmark = (id: string | number) => {
     console.log('Bookmark article:', id);
     // In a real app, you would save this article to bookmarks
   };
 
-  const handleShare = id => {
+  /**
+   * Handle share action
+   * @param id ID of the article to share
+   */
+  const handleShare = (id: string | number) => {
     console.log('Share article:', id);
     // In a real app, you would open a share dialog
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
       <Header
         title={category.name}
         showBackButton
         onBackPress={() => navigation.goBack()}
-        backgroundColor="#FFFFFF"
+        backgroundColor={theme.colors.Surface.Primary}
         titleAlignment="center"
       />
 
@@ -62,7 +111,6 @@ const CategoryScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
     flex: 1,
   },
   newsList: {

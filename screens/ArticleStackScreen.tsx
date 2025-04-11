@@ -7,10 +7,42 @@ import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
 import Stepper from '../components/Stepper';
 import ArticleScreen from './ArticleScreen';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const { width } = Dimensions.get('window');
 
-const ArticleStackScreen = ({ route, navigation }) => {
+// Define types for route params
+interface Article {
+  id?: string | number;
+  title?: string;
+  category?: string;
+  flag?: string;
+  imageUrl?: string;
+  readTime?: string;
+  timestamp?: string;
+  content?: string;
+  author?: string;
+}
+
+interface ArticleStackParams {
+  articles?: Article[];
+  initialIndex?: number;
+  title?: string;
+}
+
+type ArticleStackRouteProp = RouteProp<{ params: ArticleStackParams }, 'params'>;
+type ArticleStackNavigationProp = StackNavigationProp<{
+  ArticleStack: ArticleStackParams;
+  Article: { article: Article };
+}>;
+
+interface ArticleStackScreenProps {
+  route: ArticleStackRouteProp;
+  navigation: ArticleStackNavigationProp;
+}
+
+const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
   // Extract and validate params with defaults
   const params = route.params || {};
   const articles = Array.isArray(params.articles) ? params.articles : [];
@@ -60,14 +92,19 @@ const ArticleStackScreen = ({ route, navigation }) => {
         console.error('Error handling scroll:', error);
       }
     },
-    [currentIndex, articles.length, width],
+    [currentIndex, articles.length], // width is a constant outside component, doesn't need to be in dependencies
   );
 
   const handleBackPress = () => {
     navigation.goBack();
   };
+  // Define RenderItem type
+  type RenderItemProps = {
+    item: Article;
+    index: number;
+  };
 
-  const renderArticle = ({ item, index }) => {
+  const renderArticle = ({ item, index }: RenderItemProps) => {
     // Ensure the article has all required properties
     const safeArticle = {
       id: item.id || `article-${index}`,
@@ -97,13 +134,14 @@ const ArticleStackScreen = ({ route, navigation }) => {
   // Handle errors with empty articles array
   if (!articles.length) {
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
-
+      <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={theme.colors.Surface.Secondary} />
         {/* Header */}
         <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
           <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-            <View style={styles.backButtonCircle}>
+            <View
+              style={[styles.backButtonCircle, { backgroundColor: theme.colors.Surface.Secondary }]}
+            >
               <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
             </View>
           </TouchableOpacity>
@@ -134,13 +172,14 @@ const ArticleStackScreen = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
-
+    <View style={[styles.container, { backgroundColor: theme.colors.Surface.Primary }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.Surface.Secondary} />
       {/* Custom header with stepper */}
       <View style={[styles.header, { backgroundColor: theme.colors.Surface.Primary }]}>
         <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-          <View style={styles.backButtonCircle}>
+          <View
+            style={[styles.backButtonCircle, { backgroundColor: theme.colors.Surface.Secondary }]}
+          >
             <Ionicons name="chevron-back" size={24} color={theme.colors.Text.Primary} />
           </View>
         </TouchableOpacity>
@@ -175,6 +214,7 @@ const ArticleStackScreen = ({ route, navigation }) => {
   );
 };
 
+// Define static styles
 const styles = StyleSheet.create({
   articleContainer: {
     flex: 1,
@@ -185,7 +225,6 @@ const styles = StyleSheet.create({
   },
   backButtonCircle: {
     alignItems: 'center',
-    backgroundColor: '#F0F0F0',
     borderRadius: 20,
     height: 40,
     justifyContent: 'center',
@@ -198,7 +237,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   container: {
-    backgroundColor: '#FFFFFF',
     flex: 1,
   },
   errorContainer: {
@@ -208,11 +246,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 44, // Account for status bar
+    flexDirection: 'row',
     paddingBottom: 10,
     paddingHorizontal: 16,
+    paddingTop: 44, // Account for status bar
   },
   stepperContainer: {
     paddingBottom: 16,

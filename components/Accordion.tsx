@@ -2,7 +2,7 @@
 
 import type React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Animated, LayoutChangeEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
@@ -13,6 +13,13 @@ interface AccordionProps {
   initialExpanded?: boolean;
 }
 
+/**
+ * Accordion component that can expand/collapse to show/hide content
+ *
+ * @param title - The title displayed in the header
+ * @param children - The content to show when expanded
+ * @param initialExpanded - Whether the accordion starts expanded (default: false)
+ */
 export default function Accordion({ title, children, initialExpanded = false }: AccordionProps) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(initialExpanded);
@@ -25,13 +32,13 @@ export default function Accordion({ title, children, initialExpanded = false }: 
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [expanded]);
+  }, [expanded, animatedHeight]);
 
   const toggleAccordion = () => {
     setExpanded(!expanded);
   };
 
-  const onContentLayout = event => {
+  const onContentLayout = (event: LayoutChangeEvent) => {
     if (contentHeight.current === 0) {
       contentHeight.current = event.nativeEvent.layout.height;
     }
@@ -44,11 +51,14 @@ export default function Accordion({ title, children, initialExpanded = false }: 
 
   return (
     <View
-      style={{
-        backgroundColor: theme.colors.Surface.Primary,
-        borderWidth: theme.borderWidth['10'],
-        borderRadius: theme.radius['radius-default'],
-      }}
+      style={[
+        styles.wrapper,
+        {
+          backgroundColor: theme.colors.Surface.Primary,
+          borderWidth: theme.borderWidth['10'],
+          borderRadius: theme.radius['radius-default'],
+        },
+      ]}
     >
       <TouchableOpacity
         activeOpacity={0.7}
@@ -57,10 +67,11 @@ export default function Accordion({ title, children, initialExpanded = false }: 
           styles.header,
           {
             backgroundColor: theme.colors.Surface.Primary,
-            borderBottomColor: expanded ? theme.colors.Border['Border-Primary'] : 'transparent',
-            borderBottomWidth: expanded ? 1 : 0,
-            borderRadius: 0,
+            borderBottomColor: expanded
+              ? theme.colors.Primary.Resting
+              : theme.colors.Border.Primary,
           },
+          expanded ? styles.expandedHeader : styles.collapsedHeader,
         ]}
       >
         <Typography variant="h6" color={theme.colors.Text.Primary}>
@@ -73,10 +84,10 @@ export default function Accordion({ title, children, initialExpanded = false }: 
         style={[
           styles.contentContainer,
           {
-            height: expanded ? 'auto' : height,
             opacity: animatedHeight,
             backgroundColor: theme.colors.Surface.Primary,
           },
+          expanded ? styles.expandedContent : { height },
         ]}
       >
         <View style={styles.content} onLayout={onContentLayout}>
@@ -88,9 +99,9 @@ export default function Accordion({ title, children, initialExpanded = false }: 
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-    overflow: 'hidden',
+  collapsedHeader: {
+    borderBottomWidth: 0,
+    borderRadius: 0,
   },
   content: {
     padding: 16,
@@ -98,11 +109,22 @@ const styles = StyleSheet.create({
   contentContainer: {
     overflow: 'hidden',
   },
+  expandedContent: {
+    height: 'auto',
+  },
+  expandedHeader: {
+    borderBottomWidth: 1,
+    borderRadius: 0,
+  },
   header: {
     alignItems: 'center',
     flexDirection: 'row',
     height: 68,
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+  },
+  wrapper: {
+    marginBottom: 16,
+    overflow: 'hidden',
   },
 });

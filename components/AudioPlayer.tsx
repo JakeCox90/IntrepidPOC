@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
@@ -38,6 +38,22 @@ const AudioPlayer = ({
   const [containerWidth, setContainerWidth] = useState(0);
   const [shouldScroll, setShouldScroll] = useState(false);
 
+  // Create the ticker animation function with useCallback
+  const startTickerAnimation = React.useCallback(() => {
+    // Reset to starting position
+    scrollX.setValue(containerWidth);
+
+    // Create the scrolling animation
+    Animated.loop(
+      Animated.timing(scrollX, {
+        toValue: -contentWidth,
+        duration: 15000, // Adjust speed as needed
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ).start();
+  }, [containerWidth, contentWidth, scrollX]);
+
   // Determine if scrolling is needed when content or container width changes
   useEffect(() => {
     if (contentWidth > 0 && containerWidth > 0) {
@@ -58,21 +74,6 @@ const AudioPlayer = ({
       }
     };
   }, []);
-
-  const startTickerAnimation = () => {
-    // Reset to starting position
-    scrollX.setValue(containerWidth);
-
-    // Create the scrolling animation
-    Animated.loop(
-      Animated.timing(scrollX, {
-        toValue: -contentWidth,
-        duration: 15000, // Adjust speed as needed
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
-  };
 
   const togglePlayPause = () => {
     if (isPlaying) {
@@ -106,7 +107,7 @@ const AudioPlayer = ({
       style={[
         styles.container,
         {
-          borderColor: theme.colors.Border['Border-Primary'],
+          borderColor: theme.colors.Border.Primary,
           borderWidth: theme.borderWidth['10'],
           borderRadius: theme.radius['radius-default'],
           backgroundColor: theme.colors.Surface.Primary,

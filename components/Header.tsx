@@ -57,7 +57,7 @@ const Header = ({
   const spacing = theme.space['40'];
   const smallSpacing = theme.space['20'];
   const borderWidth = theme.borderWidth['10'];
-  const borderColor = theme.colors.Border['Border-Primary'];
+  const borderColor = theme.colors.Border.Primary;
 
   return (
     <View

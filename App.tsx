@@ -7,9 +7,6 @@ import InterRegular from './assets/fonts/Inter-Regular.ttf';
 import InterMedium from './assets/fonts/Inter-Medium.ttf';
 import InterSemiBold from './assets/fonts/Inter-SemiBold.ttf';
 import InterBold from './assets/fonts/Inter-Bold.ttf';
-import Typography from './components/Typography';
-// Import colors directly to use in LoadingScreen
-
 import TabNavigator from './navigation/TabNavigator';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { colors } from './design-system/Foundations/colors';
@@ -51,16 +48,12 @@ function LoadingScreen({ error }: LoadingScreenProps) {
       {error ? (
         <>
           <Text style={styles.errorText}>Error loading fonts</Text>
-          <Text style={styles.errorMessageText}>
-            {error.message}
-          </Text>
+          <Text style={styles.errorMessageText}>{error.message}</Text>
         </>
       ) : (
         <>
           <ActivityIndicator size="large" color={colors.Primary.Resting} />
-          <Text style={styles.loadingMessageText}>
-            Loading fonts...
-          </Text>
+          <Text style={styles.loadingMessageText}>Loading fonts...</Text>
         </>
       )}
     </View>
@@ -91,16 +84,16 @@ export default function App(): React.ReactElement {
 }
 
 const styles = StyleSheet.create({
+  errorMessageText: {
+    color: colors.Text.Primary,
+    fontSize: 14,
+    marginTop: 10,
+  },
   errorText: {
     color: colors.Error.Text,
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
-  errorMessageText: {
-    color: '#000000',
-    fontSize: 14,
-    marginTop: 10,
   },
   loadingContainer: {
     alignItems: 'center',
@@ -108,7 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   loadingMessageText: {
-    color: '#000000',
+    color: colors.Text.Primary,
     fontSize: 14,
     marginTop: 10,
   },

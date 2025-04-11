@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, FlatList, StatusBar } from 'react-native';
+import { View, TextInput, TouchableOpacity, FlatList, StatusBar } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Typography from '../components/Typography';
 import { useTheme } from '../theme/ThemeProvider';
@@ -10,6 +10,7 @@ import CardHorizontal from '../components/CardHorizontal';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { searchNews, type Article } from '../services/sunNewsService';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { styles, createDynamicStyles } from './styles/SearchScreen.styles';
 
 type SearchStackParamList = {
   SearchMain: undefined;
@@ -18,89 +19,23 @@ type SearchStackParamList = {
 
 type Props = NativeStackScreenProps<SearchStackParamList, 'SearchMain'>;
 
+/**
+ * Search screen component that allows users to search for articles and shows trending topics
+ */
 const SearchScreen = ({ navigation }: Props) => {
+  // State management
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Article[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const theme = useTheme();
 
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#FFFFFF',
-      flex: 1,
-    },
-    errorContainer: {
-      alignItems: 'center',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20,
-    },
-    errorSubtext: {
-      fontSize: 16,
-      textAlign: 'center',
-    },
-    errorText: {
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 8,
-    },
-    searchButton: {
-      borderRadius: 8,
-      height: 44,
-      justifyContent: 'center',
-      paddingHorizontal: 16,
-    },
-    searchContainer: {
-      borderBottomColor: '#EEEEEE',
-      borderBottomWidth: 1,
-      flexDirection: 'row',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-    },
-    searchIcon: {
-      marginRight: 8,
-    },
-    searchInput: {
-      flex: 1,
-      fontFamily: theme.typography.fontFamily[theme.typography.variants['input-text'].weight],
-      fontSize: theme.typography.scale[theme.typography.variants['input-text'].scale],
-      height: 44,
-      lineHeight: theme.typography.lineHeight[theme.typography.variants['input-text'].scale],
-    },
-    searchInputContainer: {
-      alignItems: 'center',
-      borderRadius: 8,
-      flex: 1,
-      flexDirection: 'row',
-      height: 44,
-      marginRight: 8,
-      paddingHorizontal: 12,
-    },
-    searchResults: {
-      padding: 16,
-    },
-    trendingColumns: {
-      justifyContent: 'space-between',
-      marginBottom: 12,
-    },
-    trendingContainer: {
-      flex: 1,
-      padding: 16,
-    },
-    trendingItem: {
-      borderRadius: 8,
-      padding: 12,
-      width: '48%',
-    },
-    trendingList: {
-      paddingBottom: 16,
-    },
-    trendingTitle: {
-      marginBottom: 16,
-    },
-  });
+  // Create dynamic styles with theme
+  const dynamicStyles = createDynamicStyles(theme);
 
+  /**
+   * Execute search query and fetch results
+   */
   const handleSearch = async () => {
     if (searchQuery.trim()) {
       try {
@@ -117,24 +52,44 @@ const SearchScreen = ({ navigation }: Props) => {
     }
   };
 
+  /**
+   * Clear search query and results
+   */
   const handleClearSearch = () => {
     setSearchQuery('');
     setSearchResults([]);
     setError(null);
   };
 
+  /**
+   * Navigate to article detail screen
+   * @param article The article to display
+   */
   const handleArticlePress = (article: Article) => {
     navigation.navigate('SearchArticle', { article });
   };
 
+  /**
+   * Handle bookmarking an article
+   * @param id ID of the article to bookmark
+   */
   const handleBookmark = (id: string) => {
     console.log('Bookmark article:', id);
   };
 
+  /**
+   * Handle sharing an article
+   * @param id ID of the article to share
+   */
   const handleShare = (id: string) => {
     console.log('Share article:', id);
   };
 
+  /**
+   * Render a trending search item
+   * @param param0 Item to render
+   * @returns Rendered component
+   */
   const renderTrendingItem = ({ item }: { item: string }) => (
     <TouchableOpacity
       style={[styles.trendingItem, { backgroundColor: theme.colors.Surface.Secondary }]}
@@ -150,12 +105,12 @@ const SearchScreen = ({ navigation }: Props) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
-      <Header title="Search" backgroundColor="#FFFFFF" />
+      <Header title="Search" backgroundColor={theme.colors.Surface.Primary} />
 
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, dynamicStyles.searchContainer]}>
         <View
           style={[styles.searchInputContainer, { backgroundColor: theme.colors.Surface.Secondary }]}
         >
@@ -166,7 +121,11 @@ const SearchScreen = ({ navigation }: Props) => {
             style={styles.searchIcon}
           />
           <TextInput
-            style={[styles.searchInput, { color: theme.colors.Text.Primary }]}
+            style={[
+              styles.searchInput,
+              dynamicStyles.searchInput,
+              { color: theme.colors.Text.Primary },
+            ]}
             placeholder="Search for news..."
             placeholderTextColor={theme.colors.Text.Secondary}
             value={searchQuery}
@@ -220,28 +179,23 @@ const SearchScreen = ({ navigation }: Props) => {
               title={item.title}
               imageUrl={item.imageUrl}
               category={item.category}
+              timestamp={item.publishDate}
               readTime={item.readTime}
               onPress={() => handleArticlePress(item)}
-              onBookmark={() => handleBookmark(item.id.toString())}
-              onShare={() => handleShare(item.id.toString())}
+              onBookmark={() => handleBookmark(item.id)}
+              onShare={() => handleShare(item.id)}
             />
           )}
           contentContainerStyle={styles.searchResults}
         />
       ) : (
+        // Trending topics section
         <View style={styles.trendingContainer}>
           <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.trendingTitle}>
-            Trending Searches
+            Trending Topics
           </Typography>
           <FlatList
-            data={[
-              'Premier League',
-              'Royal Family',
-              'Cost of Living',
-              'Ukraine War',
-              'Climate Change',
-              'US Election',
-            ]}
+            data={['Breaking News', 'Sports', 'Technology', 'Entertainment', 'Politics', 'Health']}
             keyExtractor={item => item}
             renderItem={renderTrendingItem}
             numColumns={2}

@@ -36,7 +36,7 @@ interface ErrorFallbackProps {
 }
 
 // ErrorFallback component for the BottomNav
-const BottomNavErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
+const BottomNavErrorFallback = ({ error: _error, resetErrorBoundary }: ErrorFallbackProps) => {
   const theme = useTheme();
   const errorBgColor = theme?.colors?.Error?.Background || '#FEF2F2';
   const errorBorderColor = theme?.colors?.Error?.Border || '#FECACA';
@@ -80,7 +80,7 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
   // Ensure we have fallback values if theme properties are undefined
   const primaryColor = theme?.colors?.Primary?.Resting || '#E03A3A';
   const secondaryColor = theme?.colors?.Text?.Secondary || '#717171';
-  const borderColor = theme?.colors?.Border?.['Border-Primary'] || '#E5E5E5';
+  const borderColor = theme?.colors?.Border?.Primary || '#E5E5E5';
   const borderWidth = theme?.borderWidth?.['10'] || 1;
   const surfaceColor = theme?.colors?.Surface?.Primary || '#FFFFFF';
   const errorColor = theme?.colors?.Error?.Resting || '#DC2626';
@@ -152,12 +152,12 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
       <View
         style={[
           styles.container,
+          styles.loadingContainer,
           {
             borderTopWidth: borderWidth,
             borderTopColor: borderColor,
             paddingBottom: insets.bottom || 0,
             backgroundColor: surfaceColor,
-            justifyContent: 'center',
           },
         ]}
       >
@@ -248,6 +248,9 @@ const styles = StyleSheet.create({
   inlineErrorText: {
     padding: 10,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
   },
   tab: {
     alignItems: 'center',

@@ -2,7 +2,6 @@
 import React, { useState, useRef } from 'react';
 import {
   View,
-  StyleSheet,
   Animated,
   PanResponder,
   Dimensions,
@@ -15,6 +14,7 @@ import Typography from '../components/Typography';
 import Flag from '../components/Flag';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { styles, createDynamicStyles } from './styles/ArticleSwipeScreen.styles';
 
 // Define article interface
 interface Article {
@@ -33,18 +33,22 @@ interface ArticleSwipeScreenParams {
   articles: Article[];
 }
 
+// Define RootStackParamList for type-safe navigation
+type RootStackParamList = {
+  params: ArticleSwipeScreenParams;
+  TodayArticle: { article: Article };
+};
+
 // Define props interface
 interface ArticleSwipeScreenProps {
   route: RouteProp<{ params: ArticleSwipeScreenParams }, 'params'>;
-  navigation: NativeStackNavigationProp<any>;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 }
 
 // Constants
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const SWIPE_THRESHOLD = width * 0.25;
 const SWIPE_OUT_DURATION = 300;
-const CARD_WIDTH = width - 32;
-const CARD_HEIGHT = height * 0.6;
 
 const COMMON_FLAGS = [
   'EXCLUSIVE',
@@ -66,6 +70,9 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
   const [allSwiped, setAllSwiped] = useState(false);
   const theme = useTheme();
   const isSwipingRef = useRef<boolean>(false);
+
+  // Create dynamic styles with theme
+  const dynamicStyles = createDynamicStyles(theme);
 
   // Create animated values for card animations
   const position = useRef(new Animated.ValueXY()).current;
@@ -307,7 +314,7 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
     if (!article) return null;
 
     const cardStyle = [
-      styles.cardContainer,
+      dynamicStyles.cardContainer,
       {
         zIndex: 3 - index,
       },
@@ -317,11 +324,11 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
     return (
       <Animated.View
         key={`card-${currentIndex + index}`}
-        style={cardStyle}
+        style={[cardStyle, dynamicStyles.cardShadow]}
         {...(index === 0 ? panResponder.panHandlers : {})}
       >
         <TouchableOpacity
-          style={styles.card}
+          style={dynamicStyles.card}
           activeOpacity={0.9}
           onPress={() => handleArticlePress(article)}
           disabled={isSwipingRef.current || index !== 0}
@@ -329,15 +336,15 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
           {/* Card background image */}
           <Animated.Image
             source={{ uri: article.imageUrl }}
-            style={styles.cardImage}
+            style={dynamicStyles.cardImage}
             resizeMode="cover"
           />
 
           {/* Dark overlay */}
-          <View style={styles.cardOverlay} />
+          <View style={dynamicStyles.cardOverlay} />
 
           {/* Card content */}
-          <View style={styles.cardContent}>
+          <View style={dynamicStyles.cardContent}>
             {article.category && (
               <View style={styles.categoryContainer}>
                 <Flag text={article.category} category={article.category} variant="filled" />
@@ -353,7 +360,7 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
             <Typography
               variant="h5"
               color={theme.colors.Text.Inverse}
-              style={styles.cardTitle}
+              style={dynamicStyles.cardTitle}
               numberOfLines={3}
             >
               {article.title}
@@ -491,134 +498,5 @@ const ArticleSwipeScreen: React.FC<ArticleSwipeScreenProps> = ({ route, navigati
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  activeDot: {
-    width: 24,
-  },
-  backButton: {
-    height: 40,
-    justifyContent: 'center',
-    marginRight: 16,
-    width: 40,
-  },
-  bottomContainer: {
-    alignItems: 'center',
-    paddingBottom: 24,
-    width: '100%',
-  },
-  card: {
-    backgroundColor: 'transparent',
-    borderRadius: 16,
-    height: '100%',
-    overflow: 'hidden',
-    width: '100%',
-  },
-  cardContainer: {
-    borderRadius: 16,
-    elevation: 3,
-    height: CARD_HEIGHT,
-    overflow: 'hidden',
-    position: 'absolute',
-    shadowColor: 'rgba(0, 0, 0, 0.5)',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    width: CARD_WIDTH,
-  },
-  cardContent: {
-    bottom: 0,
-    left: 0,
-    padding: 20,
-    position: 'absolute',
-    right: 0,
-  },
-  cardImage: {
-    height: '100%',
-    width: '100%',
-  },
-  cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Use theme.colors.Surface['Overlay-01'] instead
-    borderRadius: 16,
-  },
-  cardTitle: {
-    textShadowColor: 'rgba(0, 0, 0, 0.5)', // Use theme.colors.Surface['Overlay-02'] instead
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  cardsContainer: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  cardsStack: {
-    alignItems: 'center',
-    height: CARD_HEIGHT + 30,
-    position: 'relative',
-    width: CARD_WIDTH,
-  },
-  categoryContainer: {
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  container: {
-    flex: 1,
-  },
-  emptyStateContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  emptyStateSubtitle: {
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  emptyStateTitle: {
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  flagContainer: {
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingBottom: 10,
-    paddingHorizontal: 16,
-    paddingTop: 44, // Account for status bar
-  },
-  progressBar: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 4,
-    justifyContent: 'center',
-  },
-  progressContainer: {
-    alignItems: 'center',
-    paddingTop: 16,
-  },
-  progressDot: {
-    borderRadius: 4,
-    height: 8,
-    width: 8,
-  },
-  reloadButton: {
-    borderRadius: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-  },
-  swipeInstructionContainer: {
-    alignItems: 'center',
-    paddingBottom: 8,
-  },
-  swipeInstructionText: {
-    textAlign: 'center',
-  },
-  titleContainer: {
-    flex: 1,
-  },
-});
 
 export default ArticleSwipeScreen;

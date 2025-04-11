@@ -11,7 +11,7 @@ const SkeletonCardArticle = () => {
       style={[
         styles.container,
         {
-          borderBottomColor: theme.colors.Border['Border-Primary'],
+          borderBottomColor: theme.colors.Border.Primary,
           borderBottomWidth: theme.borderWidth['10'],
         },
       ]}

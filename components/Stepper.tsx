@@ -25,9 +25,7 @@ const Stepper = ({ totalSteps, currentStep, style }: StepperProps) => {
             index < totalSteps - 1 && styles.stepSpacer,
             {
               backgroundColor:
-                index === safeCurrentStep
-                  ? theme.colors.Text.Primary
-                  : theme.colors.Border['Border-Primary'],
+                index === safeCurrentStep ? theme.colors.Text.Primary : theme.colors.Border.Primary,
             },
           ]}
         />

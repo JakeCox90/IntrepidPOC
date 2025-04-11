@@ -39,13 +39,6 @@ const Comments = ({
   const [comments, setComments] = useState(initialComments);
   const [likedComments, setLikedComments] = useState<Record<string | number, boolean>>({});
 
-  const handleSubmitComment = () => {
-    if (commentText.trim() && onSubmitComment) {
-      onSubmitComment(commentText.trim());
-      setCommentText('');
-    }
-  };
-
   const handleLikeComment = (commentId: number | string) => {
     // Toggle like status
     const isCurrentlyLiked = likedComments[commentId] || false;
@@ -85,7 +78,7 @@ const Comments = ({
           styles.commentItem,
           {
             backgroundColor: theme.colors.Surface.Primary,
-            borderColor: theme.colors.Border['Border-Primary'],
+            borderColor: theme.colors.Border.Primary,
             borderWidth: theme.borderWidth['10'],
           },
         ]}
@@ -185,7 +178,7 @@ const Comments = ({
   const styles = StyleSheet.create({
     addCommentContainer: {
       alignItems: 'center',
-      borderTopColor: theme.colors.Border['Border-Primary'],
+      borderTopColor: theme.colors.Border.Primary,
       borderTopWidth: 1,
       flexDirection: 'row',
       padding: 16,
@@ -222,6 +215,7 @@ const Comments = ({
     commentInput: {
       backgroundColor: theme.colors.Surface.Secondary,
       borderRadius: 8,
+      color: theme.colors.Text.Primary,
       flex: 1,
       fontFamily: theme.typography.fontFamily[theme.typography.variants['input-text'].weight],
       fontSize: theme.typography.scale[theme.typography.variants['input-text'].scale],
@@ -230,11 +224,18 @@ const Comments = ({
       minHeight: 40,
       paddingHorizontal: 12,
       paddingVertical: 8,
+      textAlign: 'left',
+      textAlignVertical: 'center',
     },
     commentItem: {
       borderRadius: 8,
       marginBottom: 16,
       padding: 16,
+    },
+    commentSectionBackground: {
+      backgroundColor: theme.isDark
+        ? theme.colors.Surface.Secondary
+        : theme.colors.Surface.Secondary,
     },
     commentText: {
       marginBottom: 8,
@@ -279,12 +280,7 @@ const Comments = ({
   });
 
   return (
-    <View
-      style={[
-        styles.commentsSection,
-        { backgroundColor: theme.isDark ? theme.colors.Surface.Secondary : '#F5F5F5' },
-      ]}
-    >
+    <View style={[styles.commentsSection, styles.commentSectionBackground]}>
       <View style={styles.commentsSectionHeader}>
         <Typography variant="h5" color={theme.colors.Text.Primary}>
           Comments
@@ -310,19 +306,18 @@ const Comments = ({
       {/* Add comment input */}
       <View style={[styles.addCommentContainer, { backgroundColor: theme.colors.Surface.Primary }]}>
         <TextInput
-          style={[
-            styles.commentInput,
-            {
-              color: theme.colors.Text.Primary,
-              textAlign: 'left',
-              textAlignVertical: 'center',
-            },
-          ]}
+          style={styles.commentInput}
           placeholder="Leave a comment"
           placeholderTextColor={theme.colors.Text.Secondary}
           value={commentText}
           onChangeText={setCommentText}
           multiline
+          onSubmitEditing={() => {
+            if (commentText.trim() && onSubmitComment) {
+              onSubmitComment(commentText.trim());
+              setCommentText('');
+            }
+          }}
         />
       </View>
     </View>

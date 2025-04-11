@@ -26,8 +26,8 @@ export const colors = {
     Primary: palette.grey[10],
     Secondary: palette.grey[20],
     Disabled: palette.grey[30],
-    'Overlay-01': palette.blackTint[70],
-    'Overlay-02': palette.blackTint[20],
+    Overlay01: palette.blackTint[70],
+    Overlay02: palette.blackTint[20],
   },
   Error: {
     Resting: palette.red[30],
@@ -49,99 +49,99 @@ export const colors = {
     Disabled: palette.green[20],
   },
   Border: {
-    'Border-Primary': palette.blackTint[10],
-    'Border-Secondary': palette.blackTint[40],
-    'Skeleton-01': palette.blackTint[20],
-    'Skeleton-02': palette.blackTint[30],
+    Primary: palette.blackTint[10],
+    Secondary: palette.blackTint[40],
+    Skeleton01: palette.blackTint[20],
+    Skeleton02: palette.blackTint[30],
     Error: palette.red[40],
   },
   // Updated section colors to match The Sun website exactly
   Section: {
     // Main sections
-    News: '#E03A3A', // Red for News section
-    Sport: '#00A54F', // Green for Sport section
-    TV: '#9C27B0', // Purple for TV section
-    Showbiz: '#FF0099', // Pink for Showbiz section
-    Fabulous: '#FF0099', // Same pink for Fabulous section
-    Money: '#00A54F', // Green for Money section (same as Sport)
-    Travel: '#FF9500', // Orange for Travel section
-    Tech: '#00BCD4', // Cyan for Tech section
-    Motors: '#E03A3A', // Red for Motors section (same as News)
-    Health: '#00BCD4', // Cyan for Health section (same as Tech)
+    News: '#E03A3A',
+    Sport: '#00A54F',
+    TV: '#9C27B0',
+    Showbiz: '#FF0099',
+    Fabulous: '#FF0099',
+    Money: '#00A54F',
+    Travel: '#FF9500',
+    Tech: '#00BCD4',
+    Motors: '#E03A3A',
+    Health: '#00BCD4',
 
     // News subsections
-    'UK News': '#E03A3A', // Same as News
-    'World News': '#E03A3A', // Same as News
-    'Irish News': '#E03A3A', // Same as News
-    'Scottish News': '#E03A3A', // Same as News
-    Politics: '#E03A3A', // Same as News
-    'Royal Family': '#E03A3A', // Same as News
-    'US News': '#E03A3A', // Same as News
-    Opinion: '#E03A3A', // Same as News
+    UKNews: '#E03A3A',
+    WorldNews: '#E03A3A',
+    IrishNews: '#E03A3A',
+    ScottishNews: '#E03A3A',
+    Politics: '#E03A3A',
+    RoyalFamily: '#E03A3A',
+    USNews: '#E03A3A',
+    Opinion: '#E03A3A',
 
     // Sport subsections
-    Football: '#00A54F', // Same as Sport
-    Boxing: '#00A54F', // Same as Sport
-    Racing: '#00A54F', // Same as Sport
-    UFC: '#00A54F', // Same as Sport
-    F1: '#00A54F', // Same as Sport
-    Cricket: '#00A54F', // Same as Sport
-    Rugby: '#00A54F', // Same as Sport
-    Golf: '#00A54F', // Same as Sport
-    Tennis: '#00A54F', // Same as Sport
-    NFL: '#00A54F', // Same as Sport
-    'Dream Team': '#00A54F', // Same as Sport
+    Football: '#00A54F',
+    Boxing: '#00A54F',
+    Racing: '#00A54F',
+    UFC: '#00A54F',
+    F1: '#00A54F',
+    Cricket: '#00A54F',
+    Rugby: '#00A54F',
+    Golf: '#00A54F',
+    Tennis: '#00A54F',
+    NFL: '#00A54F',
+    DreamTeam: '#00A54F',
 
     // TV subsections
-    Soaps: '#9C27B0', // Same as TV
-    'Reality TV': '#9C27B0', // Same as TV
-    'TV News': '#9C27B0', // Same as TV
+    Soaps: '#9C27B0',
+    RealityTV: '#9C27B0',
+    TVNews: '#9C27B0',
 
     // Showbiz subsections
-    Celebrity: '#FF0099', // Same as Showbiz
-    Music: '#FF0099', // Same as Showbiz
-    Film: '#FF0099', // Same as Showbiz
+    Celebrity: '#FF0099',
+    Music: '#FF0099',
+    Film: '#FF0099',
 
     // Fabulous subsections
-    Fashion: '#FF0099', // Same as Fabulous
-    Beauty: '#FF0099', // Same as Fabulous
-    Food: '#FF0099', // Same as Fabulous
-    Parenting: '#FF0099', // Same as Fabulous
+    Fashion: '#FF0099',
+    Beauty: '#FF0099',
+    Food: '#FF0099',
+    Parenting: '#FF0099',
 
     // Money subsections
-    Property: '#00A54F', // Same as Money
-    Bills: '#00A54F', // Same as Money
-    Banking: '#00A54F', // Same as Money
-    Pensions: '#00A54F', // Same as Money
+    Property: '#00A54F',
+    Bills: '#00A54F',
+    Banking: '#00A54F',
+    Pensions: '#00A54F',
 
     // Travel subsections
-    'Beach Holidays': '#FF9500', // Same as Travel
-    'UK Holidays': '#FF9500', // Same as Travel
-    'City Breaks': '#FF9500', // Same as Travel
-    Cruises: '#FF9500', // Same as Travel
+    BeachHolidays: '#FF9500',
+    UKHolidays: '#FF9500',
+    CityBreaks: '#FF9500',
+    Cruises: '#FF9500',
 
     // Tech subsections
-    Phones: '#00BCD4', // Same as Tech
-    Gaming: '#00BCD4', // Same as Tech
-    Science: '#00BCD4', // Same as Tech
+    Phones: '#00BCD4',
+    Gaming: '#00BCD4',
+    Science: '#00BCD4',
 
     // Motors subsections
-    'New Cars': '#E03A3A', // Same as Motors
-    'Used Cars': '#E03A3A', // Same as Motors
+    NewCars: '#E03A3A',
+    UsedCars: '#E03A3A',
 
     // Health subsections
-    Fitness: '#00BCD4', // Same as Health
-    Diet: '#00BCD4', // Same as Health
-    'Health News': '#00BCD4', // Same as Health
+    Fitness: '#00BCD4',
+    Diet: '#00BCD4',
+    HealthNews: '#00BCD4',
 
     // Other sections
-    Puzzles: '#9C27B0', // Same as TV
-    'Dear Deidre': '#FF0099', // Same as Showbiz/Fabulous
-    'Sun Bingo': '#FF9500', // Orange like Travel
-    'Sun Vegas': '#FFD700', // Gold
-    'Sun Savers': '#FFD700', // Gold
-    'Sun Casino': '#FFD700', // Gold
-    'Sun Win': '#FFD700', // Gold
-    'Sun Selects': '#E03A3A', // Same as News
+    Puzzles: '#9C27B0',
+    DearDeidre: '#FF0099',
+    SunBingo: '#FF9500',
+    SunVegas: '#FFD700',
+    SunSavers: '#FFD700',
+    SunCasino: '#FFD700',
+    SunWin: '#FFD700',
+    SunSelects: '#E03A3A',
   },
 };

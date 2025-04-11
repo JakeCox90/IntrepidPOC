@@ -38,8 +38,14 @@ const defaultVariants = {
   'body-01': { scale: 'size-16', weight: 'regular', lineHeight: 24 },
   'body-02': { scale: 'size-14', weight: 'regular', lineHeight: 20 },
   'caption-01': { scale: 'size-12', weight: 'regular', lineHeight: 16 },
-  'button': { scale: 'size-14', weight: 'medium', lineHeight: 20 },
-  'overline': { scale: 'size-14', weight: 'semiBold', textTransform: 'uppercase', lineHeight: 20, letterSpacing: 1 },
+  button: { scale: 'size-14', weight: 'medium', lineHeight: 20 },
+  overline: {
+    scale: 'size-14',
+    weight: 'semiBold',
+    textTransform: 'uppercase',
+    lineHeight: 20,
+    letterSpacing: 1,
+  },
 };
 
 interface TypographyProps extends TextProps {
@@ -52,17 +58,17 @@ interface TypographyProps extends TextProps {
 const Typography = ({ variant, color, style, children, ...props }: TypographyProps) => {
   // Safely get theme with fallbacks for when it's not available
   const theme = useTheme();
-  
+
   // Get variant style with fallback to default
   const variantStyle = theme?.typography?.variants?.[variant] || defaultVariants[variant];
-  
+
   // Safely destructure properties with fallbacks
-  const { 
-    scale = 'size-16', 
-    weight = 'regular', 
-    lineHeight, 
-    letterSpacing, 
-    textTransform 
+  const {
+    scale = 'size-16',
+    weight = 'regular',
+    lineHeight,
+    letterSpacing,
+    textTransform,
   } = variantStyle || {};
 
   // Determine font family with fallback
@@ -71,13 +77,17 @@ const Typography = ({ variant, color, style, children, ...props }: TypographyPro
     if (theme?.typography?.fontFamily?.[weight]) {
       return theme.typography.fontFamily[weight];
     }
-    
+
     // Default font mappings if theme is unavailable
     switch (weight) {
-      case 'bold': return 'Inter-Bold';
-      case 'semiBold': return 'Inter-SemiBold';
-      case 'medium': return 'Inter-Medium';
-      default: return 'Inter-Regular';
+      case 'bold':
+        return 'Inter-Bold';
+      case 'semiBold':
+        return 'Inter-SemiBold';
+      case 'medium':
+        return 'Inter-Medium';
+      default:
+        return 'Inter-Regular';
     }
   })();
 
@@ -87,20 +97,17 @@ const Typography = ({ variant, color, style, children, ...props }: TypographyPro
         {
           // Use font size with fallback
           fontSize: theme?.typography?.scale?.[scale] || defaultFontSizes[scale] || 16,
-          
+
           // Use line height with fallbacks
-          lineHeight: lineHeight || 
-                      theme?.typography?.lineHeight?.[scale] || 
-                      defaultLineHeights[scale] || 24,
-          
+          lineHeight:
+            lineHeight || theme?.typography?.lineHeight?.[scale] || defaultLineHeights[scale] || 24,
+
           // Use font family with fallback
           fontFamily,
-          
+
           // Use color with fallback
-          color: color || 
-                 theme?.colors?.Text?.Primary || 
-                 '#000000',
-          
+          color: color || theme?.colors?.Text?.Primary || '#000000',
+
           // Apply optional properties only if they exist
           ...(letterSpacing && { letterSpacing }),
           ...(textTransform && { textTransform }),

@@ -1,15 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Image,
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  StyleProp,
-  ImageStyle,
-  ViewStyle,
-} from 'react-native';
+import { Image, View, StyleSheet, ActivityIndicator, StyleProp, ImageStyle } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Skeleton from '../components/Skeleton';
 

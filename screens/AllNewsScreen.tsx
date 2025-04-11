@@ -31,13 +31,13 @@ const MAIN_CATEGORIES = [
 // Subcategories for each main category - updated to match The Sun's exact section hierarchy
 const SUBCATEGORIES = {
   News: [
-    'UK News',
-    'World News',
+    'UKNews',
+    'WorldNews',
     'Politics',
-    'Royal Family',
-    'US News',
-    'Irish News',
-    'Scottish News',
+    'RoyalFamily',
+    'USNews',
+    'IrishNews',
+    'ScottishNews',
     'Opinion',
   ],
   Sport: [
@@ -51,16 +51,16 @@ const SUBCATEGORIES = {
     'Golf',
     'Tennis',
     'NFL',
-    'Dream Team',
+    'DreamTeam',
   ],
-  TV: ['TV News', 'Soaps', 'Reality TV'],
+  TV: ['TVNews', 'Soaps', 'RealityTV'],
   Showbiz: ['Celebrity', 'Music', 'Film'],
   Fabulous: ['Fashion', 'Beauty', 'Food', 'Parenting'],
   Money: ['Property', 'Bills', 'Banking', 'Pensions'],
-  Travel: ['Beach Holidays', 'UK Holidays', 'City Breaks', 'Cruises'],
+  Travel: ['BeachHolidays', 'UKHolidays', 'CityBreaks', 'Cruises'],
   Tech: ['Phones', 'Gaming', 'Science'],
-  Motors: ['New Cars', 'Used Cars'],
-  Health: ['Fitness', 'Diet', 'Health News'],
+  Motors: ['NewCars', 'UsedCars'],
+  Health: ['Fitness', 'Diet', 'HealthNews'],
 };
 
 // Simplified component without animations

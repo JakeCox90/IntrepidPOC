@@ -2,13 +2,22 @@
 
 import type React from 'react';
 import { useState } from 'react';
-import { Image, type ImageProps, View, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  Image,
+  type ImageProps,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  StyleProp,
+  ImageStyle,
+} from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Skeleton from './Skeleton';
 
 interface LazyImageProps extends ImageProps {
   showLoader?: boolean;
   useSkeleton?: boolean;
+  style?: StyleProp<ImageStyle>;
 }
 
 const LazyImage: React.FC<LazyImageProps> = ({
@@ -34,28 +43,46 @@ const LazyImage: React.FC<LazyImageProps> = ({
     setLoading(false);
     setError(true);
   };
-
   return (
     <View style={[styles.container, { width, height, borderRadius }]}>
       {loading && useSkeleton && (
         <Skeleton
-          width={width || '100%'}
-          height={height || 200}
-          borderRadius={borderRadius || 0}
+          width={typeof width === 'number' ? width : '100%'}
+          height={typeof height === 'number' ? height : 200}
+          borderRadius={typeof borderRadius === 'number' ? borderRadius : 0}
           style={styles.skeleton}
         />
       )}
 
       {loading && showLoader && !useSkeleton && (
-        <View style={[styles.loaderContainer, { width, height }]}>
+        <View
+          style={[
+            styles.loaderContainer,
+            {
+              width,
+              height,
+              backgroundColor: theme.colors.Border.Skeleton,
+            },
+          ]}
+        >
           <ActivityIndicator size="small" color={theme.colors.Primary.Resting} />
         </View>
       )}
 
       {error ? (
-        <View style={[styles.errorContainer, { width, height, borderRadius }]}>
+        <View
+          style={[
+            styles.errorContainer,
+            {
+              width,
+              height,
+              borderRadius,
+              backgroundColor: theme.colors.Border.Skeleton,
+            },
+          ]}
+        >
           {/* You could use an icon here instead */}
-          <View style={styles.errorIcon} />
+          <View style={[styles.errorIcon, { backgroundColor: theme.colors.Border.Disabled }]} />
         </View>
       ) : (
         <Image
@@ -77,11 +104,11 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
   },
   errorIcon: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: 'transparent',
     borderRadius: 20,
     height: 40,
     width: 40,
@@ -91,7 +118,7 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'transparent',
     bottom: 0,
     justifyContent: 'center',
     left: 0,

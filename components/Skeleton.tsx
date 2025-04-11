@@ -44,7 +44,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
           width,
           height,
           borderRadius,
-          backgroundColor: theme.colors.Border['Skeleton-01'],
+          backgroundColor: theme.colors.Border.Skeleton01,
         },
         style,
       ]}
@@ -53,7 +53,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
         style={[
           styles.shimmer,
           {
-            backgroundColor: theme.colors.Border['Skeleton-02'],
+            backgroundColor: theme.colors.Border.Skeleton02,
             transform: [{ translateX }],
           },
         ]}

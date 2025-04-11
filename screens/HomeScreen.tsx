@@ -7,6 +7,31 @@ import Typography from '../components/Typography';
 const HomeScreen = () => {
   const theme = useTheme();
 
+  const styles = StyleSheet.create({
+    header: {
+      paddingBottom: 16,
+      paddingHorizontal: 24,
+      paddingTop: 40,
+    },
+    placeholderContainer: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20,
+    },
+    placeholderSubtext: {
+      textAlign: 'center',
+    },
+    placeholderText: {
+      marginBottom: 12,
+      textAlign: 'center',
+    },
+    safeArea: {
+      backgroundColor: theme.colors.Surface.Primary,
+      flex: 1,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
@@ -36,30 +61,5 @@ const HomeScreen = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    paddingBottom: 16,
-    paddingHorizontal: 24,
-    paddingTop: 40,
-  },
-  placeholderContainer: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  placeholderSubtext: {
-    textAlign: 'center',
-  },
-  placeholderText: {
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  safeArea: {
-    backgroundColor: '#FFFFFF',
-    flex: 1,
-  },
-});
 
 export default HomeScreen;

@@ -25,7 +25,6 @@ interface SkeletonLoaderProps {
   showTitle?: boolean;
   title?: string;
 }
-
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   type,
   count = 3,
@@ -35,7 +34,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   const theme = useTheme();
 
   // Render a specific number of skeleton items
-  const renderItems = (SkeletonComponent: React.ComponentType<any>, itemCount: number) => {
+  const renderItems = (SkeletonComponent: React.ComponentType<unknown>, itemCount: number) => {
     return Array(itemCount)
       .fill(0)
       .map((_, index) => <SkeletonComponent key={`skeleton-${index}`} />);
@@ -44,7 +43,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   // Render a section with title and skeleton items
   const renderSection = (
     sectionTitle: string,
-    SkeletonComponent: React.ComponentType<any>,
+    SkeletonComponent: React.ComponentType<unknown>,
     itemCount: number,
   ) => {
     return (

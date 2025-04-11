@@ -1,30 +1,26 @@
 import { StyleSheet } from 'react-native';
 import { Dimensions } from 'react-native';
+import { ThemeProvider } from '../theme/ThemeProvider';
 
 const { width } = Dimensions.get('window');
 
+/**
+ * Shared card styles for use across the app
+ *
+ * NOTE ON COLORS: This is a static stylesheet without access to theme.
+ * When using these styles, override any colors with theme values:
+ *
+ * Example usage:
+ *
+ * const MyComponent = () => {
+ *   const theme = useTheme();
+ *   return <View style={[cardStyles.container, { backgroundColor: theme.colors.Surface.Primary }]}>...</View>;
+ * };
+ */
 export const cardStyles = StyleSheet.create({
-  // Common card styles
-  container: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-
-  // Hero card specific
-  heroContainer: {
-    marginBottom: 16,
-    width: width - 32,
-  },
-  heroImage: {
-    height: 200,
-    width: '100%',
-  },
-  heroContent: {
-    padding: 16,
-  },
-
-  // Article card specific
+  //-------------------------
+  // Article card styles
+  //-------------------------
   articleContainer: {
     borderBottomWidth: 1,
     paddingVertical: 16,
@@ -33,36 +29,19 @@ export const cardStyles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 12,
   },
-  articleTextContent: {
-    flex: 1,
-    marginRight: 12,
-  },
   articleImage: {
     borderRadius: 8,
     height: 100,
     width: 100,
   },
-
-  // Horizontal card specific
-  horizontalContainer: {
-    borderRadius: 16,
-    marginBottom: 16,
-  },
-  horizontalCardContent: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    padding: 16,
-  },
-  horizontalImage: {
-    height: 100,
-    marginRight: 16,
-    width: 100,
-  },
-  horizontalTextContent: {
+  articleTextContent: {
     flex: 1,
+    marginRight: 12,
   },
 
-  // CatchUp card specific
+  //-------------------------
+  // CatchUp card styles
+  //-------------------------
   catchUpContainer: {
     borderRadius: 12,
     height: 160,
@@ -83,48 +62,101 @@ export const cardStyles = StyleSheet.create({
     right: 0,
   },
 
-  // Common text elements
-  flagContainer: {
-    marginBottom: 8,
-  },
   category: {
     marginBottom: 4,
   },
-  title: {
+  //-------------------------
+  // Common card styles
+  //-------------------------
+  container: {
+    // NOTE: Replace with theme.colors.Surface.Primary when using
+    backgroundColor: 'white',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+
+  //-------------------------
+  // Hero card styles
+  //-------------------------
+  heroContainer: {
+    marginBottom: 16,
+    width: width - 32,
+  },
+  heroContent: {
+    padding: 16,
+  },
+  heroImage: {
+    height: 200,
+    width: '100%',
+  },
+
+  //-------------------------
+  // Horizontal card styles
+  //-------------------------
+  horizontalCardContent: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    padding: 16,
+  },
+  horizontalContainer: {
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  horizontalImage: {
+    height: 100,
+    marginRight: 16,
+    width: 100,
+  },
+  horizontalTextContent: {
+    flex: 1,
+  },
+
+  //-------------------------
+  // Text element styles
+  //-------------------------
+
+  flagContainer: {
     marginBottom: 8,
   },
   subtitle: {
     marginBottom: 12,
   },
+  title: {
+    marginBottom: 8,
+  },
 
-  // Footer elements
+  //-------------------------
+  // Footer & action styles
+  //-------------------------
+  actionButton: {
+    marginLeft: 16,
+    padding: 4,
+  },
+  actions: {
+    flexDirection: 'row',
+  },
   footer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  readTime: {
+    marginLeft: 6,
+  },
   readTimeContainer: {
     alignItems: 'center',
     flexDirection: 'row',
   },
-  readTime: {
-    marginLeft: 6,
-  },
-  actions: {
-    flexDirection: 'row',
-  },
-  actionButton: {
-    marginLeft: 16,
-    padding: 4,
-  },
 
-  // Title elements
-  titleContainer: {
-    flexDirection: 'column',
-  },
+  //-------------------------
+  // Other elements
+  //-------------------------
   prefix: {
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 4,
+  },
+  titleContainer: {
+    flexDirection: 'column',
   },
 });

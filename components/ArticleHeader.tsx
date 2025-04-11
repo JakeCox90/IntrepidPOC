@@ -56,7 +56,7 @@ const ArticleHeader = ({
   const themedStyles = {
     articleImage: {
       backgroundColor:
-        theme?.colors?.Border?.['Border-Primary'] || theme?.colors?.Surface?.Secondary,
+        theme?.colors?.Border?.Primary || theme?.colors?.Surface?.Secondary,
       borderRadius: borderRadius,
       height: imageHeight,
       marginBottom: theme?.space?.['40'] || 16,
@@ -151,7 +151,7 @@ const ArticleHeader = ({
           themedStyles.articleImage,
           {
             borderWidth: theme.borderWidth['10'],
-            borderColor: theme.colors.Border['Border-Primary'],
+            borderColor: theme.colors.Border.Primary,
           },
         ]}
       >
@@ -162,7 +162,7 @@ const ArticleHeader = ({
             resizeMode="cover"
           />
         ) : (
-          <View style={styles.placeholderImage}>
+          <View style={baseStyles.placeholderImage}>
             <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
           </View>
         )}
@@ -191,7 +191,7 @@ const baseStyles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     width: '100%',
-  },
+  }, // This style is used on line 165
   readingTimeContainer: {
     alignItems: 'center',
     flexDirection: 'row',

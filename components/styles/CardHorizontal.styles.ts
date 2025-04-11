@@ -1,8 +1,22 @@
 import { StyleSheet } from 'react-native';
 import type { ThemeType } from '../../theme/ThemeProvider';
 
+/**
+ * Creates theme-dependent styles for horizontal cards
+ *
+ * This function should be called inside components with the theme from useTheme().
+ *
+ * Example usage:
+ *
+ * const MyComponent = () => {
+ *   const theme = useTheme();
+ *   const styles = createCardHorizontalStyles(theme);
+ *   return <View style={styles.container}>...</View>;
+ * };
+ */
 export const createCardHorizontalStyles = (theme: ThemeType) => {
   return StyleSheet.create({
+    // Group: Container and layout styles
     actionButton: {
       marginLeft: 16,
       padding: 4,
@@ -15,8 +29,8 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       marginBottom: 4,
     },
     container: {
-      backgroundColor: '#FFFFFF',
-      borderColor: theme.colors.Border['Border-Primary'],
+      backgroundColor: theme.colors.Surface.Primary,
+      borderColor: theme.colors.Border.Primary,
       borderRadius: theme.radius['radius-default'],
       borderWidth: theme.borderWidth['10'],
       marginBottom: 16,
@@ -29,12 +43,14 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       paddingHorizontal: 16,
       paddingTop: 0,
     },
+
+    // Group: Text and content styles
     flagsContainer: {
       marginBottom: 4,
     },
     footer: {
       alignItems: 'center',
-      borderTopColor: theme.colors.Border['Border-Primary'],
+      borderTopColor: theme.colors.Border.Primary,
       borderTopWidth: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -42,6 +58,8 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       paddingHorizontal: 16,
       paddingTop: 8,
     },
+
+    // Group: Image styles
     image: {
       borderRadius: 8,
       height: 100,
@@ -52,12 +70,14 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
     },
     placeholderImage: {
       alignItems: 'center',
-      backgroundColor: '#E5E5E5',
+      backgroundColor: theme.colors.Border.Primary,
       borderRadius: 8,
       height: 100,
       justifyContent: 'center',
-      width: 100, // Lighter gray to match the screenshot
+      width: 100,
     },
+
+    // Group: Footer and metadata styles
     readTimeContainer: {
       alignItems: 'center',
       flexDirection: 'row',

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { ThemeType } from '../theme/theme';
+import { ThemeType } from '../../theme/ThemeProvider';
 
-export const createFlagStyles = (theme: ThemeType) => {
+export const createFlagStyles = (_theme: ThemeType) => {
   return StyleSheet.create({
     container: {
       alignSelf: 'flex-start',
