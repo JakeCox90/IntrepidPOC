@@ -5,10 +5,11 @@ import { View, TextInput, TouchableOpacity, FlatList, StatusBar } from 'react-na
 import { Feather } from '@expo/vector-icons';
 import Typography from '../components/Typography';
 import { useTheme } from '../theme/ThemeProvider';
-import Header from '../components/Header';
+import TopNav from '../components/TopNav';
 import CardHorizontal from '../components/CardHorizontal';
 import SkeletonLoader from '../components/SkeletonLoader';
-import { searchNews, type Article } from '../services/sunNewsService';
+import { searchArticles } from '../services/sunNewsService';
+import { Article } from '../types/article';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles, createDynamicStyles } from './styles/SearchScreen.styles';
 
@@ -33,6 +34,18 @@ const SearchScreen = ({ navigation }: Props) => {
   // Create dynamic styles with theme
   const dynamicStyles = createDynamicStyles(theme);
 
+  // Define trending topics with their corresponding section colors
+  const trendingTopics = [
+    { name: 'Breaking News', color: theme.colors.Section.News },
+    { name: 'Sports', color: theme.colors.Section.Sport },
+    { name: 'Technology', color: theme.colors.Section.Tech },
+    { name: 'Entertainment', color: theme.colors.Section.Showbiz },
+    { name: 'Politics', color: theme.colors.Section.Politics },
+    { name: 'Health', color: theme.colors.Section.Health },
+    { name: 'Money', color: theme.colors.Section.Money },
+    { name: 'Travel', color: theme.colors.Section.Travel },
+  ];
+
   /**
    * Execute search query and fetch results
    */
@@ -41,7 +54,7 @@ const SearchScreen = ({ navigation }: Props) => {
       try {
         setIsSearching(true);
         setError(null);
-        const results = await searchNews(searchQuery);
+        const results = await searchArticles(searchQuery);
         setSearchResults(results);
       } catch (err) {
         setError('Failed to search articles');
@@ -85,21 +98,44 @@ const SearchScreen = ({ navigation }: Props) => {
     console.log('Share article:', id);
   };
 
+  const handleProfilePress = () => {
+    console.log('Profile pressed');
+  };
+
   /**
    * Render a trending search item
    * @param param0 Item to render
    * @returns Rendered component
    */
-  const renderTrendingItem = ({ item }: { item: string }) => (
+  const renderTrendingItem = ({ item }: { item: { name: string; color: string } }) => (
     <TouchableOpacity
-      style={[styles.trendingItem, { backgroundColor: theme.colors.Surface.Secondary }]}
+      style={[
+        styles.trendingItem,
+        { 
+          backgroundColor: item.color,
+          shadowColor: item.color,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4,
+          elevation: 3,
+          height: 80,
+          justifyContent: 'flex-end',
+          alignItems: 'flex-start',
+        }
+      ]}
       onPress={() => {
-        setSearchQuery(item);
+        setSearchQuery(item.name);
         handleSearch();
       }}
     >
-      <Typography variant="body-02" color={theme.colors.Text.Primary}>
-        {item}
+      <Typography 
+        variant="subtitle-02" 
+        color={theme.colors.Text.Inverse}
+        style={{ 
+          fontWeight: '600',
+        }}
+      >
+        {item.name}
       </Typography>
     </TouchableOpacity>
   );
@@ -108,7 +144,18 @@ const SearchScreen = ({ navigation }: Props) => {
     <View style={[styles.container, dynamicStyles.container]}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
-      <Header title="Search" backgroundColor={theme.colors.Surface.Primary} />
+      <TopNav
+        title="Search"
+        backgroundColor={theme.colors.Surface.Secondary}
+        textColor={theme.colors.Text.Primary}
+        variant="explore"
+        rightButtons={[
+          {
+            label: 'Profile',
+            onPress: handleProfilePress,
+          },
+        ]}
+      />
 
       <View style={[styles.searchContainer, dynamicStyles.searchContainer]}>
         <View
@@ -195,8 +242,8 @@ const SearchScreen = ({ navigation }: Props) => {
             Trending Topics
           </Typography>
           <FlatList
-            data={['Breaking News', 'Sports', 'Technology', 'Entertainment', 'Politics', 'Health']}
-            keyExtractor={item => item}
+            data={trendingTopics}
+            keyExtractor={item => item.name}
             renderItem={renderTrendingItem}
             numColumns={2}
             columnWrapperStyle={styles.trendingColumns}

@@ -141,7 +141,7 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   }, [news]);
 
   // Get top stories and all stories
-  const topStories = React.useMemo(() => news.slice(0, 3), [news]);
+  const topStories = React.useMemo(() => news.slice(0, 8), [news]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>

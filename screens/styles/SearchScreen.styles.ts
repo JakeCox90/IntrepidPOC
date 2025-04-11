@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
   },
   trendingItem: {
     borderRadius: 8,
-    padding: 12,
+    padding: 6,
     width: '48%',
   },
   trendingList: {
