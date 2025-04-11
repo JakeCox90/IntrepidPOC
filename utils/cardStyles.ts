@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import { Dimensions } from 'react-native';
-import { ThemeProvider } from '../theme/ThemeProvider';
 
 const { width } = Dimensions.get('window');
 
@@ -53,6 +52,7 @@ export const cardStyles = StyleSheet.create({
     position: 'relative',
     width: '100%',
   },
+  // eslint-disable-next-line react-native/no-color-literals
   catchUpOverlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     bottom: 0,
@@ -68,6 +68,7 @@ export const cardStyles = StyleSheet.create({
   //-------------------------
   // Common card styles
   //-------------------------
+  // eslint-disable-next-line react-native/no-color-literals
   container: {
     // NOTE: Replace with theme.colors.Surface.Primary when using
     backgroundColor: 'white',
@@ -85,6 +86,12 @@ export const cardStyles = StyleSheet.create({
   heroContent: {
     padding: 16,
   },
+  // eslint-disable-next-line react-native/sort-styles
+  footer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   heroImage: {
     height: 200,
     width: '100%',
@@ -93,6 +100,9 @@ export const cardStyles = StyleSheet.create({
   //-------------------------
   // Horizontal card styles
   //-------------------------
+  flagContainer: {
+    marginBottom: 8,
+  },
   horizontalCardContent: {
     alignItems: 'flex-start',
     flexDirection: 'row',
@@ -114,10 +124,6 @@ export const cardStyles = StyleSheet.create({
   //-------------------------
   // Text element styles
   //-------------------------
-
-  flagContainer: {
-    marginBottom: 8,
-  },
   subtitle: {
     marginBottom: 12,
   },
@@ -134,11 +140,6 @@ export const cardStyles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-  },
-  footer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   readTime: {
     marginLeft: 6,

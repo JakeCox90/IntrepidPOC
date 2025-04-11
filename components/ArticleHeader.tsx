@@ -55,8 +55,7 @@ const ArticleHeader = ({
   // All themed styles with proper theme values
   const themedStyles = {
     articleImage: {
-      backgroundColor:
-        theme?.colors?.Border?.Primary || theme?.colors?.Surface?.Secondary,
+      backgroundColor: theme?.colors?.Border?.Primary || theme?.colors?.Surface?.Secondary,
       borderRadius: borderRadius,
       height: imageHeight,
       marginBottom: theme?.space?.['40'] || 16,

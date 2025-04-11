@@ -13,12 +13,12 @@ export const createCardHeroStyles = (theme: ThemeType) => {
       borderColor: theme.colors.Border.Primary,
       borderWidth: theme.borderWidth['10'],
     },
+    flag: {
+      marginRight: 8,
+    },
     flagContainer: {
       flexDirection: 'row',
       marginBottom: 8,
-    },
-    flag: {
-      marginRight: 8,
     },
     heroContent: {
       padding: 16,

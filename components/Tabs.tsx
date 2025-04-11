@@ -131,9 +131,7 @@ const Tabs = ({
               activeTab === tab && styles.activeTab,
               activeTab === tab && {
                 borderColor:
-                  variant === 'primary'
-                    ? theme.colors.Text.Inverse
-                    : theme.colors.Border.Primary,
+                  variant === 'primary' ? theme.colors.Text.Inverse : theme.colors.Border.Primary,
               },
             ]}
             onPress={() => onTabPress(tab)}
