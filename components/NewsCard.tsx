@@ -6,6 +6,7 @@ import Typography from '../components/Typography';
 import Flag from './Flag';
 import LazyImage from './LazyImage';
 import { getCategoryColor } from '../utils/categoryColors';
+import { formatRelativeTime } from '../utils/timeFormat';
 
 interface NewsCardProps {
   title: string;
@@ -29,6 +30,9 @@ const COMMON_ACRONYMS = [
 const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardProps) => {
   const theme = useTheme();
   const categoryColor = getCategoryColor(category, theme);
+
+  // Format the timestamp
+  const formattedTime = formatRelativeTime(timestamp);
 
   // Function to render title with colored all-caps text
   const renderTitleWithColoredCaps = () => {
@@ -117,7 +121,7 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
           color={theme.colors.Text.Secondary}
           style={styles.timestamp}
         >
-          {timestamp}
+          {formattedTime}
         </Typography>
       </View>
     </TouchableOpacity>

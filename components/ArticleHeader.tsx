@@ -6,6 +6,7 @@ import Typography from './Typography';
 import Flag from './Flag';
 import LazyImage from './LazyImage';
 import { baseStyles, getThemedStyles } from './styles/ArticleHeaderStyles';
+import { formatRelativeTime } from '../utils/timeFormat';
 
 // Add the COMMON_FLAGS constant
 // Common flags used by The Sun
@@ -49,6 +50,9 @@ const ArticleHeader = ({
   
   // Get themed styles
   const themedStyles = getThemedStyles(theme);
+
+  // Format the timestamp if it exists
+  const formattedTime = timestamp ? formatRelativeTime(timestamp) : 'Recently';
 
   return (
     <View style={baseStyles.container}>
@@ -105,7 +109,7 @@ const ArticleHeader = ({
           {author || 'The Sun'}
         </Typography>
         <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-          Published {timestamp || 'Recently'}
+          Published {formattedTime}
         </Typography>
       </View>
 

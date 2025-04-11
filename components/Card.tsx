@@ -4,6 +4,7 @@ import { View, TouchableOpacity, StyleSheet, type StyleProp, type ViewStyle } fr
 import { useTheme } from '../theme/ThemeProvider';
 import { Feather } from '@expo/vector-icons';
 import Typography from './Typography';
+import { formatRelativeTime } from '../utils/timeFormat';
 
 export interface CardBaseProps {
   id?: number | string;
@@ -32,12 +33,15 @@ const Card: React.FC<CardBaseProps> = ({
 }) => {
   const theme = useTheme();
 
+  // Format the timestamp if it exists
+  const formattedTime = timestamp ? formatRelativeTime(timestamp) : undefined;
+
   const renderDefaultFooter = () => {
-    if (!renderFooter || (!onBookmark && !onShare && !readTime && !timestamp)) return null;
+    if (!renderFooter || (!onBookmark && !onShare && !readTime && !formattedTime)) return null;
 
     return (
       <View style={[styles.footer, footerStyle]}>
-        {(readTime || timestamp) && (
+        {(readTime || formattedTime) && (
           <View style={styles.metaContainer}>
             {readTime && (
               <View style={styles.readTimeContainer}>
@@ -51,13 +55,13 @@ const Card: React.FC<CardBaseProps> = ({
                 </Typography>
               </View>
             )}
-            {timestamp && (
+            {formattedTime && (
               <Typography
                 variant="body-02"
                 color={theme.colors.Text.Secondary}
                 style={styles.metaText}
               >
-                {timestamp}
+                {formattedTime}
               </Typography>
             )}
           </View>
