@@ -37,7 +37,6 @@ const CardCatchUp = ({ title, subtitle, imageUrl, count, onPress }: CardCatchUpP
     </Card>
   );
 };
-
 const styles = StyleSheet.create({
   content: {
     flex: 1,
@@ -64,3 +63,4 @@ const styles = StyleSheet.create({
 });
 
 export default CardCatchUp;
+

@@ -142,7 +142,6 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
 
   // Get top stories and all stories
   const topStories = React.useMemo(() => news.slice(0, 3), [news]);
-  const allStories = React.useMemo(() => news.slice(3, 10), [news]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
@@ -246,28 +245,6 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
                 />
               ))}
             </>
-          </View>
-
-          {/* All Stories Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              All Stories
-            </Typography>
-
-            {allStories.map(story => (
-              <CardHorizontal
-                key={story.id}
-                id={story.id}
-                title={story.title}
-                imageUrl={story.imageUrl}
-                category={story.category}
-                flag={story.flag}
-                readTime={story.readTime}
-                onPress={() => handleArticlePress(story)}
-                onBookmark={() => handleBookmark(story.id)}
-                onShare={() => handleShare(story.id)}
-              />
-            ))}
           </View>
 
           {/* Bottom padding */}

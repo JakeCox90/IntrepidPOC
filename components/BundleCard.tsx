@@ -1,7 +1,6 @@
 'use client';
 import {
   View,
-  StyleSheet,
   TouchableOpacity,
   ImageBackground,
   GestureResponderEvent,
@@ -9,6 +8,7 @@ import {
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import { Feather } from '@expo/vector-icons';
+import { baseStyles, getThemedStyles } from './styles/BundleCardStyles';
 
 interface BundleCardProps {
   title: string;
@@ -19,9 +19,6 @@ interface BundleCardProps {
   onNotify?: () => void;
 }
 
-const cardWidth = 280;
-const cardHeight = 265;
-
 const BundleCard = ({
   title,
   subtitle,
@@ -31,53 +28,9 @@ const BundleCard = ({
   onNotify,
 }: BundleCardProps) => {
   const theme = useTheme();
-
-  // Create styles inside the component with access to theme
-  const styles = StyleSheet.create({
-    container: {
-      borderRadius: 12,
-      height: cardHeight,
-      overflow: 'hidden',
-      width: cardWidth,
-    },
-    content: {
-      flex: 1,
-      justifyContent: 'flex-end',
-    },
-    imageStyle: {
-      borderRadius: 12,
-    },
-    notifyButton: {
-      alignSelf: 'flex-end',
-    },
-    notifyIconContainer: {
-      alignItems: 'center',
-      backgroundColor: theme.colors.Surface.Overlay01,
-      borderRadius: 18,
-      height: 36,
-      justifyContent: 'center',
-      width: 36,
-    },
-    overlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.Surface.Overlay02,
-      borderRadius: 12,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 16,
-    },
-    storyCount: {
-      opacity: 0.8,
-    },
-    subtitle: {
-      marginBottom: 4,
-      opacity: 0.9,
-    },
-    title: {
-      fontWeight: '700',
-      marginBottom: 4,
-    },
-  });
+  
+  // Get themed styles
+  const themedStyles = getThemedStyles(theme);
 
   const handleNotifyPress = (e: GestureResponderEvent) => {
     e.stopPropagation();
@@ -90,32 +43,33 @@ const BundleCard = ({
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
       <ImageBackground
         source={{ uri: imageUrl }}
-        style={styles.container}
-        imageStyle={styles.imageStyle}
+        style={baseStyles.container}
+        imageStyle={baseStyles.imageStyle}
       >
         {/* Dark gradient overlay */}
-        <View style={styles.overlay}>
-          <View style={styles.content}>
-            <Typography variant="h5" color={theme.colors.Text.Inverse} style={styles.title}>
+        <View style={[baseStyles.overlay, themedStyles.overlay]}>
+          <View style={baseStyles.content}>
+            <Typography variant="h5" color={theme.colors.Text.Inverse} style={baseStyles.title}>
               {title}
             </Typography>
-            <Typography variant="body-02" color={theme.colors.Text.Inverse} style={styles.subtitle}>
+            <Typography variant="subtitle-01" color={theme.colors.Text.Inverse} style={baseStyles.subtitle}>
               {subtitle}
             </Typography>
-            <Typography
-              variant="body-02"
-              color={theme.colors.Text.Inverse}
-              style={styles.storyCount}
-            >
+            <Typography variant="body-02" color={theme.colors.Text.Inverse} style={baseStyles.storyCount}>
               {storyCount} stories
             </Typography>
           </View>
-
-          <TouchableOpacity style={styles.notifyButton} onPress={handleNotifyPress}>
-            <View style={styles.notifyIconContainer}>
-              <Feather name="bell" size={20} color={theme.colors.Text.Inverse} />
-            </View>
-          </TouchableOpacity>
+          {onNotify && (
+            <TouchableOpacity
+              style={baseStyles.notifyButton}
+              onPress={handleNotifyPress}
+              activeOpacity={0.7}
+            >
+              <View style={[baseStyles.notifyIconContainer, themedStyles.notifyIconContainer]}>
+                <Feather name="bell" size={18} color={theme.colors.Text.Inverse} />
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
       </ImageBackground>
     </TouchableOpacity>
