@@ -113,7 +113,7 @@ const ArticleHeader = ({
       <View style={[baseStyles.articleImage, themedStyles.imageContainer]}>
         {imageUrl ? (
           <LazyImage
-            source={{ uri: imageUrl }}
+          source={{ uri: imageUrl }}
             style={[baseStyles.image, themedStyles.image]}
             resizeMode="cover"
           />

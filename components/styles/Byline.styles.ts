@@ -12,7 +12,6 @@ export const baseStyles = StyleSheet.create({
 
 export const getThemedStyles = (theme: ThemeType) => StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.Surface.Secondary,
   },
   authorName: {
     color: theme.colors.Text.Primary,
