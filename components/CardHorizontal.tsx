@@ -42,10 +42,11 @@ const CardHorizontal = ({
   imageUrl,
   category,
   flag,
-  readTime = '3 min read',
+  readTime,
   onPress,
   onBookmark,
   onShare,
+  style,
 }: CardHorizontalProps) => {
   const theme = useTheme();
   const styles = createCardHorizontalStyles(theme);

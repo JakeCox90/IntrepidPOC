@@ -31,6 +31,8 @@ export interface CardBaseProps {
   timestamp?: string;
   /** Whether to render the footer */
   renderFooter?: boolean;
+  /** Whether the article is bookmarked */
+  isBookmarked?: boolean;
 }
 
 /**

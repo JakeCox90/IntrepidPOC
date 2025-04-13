@@ -38,6 +38,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   const { articleId, article: routeArticle } = route.params || {};
   const accordionStyles = createAccordionStyles(theme);
   const styles = createStyles(theme);
+  const [isBookmarked, setIsBookmarked] = React.useState(false);
 
   // Use the custom hook for article-related business logic
   const {
@@ -54,6 +55,12 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
     articleId,
     initialArticle: routeArticle,
   });
+
+  // Toggle bookmark state
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    console.log('Bookmark toggled:', !isBookmarked);
+  };
 
   // Debug navigation
   useEffect(() => {
@@ -189,8 +196,8 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
             rightButtons={[
               {
                 label: "Bookmark",
-                icon: "bookmark-outline",
-                onPress: () => console.log('Bookmark pressed')
+                icon: isBookmarked ? "bookmark" : "bookmark-outline",
+                onPress: handleBookmark
               },
               {
                 label: "Share",

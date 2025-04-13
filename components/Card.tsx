@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import Typography from './Typography';
 import { formatRelativeTime } from '../utils/timeFormat';
 import type { CardBaseProps } from '../types/components';
+import { useBookmark } from '../contexts/BookmarkContext';
 
 const Card: React.FC<CardBaseProps> = ({
   id,
@@ -18,8 +19,15 @@ const Card: React.FC<CardBaseProps> = ({
   readTime,
   timestamp,
   renderFooter = false,
+  isBookmarked: propIsBookmarked,
 }) => {
   const theme = useTheme();
+  const { isBookmarked: contextIsBookmarked } = useBookmark();
+  
+  // Use prop value if provided, otherwise use context value
+  const isBookmarked = propIsBookmarked !== undefined 
+    ? propIsBookmarked 
+    : id ? contextIsBookmarked(id) : false;
 
   // Format the timestamp if it exists
   const formattedTime = timestamp ? formatRelativeTime(timestamp) : undefined;
@@ -59,7 +67,11 @@ const Card: React.FC<CardBaseProps> = ({
           <View style={styles.actions}>
             {onBookmark && (
               <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
-                <Feather name="bookmark" size={18} color={theme.colors.Text.Secondary} />
+                <Feather 
+                  name={isBookmarked ? "bookmark" : "bookmark"} 
+                  size={18} 
+                  color={isBookmarked ? theme.colors.Primary.Resting : theme.colors.Text.Secondary} 
+                />
               </TouchableOpacity>
             )}
             {onShare && (

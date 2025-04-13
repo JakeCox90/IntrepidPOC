@@ -11,6 +11,7 @@ import TabNavigator from './navigation/TabNavigator';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { colors } from './design-system/Foundations/colors';
 import Typography from './components/Typography';
+import { BookmarkProvider } from './contexts/BookmarkContext';
 // Ignore specific warnings that might be related to third-party libraries
 LogBox.ignoreLogs([
   'Reanimated 2',
@@ -48,8 +49,8 @@ function LoadingScreen({ error }: LoadingScreenProps) {
     <View style={styles.loadingContainer}>
       {error ? (
         <>
-          <Typography variant="heading3" color="Error.Text">Error loading fonts</Typography>
-          <Typography variant="body2" color="Text.Primary" style={styles.errorMessageText}>{error.message}</Typography>
+          <Typography variant="h3" color="Error.Text">Error loading fonts</Typography>
+          <Typography variant="body-02" color="Text.Primary" style={styles.errorMessageText}>{error.message}</Typography>
         </>
       ) : (
         <>
@@ -81,9 +82,11 @@ export default function App(): React.ReactElement {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <NavigationContainer>
-          <TabNavigator />
-        </NavigationContainer>
+        <BookmarkProvider>
+          <NavigationContainer>
+            <TabNavigator />
+          </NavigationContainer>
+        </BookmarkProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

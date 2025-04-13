@@ -10,7 +10,7 @@ export const createStyles = (theme: ThemeType) => {
       marginTop: theme.space['20'],
     },
     audioPlayerContainer: {
-      marginBottom: theme.space['20'],
+      marginBottom: theme.space['40'],
       marginTop: theme.space['20'],
     },
     backToHomeButton: {

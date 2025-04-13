@@ -21,6 +21,7 @@ import Typography from '../components/Typography';
 import { fetchSunNews } from '../services/sunNewsService';
 import { Article } from '../types/article';
 import { createSharedStyles } from '../utils/sharedStyles';
+import { useBookmark } from '../contexts/BookmarkContext';
 
 type RootStackParamList = {
   TodayArticle: { article: Article };
@@ -35,6 +36,7 @@ interface TodayScreenProps {
 const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   const theme = useTheme();
   const sharedStyles = createSharedStyles(theme);
+  const { toggleBookmark, isBookmarked } = useBookmark();
   const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
