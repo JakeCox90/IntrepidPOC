@@ -17,6 +17,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Article, Comment } from '../types';
 import { createStyles } from './styles/ArticleScreen.styles';
 import { useArticle } from '../hooks/useArticle';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { ErrorDisplay } from '../components/ErrorDisplay';
+import { useErrorHandling } from '../hooks/useErrorHandling';
 
 // Define the navigation types
 type RootStackParamList = {
@@ -39,6 +42,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   const accordionStyles = createAccordionStyles(theme);
   const styles = createStyles(theme);
   const [isBookmarked, setIsBookmarked] = React.useState(false);
+  const { handleError, lastError, clearError } = useErrorHandling();
 
   // Use the custom hook for article-related business logic
   const {
@@ -260,13 +264,26 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   }
 
   return (
-    <View style={styles.container}>
-      {!hideHeader && (
-        <>
-          <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-          {/* Top Navigation */}
+    <ErrorBoundary
+      onError={(error, info) => {
+        console.error('ArticleScreen Error:', error, info);
+      }}
+    >
+      <View style={styles.container}>
+        {lastError && (
+          <ErrorDisplay
+            error={lastError}
+            onDismiss={clearError}
+            showDetails={__DEV__}
+          />
+        )}
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={theme.colors.Surface.Primary}
+        />
+        {!hideHeader && (
           <TopNav
-            title=""
+            title="Article"
             showBackButton
             onBackPress={() => navigation.goBack()}
             rightButtons={[
@@ -282,25 +299,16 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
               }
             ]}
           />
-        </>
-      )}
-
-      <FlatList
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollViewContent,
-          { paddingBottom: theme.space['80'] }
-        ]}
-        data={[{ key: 'content' }]}
-        renderItem={renderItem}
-        keyExtractor={() => 'content'}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={5}
-        windowSize={3}
-        initialNumToRender={1}
-        updateCellsBatchingPeriod={50}
-      />
-    </View>
+        )}
+        <FlatList
+          data={[{ key: 'content' }]}
+          renderItem={renderItem}
+          keyExtractor={() => 'content'}
+          contentContainerStyle={styles.scrollViewContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </ErrorBoundary>
   );
 };
 
