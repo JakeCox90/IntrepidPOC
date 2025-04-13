@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
@@ -51,55 +51,105 @@ const ArticleHeader = ({
 }: ArticleHeaderProps) => {
   const theme = useTheme();
   
-  // Get themed styles
-  const themedStyles = getThemedStyles(theme);
+  // Get themed styles - memoize to prevent unnecessary style recalculations
+  const themedStyles = useMemo(() => getThemedStyles(theme), [theme]);
 
-  // Format the timestamp if it exists
-  const formattedTime = timestamp ? formatRelativeTime(timestamp) : 'Recently';
+  // Format the timestamp if it exists - memoize to prevent unnecessary formatting
+  const formattedTime = useMemo(() => 
+    timestamp ? formatRelativeTime(timestamp) : 'Recently', 
+    [timestamp]
+  );
+
+  // Memoize the flag component
+  const FlagComponent = useMemo(() => {
+    if (!flag || !COMMON_FLAGS.includes(flag.toUpperCase())) return null;
+    
+    const flagColor = flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
+                     flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
+                     theme.colors.Error.Resting;
+    
+    return (
+      <Flag 
+        text={flag} 
+        style={baseStyles.flag} 
+        variant="minimal"
+        color={flagColor}
+      />
+    );
+  }, [flag, theme.colors.Status.Breaking, theme.colors.Status.Exclusive, theme.colors.Error.Resting]);
+
+  // Memoize the category component
+  const CategoryComponent = useMemo(() => {
+    if (!category) return null;
+    
+    return (
+      <Flag
+        text={category}
+        category={category}
+        style={baseStyles.flag}
+        variant="minimal"
+      />
+    );
+  }, [category]);
+
+  // Memoize the title component
+  const TitleComponent = useMemo(() => (
+    <Typography
+      variant="h3"
+      color={theme.colors.Text.Primary}
+      style={[baseStyles.title, themedStyles.title]}
+    >
+      {title || 'No title available'}
+    </Typography>
+  ), [title, theme.colors.Text.Primary, baseStyles.title, themedStyles.title]);
+
+  // Memoize the subtitle component
+  const SubtitleComponent = useMemo(() => {
+    if (!subtitle) return null;
+    
+    return (
+      <Typography
+        variant="subtitle-01"
+        color={theme.colors.Text.Secondary}
+        style={[baseStyles.subtitle, themedStyles.subtitle]}
+      >
+        {subtitle}
+      </Typography>
+    );
+  }, [subtitle, theme.colors.Text.Secondary, baseStyles.subtitle, themedStyles.subtitle]);
+
+  // Memoize the image component
+  const ImageComponent = useMemo(() => {
+    if (!imageUrl) {
+      return (
+        <View style={baseStyles.placeholderImage}>
+          <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
+        </View>
+      );
+    }
+    
+    return (
+      <LazyImage
+        source={{ uri: imageUrl }}
+        style={[baseStyles.image, themedStyles.image]}
+        resizeMode="cover"
+      />
+    );
+  }, [imageUrl, theme.colors.Text.Secondary, baseStyles.placeholderImage, baseStyles.image, themedStyles.image]);
 
   return (
     <View style={baseStyles.container}>
       {/* Tags */}
       <View style={[baseStyles.tagsContainer, themedStyles.tagsContainer]}>
-        {flag && COMMON_FLAGS.includes(flag.toUpperCase()) && (
-          <Flag 
-            text={flag} 
-            style={baseStyles.flag} 
-            variant="minimal"
-            color={flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
-                   flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
-                   theme.colors.Error.Resting}
-          />
-        )}
-        {category && (
-          <Flag
-            text={category}
-            category={category}
-            style={baseStyles.flag}
-            variant="minimal"
-          />
-        )}
+        {FlagComponent}
+        {CategoryComponent}
       </View>
 
       {/* Title */}
-      <Typography
-        variant="h3"
-        color={theme.colors.Text.Primary}
-        style={[baseStyles.title, themedStyles.title]}
-      >
-        {title || 'No title available'}
-      </Typography>
+      {TitleComponent}
 
       {/* Subtitle */}
-      {subtitle && (
-        <Typography
-          variant="subtitle-01"
-          color={theme.colors.Text.Secondary}
-          style={[baseStyles.subtitle, themedStyles.subtitle]}
-        >
-          {subtitle}
-        </Typography>
-      )}
+      {SubtitleComponent}
 
       {/* Reading time */}
       <View style={[baseStyles.readingTimeContainer, themedStyles.readingTimeContainer]}>
@@ -111,20 +161,10 @@ const ArticleHeader = ({
 
       {/* Article Image */}
       <View style={[baseStyles.articleImage, themedStyles.imageContainer]}>
-        {imageUrl ? (
-          <LazyImage
-          source={{ uri: imageUrl }}
-            style={[baseStyles.image, themedStyles.image]}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={baseStyles.placeholderImage}>
-            <Feather name="image" size={24} color={theme.colors.Text.Secondary} />
-          </View>
-        )}
+        {ImageComponent}
       </View>
     </View>
   );
 };
 
-export default ArticleHeader;
+export default memo(ArticleHeader);

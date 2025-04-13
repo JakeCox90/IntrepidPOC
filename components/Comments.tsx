@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { View, TouchableOpacity, TextInput, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
@@ -9,6 +9,9 @@ import { Comment as CommentType, CommentsProps } from '../types';
 import CommentItem from './CommentItem';
 import { validateComments } from '../utils/typeValidation';
 import { createCommentsStyles } from './styles/Comments.styles';
+
+// Memoize the CommentItem component to prevent unnecessary re-renders
+const MemoizedCommentItem = React.memo(CommentItem);
 
 export const Comments: React.FC<CommentsProps> = ({
   comments,
@@ -24,17 +27,17 @@ export const Comments: React.FC<CommentsProps> = ({
   const [commentText, setCommentText] = React.useState('');
   const [likedComments, setLikedComments] = React.useState<Record<string | number, boolean>>({});
 
-  // Validate comments array
-  const validComments = validateComments(comments);
+  // Validate comments array - memoize to prevent unnecessary validation
+  const validComments = useMemo(() => validateComments(comments), [comments]);
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = useCallback(() => {
     if (commentText.trim() && onSubmitComment) {
       onSubmitComment(commentText.trim());
       setCommentText('');
     }
-  };
+  }, [commentText, onSubmitComment]);
 
-  const handleLikeComment = (commentId: string | number) => {
+  const handleLikeComment = useCallback((commentId: string | number) => {
     const isCurrentlyLiked = likedComments[commentId] || false;
     setLikedComments(prev => ({
       ...prev,
@@ -43,29 +46,49 @@ export const Comments: React.FC<CommentsProps> = ({
     if (onLikeComment) {
       onLikeComment(commentId, !isCurrentlyLiked);
     }
-  };
+  }, [likedComments, onLikeComment]);
 
-  const handleReplyComment = (commentId: string | number) => {
+  const handleReplyComment = useCallback((commentId: string | number) => {
     if (onReplyComment) {
       onReplyComment(commentId);
     }
-  };
+  }, [onReplyComment]);
 
-  const handleViewReplies = (commentId: string | number) => {
+  const handleViewReplies = useCallback((commentId: string | number) => {
     if (onViewReplies) {
       onViewReplies(commentId);
     }
-  };
+  }, [onViewReplies]);
 
-  const renderComment = ({ item: comment }: { item: CommentType }) => (
-    <CommentItem
+  const renderComment = useCallback(({ item: comment }: { item: CommentType }) => (
+    <MemoizedCommentItem
       comment={comment}
       isLiked={likedComments[comment.id] || false}
       onLike={handleLikeComment}
       onReply={handleReplyComment}
       onViewReplies={handleViewReplies}
     />
-  );
+  ), [likedComments, handleLikeComment, handleReplyComment, handleViewReplies]);
+
+  const keyExtractor = useCallback((item: CommentType) => item.id.toString(), []);
+
+  const ListFooterComponent = useMemo(() => (
+    <>
+      <View style={{ height: theme.space['40'] }} />
+      {totalComments > comments.length && onShowAllPress && (
+        <TouchableOpacity onPress={onShowAllPress} style={{ alignItems: 'center' }}>
+          <Typography 
+            variant="body-02" 
+            color={theme.colors.Primary.Resting}
+            style={{ textAlign: 'center' }}
+          >
+            Show all {totalComments} comments
+          </Typography>
+        </TouchableOpacity>
+      )}
+      <View style={{ height: theme.space['70'] }} />
+    </>
+  ), [totalComments, comments.length, onShowAllPress, theme.space]);
 
   return (
     <View style={styles.container}>
@@ -88,33 +111,22 @@ export const Comments: React.FC<CommentsProps> = ({
           )}
         </View>
 
-        {/* Comments list */}
+        {/* Comments list with performance optimizations */}
         <FlatList
           data={validComments}
           renderItem={renderComment}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={keyExtractor}
           contentContainerStyle={[styles.listContent, { paddingBottom: theme.space['60'] }]}
-          ListFooterComponent={
-            <>
-              <View style={{ height: theme.space['40'] }} />
-              {totalComments > comments.length && onShowAllPress && (
-                <TouchableOpacity onPress={onShowAllPress} style={{ alignItems: 'center' }}>
-                  <Typography 
-                    variant="body-02" 
-                    color={theme.colors.Primary.Resting}
-                    style={{ textAlign: 'center' }}
-                  >
-                    Show all {totalComments} comments
-                  </Typography>
-                </TouchableOpacity>
-              )}
-              <View style={{ height: theme.space['70'] }} />
-            </>
-          }
+          ListFooterComponent={ListFooterComponent}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          initialNumToRender={5}
+          updateCellsBatchingPeriod={50}
         />
       </View>
     </View>
   );
 };
 
-export default Comments;
+export default React.memo(Comments);

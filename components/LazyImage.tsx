@@ -1,7 +1,7 @@
 'use client';
 
 import type React from 'react';
-import { useState } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import {
   Image,
   type ImageProps,
@@ -31,67 +31,107 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // Extract dimensions from style
-  const flattenedStyle = StyleSheet.flatten(style || {});
-  const { width, height, borderRadius } = flattenedStyle;
+  // Extract dimensions from style - memoize to prevent unnecessary calculations
+  const { width, height, borderRadius } = useMemo(() => {
+    const flattenedStyle = StyleSheet.flatten(style || {});
+    return {
+      width: flattenedStyle.width,
+      height: flattenedStyle.height,
+      borderRadius: flattenedStyle.borderRadius
+    };
+  }, [style]);
 
-  const handleLoad = () => {
+  const handleLoad = useCallback(() => {
     setLoading(false);
-  };
+  }, []);
 
-  const handleError = () => {
+  const handleError = useCallback(() => {
     setLoading(false);
     setError(true);
-  };
+  }, []);
+
+  // Memoize the container style
+  const containerStyle = useMemo(() => [
+    styles.container, 
+    { width, height, borderRadius }
+  ], [width, height, borderRadius]);
+
+  // Memoize the skeleton component
+  const SkeletonComponent = useMemo(() => {
+    if (!loading || !useSkeleton) return null;
+    
+    return (
+      <Skeleton
+        width={typeof width === 'number' ? width : '100%'}
+        height={typeof height === 'number' ? height : 200}
+        borderRadius={typeof borderRadius === 'number' ? borderRadius : 0}
+        style={styles.skeleton}
+      />
+    );
+  }, [loading, useSkeleton, width, height, borderRadius]);
+
+  // Memoize the loader component
+  const LoaderComponent = useMemo(() => {
+    if (!loading || !showLoader || useSkeleton) return null;
+    
+    return (
+      <View
+        style={[
+          styles.loaderContainer,
+          {
+            width,
+            height,
+            backgroundColor: theme.colors.Border.Skeleton01,
+          },
+        ]}
+      >
+        <ActivityIndicator size="small" color={theme.colors.Primary.Resting} />
+      </View>
+    );
+  }, [loading, showLoader, useSkeleton, width, height, theme.colors.Border.Skeleton01, theme.colors.Primary.Resting]);
+
+  // Memoize the error component
+  const ErrorComponent = useMemo(() => {
+    if (!error) return null;
+    
+    return (
+      <View
+        style={[
+          styles.errorContainer,
+          {
+            width,
+            height,
+            borderRadius,
+            backgroundColor: theme.colors.Border.Skeleton01,
+          },
+        ]}
+      >
+        <View style={[styles.errorIcon, { backgroundColor: theme.colors.Border.Secondary }]} />
+      </View>
+    );
+  }, [error, width, height, borderRadius, theme.colors.Border.Skeleton01, theme.colors.Border.Secondary]);
+
+  // Memoize the image component
+  const ImageComponent = useMemo(() => {
+    if (error) return null;
+    
+    return (
+      <Image
+        {...props}
+        source={source}
+        style={[style, loading && styles.hiddenImage]}
+        onLoad={handleLoad}
+        onError={handleError}
+      />
+    );
+  }, [error, props, source, style, loading, handleLoad, handleError]);
+
   return (
-    <View style={[styles.container, { width, height, borderRadius }]}>
-      {loading && useSkeleton && (
-        <Skeleton
-          width={typeof width === 'number' ? width : '100%'}
-          height={typeof height === 'number' ? height : 200}
-          borderRadius={typeof borderRadius === 'number' ? borderRadius : 0}
-          style={styles.skeleton}
-        />
-      )}
-
-      {loading && showLoader && !useSkeleton && (
-        <View
-          style={[
-            styles.loaderContainer,
-            {
-              width,
-              height,
-              backgroundColor: theme.colors.Border.Skeleton01,
-            },
-          ]}
-        >
-          <ActivityIndicator size="small" color={theme.colors.Primary.Resting} />
-        </View>
-      )}
-
-      {error ? (
-        <View
-          style={[
-            styles.errorContainer,
-            {
-              width,
-              height,
-              borderRadius,
-              backgroundColor: theme.colors.Border.Skeleton01,
-            },
-          ]}
-        >
-          <View style={[styles.errorIcon, { backgroundColor: theme.colors.Border.Secondary }]} />
-        </View>
-      ) : (
-        <Image
-          {...props}
-          source={source}
-          style={[style, loading && styles.hiddenImage]}
-          onLoad={handleLoad}
-          onError={handleError}
-        />
-      )}
+    <View style={containerStyle}>
+      {SkeletonComponent}
+      {LoaderComponent}
+      {ErrorComponent}
+      {ImageComponent}
     </View>
   );
 };
@@ -136,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LazyImage;
+export default memo(LazyImage);
