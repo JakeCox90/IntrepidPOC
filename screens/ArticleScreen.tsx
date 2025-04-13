@@ -188,7 +188,13 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
             onBackPress={() => navigation.goBack()}
             rightButtons={[
               {
+                label: "Bookmark",
+                icon: "bookmark-outline",
+                onPress: () => console.log('Bookmark pressed')
+              },
+              {
                 label: "Share",
+                icon: "share-outline",
                 onPress: handleShare
               }
             ]}

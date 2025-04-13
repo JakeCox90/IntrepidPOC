@@ -15,6 +15,7 @@ interface TopNavProps {
   rightButtons?: Array<{
     label: string;
     onPress: () => void;
+    icon?: string;
   }>;
   variant?: 'default' | 'explore';
   hasStepper?: boolean;
@@ -109,9 +110,13 @@ const TopNav = ({
           <View style={styles.rightButtonsContainer}>
             {rightButtons.map((button, index) => (
               <TouchableOpacity key={index} style={styles.rightButton} onPress={button.onPress}>
-                <Typography variant="subtitle-01" color={txtColor}>
-                  {button.label}
-                </Typography>
+                {button.icon ? (
+                  <Ionicons name={button.icon as any} size={24} color={txtColor} />
+                ) : (
+                  <Typography variant="subtitle-01" color={txtColor}>
+                    {button.label}
+                  </Typography>
+                )}
               </TouchableOpacity>
             ))}
           </View>

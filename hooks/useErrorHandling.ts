@@ -61,40 +61,4 @@ export const useErrorHandling = (): UseErrorHandlingResult => {
     clearError,
     isError: lastError !== null,
   };
-};
-
-// Example usage in a component:
-/*
-const MyComponent = () => {
-  const { handleError, lastError, clearError, isError } = useErrorHandling();
-
-  const fetchData = async () => {
-    try {
-      const data = await handleError(
-        async () => {
-          return await api.fetchData();
-        },
-        {
-          showAlert: true,
-          retryCount: 3,
-        }
-      );
-      // Handle success
-    } catch (error) {
-      // Handle final error
-    }
-  };
-
-  return (
-    <View>
-      {isError && (
-        <ErrorDisplay
-          error={lastError}
-          onDismiss={clearError}
-        />
-      )}
-      {/* Rest of your component */}
-    </View>
-  );
-};
-*/ 
+}; 
