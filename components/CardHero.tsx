@@ -10,6 +10,7 @@ import { createCardHeroStyles } from './styles/CardHero.styles';
 import { getCategoryColor } from '../utils/categoryColors';
 import { Feather } from '@expo/vector-icons';
 import type { CardHeroProps } from '../types/components';
+import { renderColoredText } from '../utils/textColouring';
 
 // Common flags used by The Sun
 const COMMON_FLAGS = [
@@ -27,20 +28,11 @@ const COMMON_FLAGS = [
   'WARNING',
 ];
 
-// Common acronyms and country codes that should not be colored
-const COMMON_ACRONYMS = [
-  'UK', 'USA', 'US', 'EU', 'UN', 'NHS', 'BBC', 'ITV', 'CNN', 'FBI', 'CIA', 'NASA',
-  'WHO', 'WTO', 'IMF', 'NATO', 'EU', 'UNESCO', 'UNICEF', 'WWF', 'FIFA', 'UEFA',
-  'NBA', 'NFL', 'MLB', 'NHL', 'F1', 'GP', 'PM', 'MP', 'MPs', 'MPs', 'MPs', 'MPs',
-  'CEO', 'CFO', 'CTO', 'COO', 'VIP', 'DIY', 'DNA', 'RNA', 'HIV', 'AIDS', 'COVID',
-  'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR',
-];
-
 const CardHero = ({
   title,
   subtitle,
   imageUrl,
-  category,
+  category = 'News',
   flag,
   readTime,
   onPress,
@@ -50,57 +42,10 @@ const CardHero = ({
 }: CardHeroProps) => {
   const theme = useTheme();
   const styles = createCardHeroStyles(theme);
-  const categoryColor = category ? getCategoryColor(category, theme) : theme.colors.Primary.Resting;
+  const categoryColor = getCategoryColor(category, theme);
 
   // Check if the flag is a common flag type
   const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase());
-
-  // Function to render title with colored all-caps text
-  const renderTitleWithColoredCaps = () => {
-    // Split the title into words
-    const words: string[] = title.split(' ');
-    
-    // Check if any word is in all caps, not a common acronym, and not a number
-    const hasAllCaps = words.some((word: string) => 
-      word === word.toUpperCase() && 
-      word.length > 1 && 
-      !COMMON_ACRONYMS.includes(word) &&
-      !/^\d+$/.test(word) // Exclude numbers
-    );
-    
-    if (!hasAllCaps) {
-      // If no all-caps words, render the title normally
-      return (
-        <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.title}>
-          {title}
-        </Typography>
-      );
-    }
-    
-    // If there are all-caps words, render them with the section color
-    return (
-      <View style={styles.titleContainer}>
-        {words.map((word: string, index: number) => {
-          // Check if the word is in all caps, longer than 1 character, not a common acronym, and not a number
-          const isAllCaps = 
-            word === word.toUpperCase() && 
-            word.length > 1 && 
-            !COMMON_ACRONYMS.includes(word) &&
-            !/^\d+$/.test(word); // Exclude numbers
-          
-          return (
-            <Typography
-              key={index}
-              variant="h5"
-              color={isAllCaps ? categoryColor : theme.colors.Text.Primary}
-            >
-              {word}{index < words.length - 1 ? ' ' : ''}
-            </Typography>
-          );
-        })}
-      </View>
-    );
-  };
 
   return (
     <Card
@@ -127,7 +72,13 @@ const CardHero = ({
           {category && <Flag text={category} category={category} variant="minimal" />}
         </View>
 
-        {renderTitleWithColoredCaps()}
+        {renderColoredText({
+          text: title,
+          category,
+          theme,
+          typographyVariant: 'h5',
+          containerStyle: styles.titleContainer
+        })}
 
         {subtitle && (
           <Typography

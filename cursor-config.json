@@ -21,6 +21,7 @@
       "When converting any hardcoded values to a token, ensure that you are reviewing the value of both the hardcoded value and the token and converting it e.g. Space 40 is 16px. Not 40px.",
       "Ensure that the hardcoded values align to the values defined in any spacing e.g. 16px hardcoded = Space 40 = Sizing 40 (16px)",
       "Ensure that all padding and margin values use space tokens only",
-      "Ensure that all size values e.g. icon sizing use the sizing primitive tokens"
+      "Ensure that all size values e.g. icon sizing use the sizing primitive tokens",
+      "When adding a new function or change, review the components that you've affected and ensure that you are cleaning up any redundant code that is no longer needed due to the changes"
     ]
   }

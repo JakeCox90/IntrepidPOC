@@ -11,6 +11,7 @@ import { createCardHorizontalStyles } from './styles/CardHorizontal.styles';
 import { getCategoryColor } from '../utils/categoryColors';
 import Flag from './Flag';
 import type { CardHorizontalProps } from '../types/components';
+import { renderColoredText } from '../utils/textColouring';
 
 // Common flags used by The Sun
 const COMMON_FLAGS = [
@@ -26,15 +27,6 @@ const COMMON_FLAGS = [
   'HORROR',
   'URGENT',
   'WARNING',
-];
-
-// Common acronyms and country codes that should not be colored
-const COMMON_ACRONYMS = [
-  'UK', 'USA', 'US', 'EU', 'UN', 'NHS', 'BBC', 'ITV', 'CNN', 'FBI', 'CIA', 'NASA',
-  'WHO', 'WTO', 'IMF', 'NATO', 'EU', 'UNESCO', 'UNICEF', 'WWF', 'FIFA', 'UEFA',
-  'NBA', 'NFL', 'MLB', 'NHL', 'F1', 'GP', 'PM', 'MP', 'MPs', 'MPs', 'MPs', 'MPs',
-  'CEO', 'CFO', 'CTO', 'COO', 'VIP', 'DIY', 'DNA', 'RNA', 'HIV', 'AIDS', 'COVID',
-  'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR', 'PCR',
 ];
 
 const CardHorizontal = ({
@@ -80,62 +72,6 @@ const CardHorizontal = ({
     }
   }
 
-  // Function to render title with colored all-caps text
-  const renderTitleWithColoredCaps = () => {
-    // Split the title into words
-    const words: string[] = mainTitle.split(' ');
-    
-    // Check if any word is in all caps, not a common acronym, and not a number
-    const hasAllCaps = words.some((word: string) => 
-      word === word.toUpperCase() && 
-      word.length > 1 && 
-      !COMMON_ACRONYMS.includes(word) &&
-      !/^\d+$/.test(word) // Exclude numbers
-    );
-    
-    if (!hasAllCaps) {
-      // If no all-caps words, render the title normally
-      return (
-        <Typography
-          variant="h6"
-          color={theme.colors.Text.Primary}
-          style={styles.title}
-          numberOfLines={3}
-        >
-          {mainTitle}
-        </Typography>
-      );
-    }
-    
-    // If there are all-caps words, render them with the section color
-    return (
-      <Typography
-        variant="h6"
-        style={styles.title}
-        numberOfLines={3}
-      >
-        {words.map((word: string, index: number) => {
-          // Check if the word is in all caps, longer than 1 character, not a common acronym, and not a number
-          const isAllCaps = 
-            word === word.toUpperCase() && 
-            word.length > 1 && 
-            !COMMON_ACRONYMS.includes(word) &&
-            !/^\d+$/.test(word); // Exclude numbers
-          
-          return (
-            <Typography
-              key={index}
-              variant="h6"
-              color={isAllCaps ? categoryColor : theme.colors.Text.Primary}
-            >
-              {word}{index < words.length - 1 ? ' ' : ''}
-            </Typography>
-          );
-        })}
-      </Typography>
-    );
-  };
-
   return (
     <Card id={id} onPress={onPress} style={styles.container}>
       <View style={styles.contentContainer}>
@@ -172,7 +108,13 @@ const CardHorizontal = ({
             )}
           </View>
 
-          {renderTitleWithColoredCaps()}
+          {renderColoredText({
+            text: mainTitle,
+            category: categoryText,
+            theme,
+            typographyVariant: 'h6',
+            containerStyle: styles.title
+          })}
         </View>
       </View>
 
