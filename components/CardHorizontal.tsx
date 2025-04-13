@@ -8,6 +8,7 @@ import { Feather } from '@expo/vector-icons';
 import LazyImage from './LazyImage';
 import { createCardHorizontalStyles } from './styles/CardHorizontal.styles';
 import { getCategoryColor } from '../utils/categoryColors';
+import Flag from './Flag';
 
 interface CardHorizontalProps {
   id?: number | string;
@@ -162,14 +163,22 @@ const CardHorizontal = ({
         {/* Text Content */}
         <View style={styles.textContent}>
           <View style={styles.flagsContainer}>
+            {flag && COMMON_FLAGS.includes(flag.toUpperCase()) && (
+              <Flag
+                text={flag}
+                variant="minimal"
+                color={flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
+                       flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
+                       theme.colors.Error.Resting}
+                style={{ marginRight: 8 }}
+              />
+            )}
             {categoryText && (
-              <Typography
-                variant="overline"
-                color={categoryColor}
-                style={styles.categoryText}
-              >
-                {categoryText.toUpperCase()}
-              </Typography>
+              <Flag
+                text={categoryText}
+                variant="minimal"
+                category={categoryText}
+              />
             )}
           </View>
 

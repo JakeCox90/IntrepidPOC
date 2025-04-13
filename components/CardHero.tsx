@@ -123,7 +123,16 @@ const CardHero = ({
 
       <View style={styles.heroContent}>
         <View style={styles.flagContainer}>
-          {isCommonFlag && <Flag text={flag} style={styles.flag} variant="filled" />}
+          {isCommonFlag && (
+            <Flag 
+              text={flag} 
+              style={styles.flag} 
+              variant="minimal"
+              color={flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
+                     flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
+                     theme.colors.Error.Resting}
+            />
+          )}
           {category && <Flag text={category} category={category} variant="minimal" />}
         </View>
 

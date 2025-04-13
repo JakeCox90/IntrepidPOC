@@ -59,7 +59,14 @@ const ArticleHeader = ({
       {/* Tags */}
       <View style={[baseStyles.tagsContainer, themedStyles.tagsContainer]}>
         {flag && COMMON_FLAGS.includes(flag.toUpperCase()) && (
-          <Flag text={flag} style={baseStyles.flag} variant="filled" />
+          <Flag 
+            text={flag} 
+            style={baseStyles.flag} 
+            variant="minimal"
+            color={flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
+                   flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
+                   theme.colors.Error.Resting}
+          />
         )}
         {category && (
           <Flag

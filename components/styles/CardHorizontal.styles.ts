@@ -46,6 +46,8 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
 
     // Group: Text and content styles
     flagsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: 4,
     },
     footer: {

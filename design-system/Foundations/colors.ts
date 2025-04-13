@@ -6,8 +6,8 @@ export const colors = {
   Primary: {
     Resting: palette.red[60],
     Disabled: palette.grey[30],
-    Pressed: palette.blue[80],
-    Selected: palette.blue[100],
+    Pressed: palette.red[80],
+    Selected: palette.red[100],
   },
   Secondary: {
     Resting: palette.grey[30],
@@ -55,6 +55,19 @@ export const colors = {
     Skeleton02: palette.blackTint[30],
     Error: palette.red[40],
   },
+
+  Status: {
+    // Flag status colours
+    Breaking: palette.red[60],
+    Exclusive: palette.blackTint[100],
+    Updated: palette.blackTint[100],
+    New: palette.blackTint[100],
+    Live: palette.blackTint[100],
+    Outrage: palette.blackTint[100],
+    Sponsored: palette.blackTint[100],
+    
+  },
+
   // Updated section colors to match The Sun website exactly
   Section: {
     // Main sections

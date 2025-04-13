@@ -62,6 +62,10 @@ export type ThemeType = {
       Pressed: string;
       Disabled: string;
     };
+    Status: {
+      Breaking: string;
+      Exclusive: string;
+    };
     Border: {
       Primary: string;
       Secondary: string;
@@ -195,6 +199,8 @@ const lightTheme: ThemeType = {
       Skeleton02: '#EBEBEB',
       Error: colors.Border.Error,
     },
+    Section: colors.Section,
+    Status: colors.Status,
   },
   typography: {
     fontFamily: {
@@ -243,6 +249,8 @@ const darkTheme: ThemeType = {
       Skeleton02: '#333333',
       Error: colors.Border.Error,
     },
+    Section: colors.Section,
+    Status: colors.Status,
   },
   isDark: true,
 };
