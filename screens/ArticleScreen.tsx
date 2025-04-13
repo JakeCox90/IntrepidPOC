@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
@@ -19,6 +19,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Share } from 'react-native';
 import { getArticleById } from '../services/mockArticleService';
 import { Article } from '../types/article';
+import { createStyles } from './styles/ArticleScreen.styles';
 
 // Cache key prefix for articles
 const ARTICLE_CACHE_PREFIX = 'article_';
@@ -49,6 +50,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   const theme = useTheme();
   const { articleId, article: routeArticle } = route.params || {};
   const accordionStyles = createAccordionStyles(theme);
+  const styles = createStyles(theme);
 
   // Use the useContentCache hook to manage article data
   const { data: article, loading, error, setData } = useContentCache<Article>(
@@ -178,7 +180,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   if (showSkeleton) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color={theme?.colors?.Primary?.Resting || '#E03A3A'} />
+        <ActivityIndicator size="large" color={theme.colors.Primary.Resting} />
       </View>
     );
   }
@@ -198,88 +200,85 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
           {/* Top Navigation */}
           <TopNav
-            title=""
+            title="Article"
             showBackButton
             onBackPress={() => navigation.goBack()}
-            backgroundColor="#F5F5F5"
+            rightButtons={[
+              {
+                label: "Share",
+                onPress: () => handleShare(article.title)
+              }
+            ]}
           />
         </>
       )}
 
-      <ScrollView
-        style={[styles.scrollView, { backgroundColor: theme.colors.Surface.Secondary }]}
-        contentContainerStyle={[
-          styles.scrollViewContent,
-          { paddingHorizontal: theme.space['40'] },
-        ]}
-      >
-        {/* Article Header Component */}
-        <ArticleHeader
-          title={article.title}
-          subtitle={subtitle}
-          category={article.category}
-          flag={article.flag}
-          readTime={article.readTime || '3 min read'}
-          author={article.author}
-          timestamp={article.timestamp}
-          imageUrl={article.imageUrl}
-        />
-
-        {/* Audio Player Component */}
-        <View style={styles.audioPlayerContainer}>
-          <AudioPlayer
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
+        {/* Content Container */}
+        <View style={styles.contentContainer}>
+          {/* Article Header */}
+          <ArticleHeader
             title={article.title}
+            subtitle={subtitle}
+            imageUrl={article.imageUrl}
             category={article.category}
-            duration={321} // Default duration in seconds (5m 21s)
-            onPlay={() => console.log('Audio started playing')}
-            onPause={() => console.log('Audio paused')}
-            onComplete={() => console.log('Audio playback completed')}
+            readTime={article.readTime}
+            flag={article.flag}
+            timestamp={article.timestamp}
           />
-        </View>
 
-        {/* Accordion Component */}
-        <View style={styles.accordionContainer}>
-          <Accordion title="Key Points" initialExpanded={true}>
-            <View style={accordionStyles.keyPointsContainer}>
-              <Typography
-                variant="body-02"
-                color={theme.colors.Text.Secondary}
-                style={accordionStyles.keyPoint}
-              >
-                • {article.title.split(' ').slice(0, 5).join(' ')}...
-              </Typography>
-              <Typography
-                variant="body-02"
-                color={theme.colors.Text.Secondary}
-                style={accordionStyles.keyPoint}
-              >
-                • {contentParagraphs[0].split('.')[0]}.
-              </Typography>
-              {contentParagraphs.length > 1 && (
+          {/* Audio Player */}
+          <View style={styles.audioPlayerContainer}>
+            <AudioPlayer
+              title={article.title}
+              category={article.category}
+              duration={120}
+              onPlay={() => console.log('Play audio')}
+              onPause={() => console.log('Pause audio')}
+              onComplete={() => console.log('Audio completed')}
+            />
+          </View>
+
+          {/* Key Points Accordion */}
+          <View style={styles.accordionContainer}>
+            <Accordion
+              title="Key Points"
+              initialExpanded={true}
+            >
+              <View style={accordionStyles.keyPointsContainer}>
                 <Typography
                   variant="body-02"
                   color={theme.colors.Text.Secondary}
                   style={accordionStyles.keyPoint}
                 >
-                  • {contentParagraphs[1].split('.')[0]}.
+                  • {contentParagraphs[0].split('.')[0]}.
                 </Typography>
-              )}
-            </View>
-          </Accordion>
-        </View>
+                {contentParagraphs.length > 1 && (
+                  <Typography
+                    variant="body-02"
+                    color={theme.colors.Text.Secondary}
+                    style={accordionStyles.keyPoint}
+                  >
+                    • {contentParagraphs[1].split('.')[0]}.
+                  </Typography>
+                )}
+              </View>
+            </Accordion>
+          </View>
 
-        {/* Article content */}
-        <View style={styles.articleContent}>
-          {remainingParagraphs.map((paragraph, index) => (
-            <Typography
-              key={index}
-              variant="body-01"
-              color={theme.colors.Text.Secondary}
-              style={styles.paragraph}
-            >
-              {paragraph}
-            </Typography>
-          ))}
+          {/* Article content */}
+          <View style={styles.articleContent}>
+            {remainingParagraphs.map((paragraph, index) => (
+              <Typography
+                key={index}
+                variant="body-01"
+                color={theme.colors.Text.Secondary}
+                style={styles.paragraph}
+              >
+                {paragraph}
+              </Typography>
+            ))}
+          </View>
         </View>
 
         {/* Comments Section using Comments component */}
@@ -299,47 +298,5 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  accordionContainer: {
-    marginBottom: 24,
-  },
-  articleContent: {
-    marginBottom: 24,
-  },
-  audioPlayerContainer: {
-    marginBottom: 16,
-    marginTop: 16,
-  },
-  backToHomeButton: {
-    borderRadius: 8,
-    marginTop: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  bottomSpacing: {
-    height: 20,
-  },
-  container: {
-    backgroundColor: '#FFFFFF',
-    flex: 1,
-  },
-  errorContainer: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  paragraph: {
-    marginBottom: 16,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    paddingBottom: 16,
-    paddingTop: 16,
-  },
-});
 
 export default ArticleScreen;
