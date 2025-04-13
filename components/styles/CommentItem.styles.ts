@@ -3,8 +3,31 @@ import { ThemeType } from '../../theme/ThemeProvider';
 
 export const createCommentItemStyles = (theme: ThemeType) =>
   StyleSheet.create({
-    authorName: {
-      marginRight: theme.space['20'],
+    // Container styles
+    commentItem: {
+      backgroundColor: theme.colors.Surface.Primary,
+      borderColor: theme.colors.Border.Primary,
+      borderWidth: theme.borderWidth['10'],
+      borderRadius: theme.radius['radius-default'],
+      marginBottom: theme.space['40'],
+      overflow: 'hidden',
+    },
+
+    // Header section
+    commentHeader: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      padding: theme.space['40'],
+    },
+
+    // Author section
+    commentAuthorContainer: {
+      flexDirection: 'row',
+      flex: 1,
+    },
+    avatarContainer: {
+      marginRight: theme.space['30'],
     },
     avatar: {
       backgroundColor: theme.colors.Surface.Secondary,
@@ -12,70 +35,47 @@ export const createCommentItemStyles = (theme: ThemeType) =>
       width: theme.space['80'],
       borderRadius: theme.radius['radius-default'],
     },
-    avatarContainer: {
-      marginRight: theme.space['30'],
-    },
-    bulletPoint: {
-      marginHorizontal: theme.space['20'],
-    },
-    commentAuthorContainer: {
+    nameTimeContainer: {
       flexDirection: 'row',
-      flex: 1,
+      alignItems: 'center',
+      marginBottom: theme.space['10'],
     },
+    authorName: {
+      marginRight: theme.space['20'],
+    },
+
+    // Content section
     commentContent: {
       flex: 1,
-    },
-    commentFooter: {
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    commentHeader: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingHorizontal: theme.space['40'],
-      paddingTop: theme.space['40'],
-      paddingBottom: theme.space['40'],
-    },
-    commentItem: {
-      marginBottom: theme.space['40'],
-      overflow: 'hidden',
-      backgroundColor: theme.colors.Surface.Primary,
-      borderColor: theme.colors.Border.Primary,
-      borderWidth: theme.borderWidth['10'],
-      borderRadius: theme.radius['radius-default'],
     },
     commentText: {
       marginBottom: theme.space['20'],
     },
-    commentTime: {},
-    divider: {
-      width: '100%',
-      borderTopWidth: theme.borderWidth['10'],
-      borderTopColor: theme.colors.Border.Primary,
+
+    // Interaction buttons
+    replyButton: {
+      marginTop: theme.space['20'],
     },
     likeButton: {
       padding: theme.space['10'],
       marginLeft: theme.space['20'],
     },
     likeContainer: {
-      alignItems: 'center',
       flexDirection: 'row',
+      alignItems: 'center',
     },
     likeCount: {
       marginLeft: theme.space['10'],
     },
-    nameTimeContainer: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      marginBottom: theme.space['10'],
-    },
-    replyButton: {
-      marginTop: theme.space['20'],
-    },
-    replyText: {},
+
+    // Replies section
     repliesContainer: {
       marginTop: 0,
+    },
+    divider: {
+      width: '100%',
+      borderTopWidth: theme.borderWidth['10'],
+      borderTopColor: theme.colors.Border.Primary,
     },
     viewRepliesContainer: {
       padding: theme.space['40'],

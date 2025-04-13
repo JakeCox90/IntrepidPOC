@@ -3,10 +3,13 @@ import { ThemeType } from '../../theme/ThemeProvider';
 
 export const createCommentsStyles = (theme: ThemeType) =>
   StyleSheet.create({
+    // Container styles
     container: {
       flex: 1,
       backgroundColor: theme.colors.Surface.Primary,
     },
+
+    // Comments section
     commentsSection: {
       flex: 1,
       backgroundColor: theme.colors.Surface.Primary,
@@ -14,6 +17,8 @@ export const createCommentsStyles = (theme: ThemeType) =>
     commentSectionBackground: {
       backgroundColor: theme.colors.Surface.Secondary,
     },
+
+    // Header section
     commentsSectionHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -28,9 +33,13 @@ export const createCommentsStyles = (theme: ThemeType) =>
     headerAction: {
       marginLeft: theme.space['20'],
     },
+
+    // List styles
     listContent: {
       padding: theme.space['40'],
     },
+
+    // Comment input section
     addCommentContainer: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -42,16 +51,11 @@ export const createCommentsStyles = (theme: ThemeType) =>
       flex: 1,
       marginRight: theme.space['20'],
       padding: theme.space['10'],
-      borderRadius: 8,
+      borderRadius: theme.radius['radius-default'],
       backgroundColor: theme.colors.Surface.Secondary,
       color: theme.colors.Text.Primary,
     },
     submitButton: {
       padding: theme.space['10'],
-    },
-    commentItem: {
-      marginBottom: theme.space['20'],
-      padding: theme.space['20'],
-      borderRadius: 8,
     },
   }); 
