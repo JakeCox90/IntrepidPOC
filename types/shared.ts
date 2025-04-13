@@ -68,4 +68,23 @@ export interface NavigationType {
   navigate: (name: string, params?: object) => void;
   reset: (state: { index: number; routes: { name: string; params?: object }[] }) => void;
   emit?: (event: string, ...args: unknown[]) => void;
+}
+
+// Header Types
+export interface HeaderButton {
+  label: string;
+  onPress: () => void;
+}
+
+export interface HeaderProps {
+  title: string;
+  showBackButton?: boolean;
+  onBackPress?: () => void;
+  rightButtons?: HeaderButton[];
+  backgroundColor?: string;
+  textColor?: string;
+  flag?: Pick<FlagProps, 'text' | 'category'> | null;
+  titleStyle?: 'default' | 'large';
+  showProfileButton?: boolean;
+  onProfilePress?: () => void;
 } 

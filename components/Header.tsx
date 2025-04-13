@@ -5,29 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Flag from './Flag';
 import Typography from './Typography';
-
-interface HeaderButton {
-  label: string;
-  onPress: () => void;
-}
-
-interface FlagProps {
-  text: string;
-  category?: string;
-}
-
-interface HeaderProps {
-  title: string;
-  showBackButton?: boolean;
-  onBackPress?: () => void;
-  rightButtons?: HeaderButton[];
-  backgroundColor?: string;
-  textColor?: string;
-  flag?: FlagProps | null;
-  titleStyle?: 'default' | 'large';
-  showProfileButton?: boolean;
-  onProfilePress?: () => void;
-}
+import { HeaderProps } from '../types/shared';
 
 const Header = ({
   title,
