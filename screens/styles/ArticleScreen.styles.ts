@@ -4,9 +4,10 @@ import type { ThemeType } from '../../theme/ThemeProvider';
 export const createStyles = (theme: ThemeType) => {
   return StyleSheet.create({
     accordionContainer: {
-      marginBottom: theme.space['30'],
+      marginBottom: theme.space['20'],
     },
     articleContent: {
+      marginTop: theme.space['20'],
     },
     audioPlayerContainer: {
       marginBottom: theme.space['20'],
@@ -18,6 +19,7 @@ export const createStyles = (theme: ThemeType) => {
       paddingHorizontal: theme.space['30'],
     },
     bottomSpacing: {
+      height: theme.space['20'],
     },
     contentContainer: {
       paddingHorizontal: theme.space['40'],
@@ -34,6 +36,7 @@ export const createStyles = (theme: ThemeType) => {
       padding: theme.space['30'],
     },
     paragraph: {
+      marginBottom: theme.space['20'],
     },
     scrollView: {
       flex: 1,

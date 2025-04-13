@@ -183,7 +183,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
           {/* Top Navigation */}
           <TopNav
-            title="Article"
+            title=""
             showBackButton
             onBackPress={() => navigation.goBack()}
             rightButtons={[
@@ -229,38 +229,38 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
               initialExpanded={true}
             >
               <View style={accordionStyles.keyPointsContainer}>
-                <Typography
-                  variant="body-02"
-                  color={theme.colors.Text.Secondary}
-                  style={accordionStyles.keyPoint}
-                >
-                  • {article.content.split('.')[0]}.
-                </Typography>
-                {article.content.split('.').length > 1 && (
-                  <Typography
-                    variant="body-02"
-                    color={theme.colors.Text.Secondary}
-                    style={accordionStyles.keyPoint}
-                  >
-                    • {article.content.split('.')[1]}.
-                  </Typography>
-                )}
+                {article.content.split('.')
+                  .filter(sentence => sentence.trim().length > 0)
+                  .slice(0, 2)
+                  .map((sentence, index) => (
+                    <Typography
+                      key={index}
+                      variant="body-02"
+                      color={theme.colors.Text.Secondary}
+                      style={accordionStyles.keyPoint}
+                    >
+                      • {sentence.trim()}.
+                    </Typography>
+                  ))}
               </View>
             </Accordion>
           </View>
 
           {/* Article content */}
           <View style={styles.articleContent}>
-            {article.content.split('.').slice(2).map((paragraph, index) => (
-              <Typography
-                key={index}
-                variant="body-01"
-                color={theme.colors.Text.Secondary}
-                style={styles.paragraph}
-              >
-                {paragraph}.
-              </Typography>
-            ))}
+            {article.content.split('.')
+              .filter(sentence => sentence.trim().length > 0)
+              .slice(2)
+              .map((paragraph, index) => (
+                <Typography
+                  key={index}
+                  variant="body-01"
+                  color={theme.colors.Text.Secondary}
+                  style={styles.paragraph}
+                >
+                  {paragraph.trim()}.
+                </Typography>
+              ))}
           </View>
         </View>
 
