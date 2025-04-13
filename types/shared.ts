@@ -1,27 +1,6 @@
 import { ViewStyle, TextStyle } from 'react-native';
 import { Article } from './article';
 
-// Navigation Types
-export interface NavigationParams {
-  articleId?: string;
-  article?: Article;
-  category?: {
-    id: string | number;
-    name: string;
-  };
-  source?: string;
-}
-
-// Comment Types
-export interface Comment {
-  id: string | number;
-  author: string;
-  text: string;
-  time: string;
-  likes: number;
-  replies?: Comment[];
-}
-
 // Flag Types
 export interface FlagProps {
   text: string;
@@ -34,12 +13,6 @@ export interface FlagProps {
 }
 
 export type FlagVariant = 'minimal' | 'filled';
-
-// Cache Types
-export interface CacheItem<T> {
-  data: T;
-  timestamp: number;
-}
 
 // Tab Types
 export interface TabState {
@@ -63,13 +36,6 @@ export interface Bundle {
   imageUrl: string;
 }
 
-// Navigation Types
-export interface NavigationType {
-  navigate: (name: string, params?: object) => void;
-  reset: (state: { index: number; routes: { name: string; params?: object }[] }) => void;
-  emit?: (event: string, ...args: unknown[]) => void;
-}
-
 // Header Types
 export interface HeaderButton {
   label: string;
@@ -87,4 +53,8 @@ export interface HeaderProps {
   titleStyle?: 'default' | 'large';
   showProfileButton?: boolean;
   onProfilePress?: () => void;
-} 
+}
+
+// Re-export types from other files
+export { Comment, CommentProps, CommentsProps } from './comments';
+export { CacheItem, CacheOptions, CacheService } from './cache'; 

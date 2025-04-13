@@ -5,13 +5,7 @@ import { Text, type TextStyle, type TextProps } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { type TypographyVariant } from '../design-system/typography';
 import { typography } from '../design-system/Foundations/typography';
-
-interface TypographyProps extends TextProps {
-  variant: TypographyVariant;
-  color?: string;
-  style?: TextStyle | TextStyle[];
-  children: React.ReactNode;
-}
+import { TypographyProps } from '../types/components';
 
 const Typography = ({ variant, color, style, children, ...props }: TypographyProps) => {
   const theme = useTheme();

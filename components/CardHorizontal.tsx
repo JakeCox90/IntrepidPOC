@@ -9,19 +9,7 @@ import LazyImage from './LazyImage';
 import { createCardHorizontalStyles } from './styles/CardHorizontal.styles';
 import { getCategoryColor } from '../utils/categoryColors';
 import Flag from './Flag';
-
-interface CardHorizontalProps {
-  id?: number | string;
-  title: string;
-  imageUrl: string;
-  category: string;
-  flag?: string;
-  timestamp?: string;
-  readTime?: string;
-  onPress: () => void;
-  onBookmark?: () => void;
-  onShare?: () => void;
-}
+import type { CardHorizontalProps } from '../types/components';
 
 // Common flags used by The Sun
 const COMMON_FLAGS = [
@@ -93,10 +81,10 @@ const CardHorizontal = ({
   // Function to render title with colored all-caps text
   const renderTitleWithColoredCaps = () => {
     // Split the title into words
-    const words = mainTitle.split(' ');
+    const words: string[] = mainTitle.split(' ');
     
     // Check if any word is in all caps, not a common acronym, and not a number
-    const hasAllCaps = words.some(word => 
+    const hasAllCaps = words.some((word: string) => 
       word === word.toUpperCase() && 
       word.length > 1 && 
       !COMMON_ACRONYMS.includes(word) &&
@@ -124,7 +112,7 @@ const CardHorizontal = ({
         style={styles.title}
         numberOfLines={3}
       >
-        {words.map((word, index) => {
+        {words.map((word: string, index: number) => {
           // Check if the word is in all caps, longer than 1 character, not a common acronym, and not a number
           const isAllCaps = 
             word === word.toUpperCase() && 

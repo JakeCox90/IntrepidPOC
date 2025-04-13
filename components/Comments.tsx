@@ -1,316 +1,132 @@
 'use client';
 
-import { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, TextInput, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
-import { Comment } from '../types/shared';
+import { Comment as CommentType, CommentsProps } from '../types';
+import CommentItem from './CommentItem';
+import { validateComments } from '../utils/typeValidation';
+import { createCommentsStyles } from './styles/Comments.styles';
 
-interface CommentsProps {
-  comments: Comment[];
-  totalComments?: number;
-  onShowAllPress?: () => void;
-  onSubmitComment?: (text: string) => void;
-  onLikeComment?: (commentId: string | number, isLiked: boolean) => void;
-  onReplyComment?: (commentId: string | number) => void;
-  onViewReplies?: (commentId: string | number) => void;
-}
-
-const Comments = ({
-  comments: initialComments,
+export const Comments: React.FC<CommentsProps> = ({
+  comments,
   totalComments = 0,
   onShowAllPress,
   onSubmitComment,
   onLikeComment,
   onReplyComment,
   onViewReplies,
-}: CommentsProps) => {
+}) => {
   const theme = useTheme();
-  const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState(initialComments);
-  const [likedComments, setLikedComments] = useState<Record<string | number, boolean>>({});
+  const styles = createCommentsStyles(theme);
+  const [commentText, setCommentText] = React.useState('');
+  const [likedComments, setLikedComments] = React.useState<Record<string | number, boolean>>({});
 
-  const handleLikeComment = (commentId: string | number) => {
-    // Toggle like status
-    const isCurrentlyLiked = likedComments[commentId] || false;
-    const newLikedState = !isCurrentlyLiked;
+  // Validate comments array
+  const validComments = validateComments(comments);
 
-    // Update liked comments state
-    setLikedComments(prev => ({
-      ...prev,
-      [commentId]: newLikedState,
-    }));
-
-    // Update comment likes count
-    setComments(prevComments =>
-      prevComments.map(comment => {
-        if (comment.id === commentId) {
-          return {
-            ...comment,
-            likes: comment.likes + (newLikedState ? 1 : -1),
-          };
-        }
-        return comment;
-      }),
-    );
-
-    // Call the parent handler if provided
-    if (onLikeComment) {
-      onLikeComment(commentId, newLikedState);
+  const handleSubmitComment = () => {
+    if (commentText.trim() && onSubmitComment) {
+      onSubmitComment(commentText.trim());
+      setCommentText('');
     }
   };
 
-  const renderComment = ({ item }: { item: Comment }) => {
-    const isLiked = likedComments[item.id] || false;
-
-    return (
-      <View
-        style={[
-          styles.commentItem,
-          {
-            backgroundColor: theme.colors.Surface.Primary,
-            borderColor: theme.colors.Border.Primary,
-            borderWidth: theme.borderWidth['10'],
-          },
-        ]}
-      >
-        <View style={styles.commentHeader}>
-          <View style={styles.commentAuthorContainer}>
-            <View style={styles.avatarContainer}>
-              {/* Placeholder avatar - in a real app, you would use the user's avatar */}
-              <View style={styles.avatar} />
-            </View>
-            <View>
-              <View style={styles.nameTimeContainer}>
-                <Typography
-                  variant="subtitle-02"
-                  color={theme.colors.Text.Primary}
-                  style={styles.authorName}
-                >
-                  {item.author}
-                </Typography>
-                <Typography
-                  variant="body-02"
-                  color={theme.colors.Text.Secondary}
-                  style={styles.commentTime}
-                >
-                  {item.time}
-                </Typography>
-              </View>
-              <Typography
-                variant="body-02"
-                color={theme.colors.Text.Secondary}
-                style={styles.commentText}
-              >
-                {item.text}
-              </Typography>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.commentFooter}>
-          <TouchableOpacity
-            style={styles.replyButton}
-            onPress={() => onReplyComment && onReplyComment(item.id)}
-          >
-            <Typography
-              variant="body-02"
-              color={theme.colors.Primary.Resting}
-              style={styles.replyText}
-            >
-              Reply
-            </Typography>
-          </TouchableOpacity>
-
-          {item.replies && item.replies.length > 0 && (
-            <View style={styles.viewRepliesContainer}>
-              <Typography
-                variant="body-02"
-                color={theme.colors.Text.Secondary}
-                style={styles.bulletPoint}
-              >
-                •
-              </Typography>
-              <TouchableOpacity onPress={() => onViewReplies && onViewReplies(item.id)}>
-                <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-                  View {item.replies.length} {item.replies.length === 1 ? 'reply' : 'replies'}
-                </Typography>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <View style={styles.likeContainer}>
-            <TouchableOpacity
-              style={styles.likeButton}
-              onPress={() => handleLikeComment(item.id)}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={isLiked ? 'heart' : 'heart-outline'}
-                size={24}
-                color={isLiked ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
-              />
-            </TouchableOpacity>
-            {item.likes > 0 && (
-              <Typography
-                variant="body-02"
-                color={isLiked ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
-                style={styles.likeCount}
-              >
-                {item.likes}
-              </Typography>
-            )}
-          </View>
-        </View>
-      </View>
-    );
+  const handleLikeComment = (commentId: string | number) => {
+    const isCurrentlyLiked = likedComments[commentId] || false;
+    setLikedComments(prev => ({
+      ...prev,
+      [commentId]: !isCurrentlyLiked
+    }));
+    if (onLikeComment) {
+      onLikeComment(commentId, !isCurrentlyLiked);
+    }
   };
 
-  const styles = StyleSheet.create({
-    addCommentContainer: {
-      alignItems: 'center',
-      borderTopColor: theme.colors.Border.Primary,
-      borderTopWidth: 1,
-      flexDirection: 'row',
-      padding: 16,
-    },
-    authorName: {
-      marginRight: 8,
-    },
-    avatar: {
-      backgroundColor: theme.colors.Surface.Secondary,
-      borderRadius: 16,
-      height: 32,
-      width: 32,
-    },
-    avatarContainer: {
-      marginRight: 12,
-    },
-    bulletPoint: {
-      marginHorizontal: 8,
-    },
-    commentAuthorContainer: {
-      flexDirection: 'row',
-      flex: 1,
-    },
-    commentFooter: {
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    commentHeader: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 8,
-    },
-    commentInput: {
-      backgroundColor: theme.colors.Surface.Secondary,
-      borderRadius: 8,
-      color: theme.colors.Text.Primary,
-      flex: 1,
-      fontFamily: theme.typography.fontFamily[theme.typography.variants['input-text'].weight],
-      fontSize: theme.typography.scale[theme.typography.variants['input-text'].scale],
-      lineHeight: theme.typography.lineHeight[theme.typography.variants['input-text'].scale],
-      maxHeight: 120,
-      minHeight: 40,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      textAlign: 'left',
-      textAlignVertical: 'center',
-    },
-    commentItem: {
-      borderRadius: 8,
-      marginBottom: 16,
-      padding: 16,
-    },
-    commentSectionBackground: {
-      backgroundColor: theme.isDark
-        ? theme.colors.Surface.Secondary
-        : theme.colors.Surface.Secondary,
-    },
-    commentText: {
-      marginBottom: 8,
-    },
-    commentTime: {},
-    commentsList: {
-      paddingBottom: 16,
-    },
-    commentsSection: {
-      padding: 16,
-    },
-    commentsSectionHeader: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 16,
-    },
-    likeButton: {
-      padding: 4,
-    },
-    likeContainer: {
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    likeCount: {
-      marginLeft: 4,
-    },
-    nameTimeContainer: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      marginBottom: 4,
-    },
-    replyButton: {
-      marginRight: 8,
-    },
-    replyText: {},
-    viewRepliesContainer: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      flex: 1,
-    },
-  });
+  const handleReplyComment = (commentId: string | number) => {
+    if (onReplyComment) {
+      onReplyComment(commentId);
+    }
+  };
+
+  const handleViewReplies = (commentId: string | number) => {
+    if (onViewReplies) {
+      onViewReplies(commentId);
+    }
+  };
+
+  const renderComment = ({ item: comment }: { item: CommentType }) => (
+    <CommentItem
+      comment={comment}
+      isLiked={likedComments[comment.id] || false}
+      onLike={handleLikeComment}
+      onReply={handleReplyComment}
+      onViewReplies={handleViewReplies}
+    />
+  );
 
   return (
-    <View style={[styles.commentsSection, styles.commentSectionBackground]}>
-      <View style={styles.commentsSectionHeader}>
-        <Typography variant="h5" color={theme.colors.Text.Primary}>
-          Comments
-        </Typography>
-        {totalComments > 0 && (
-          <TouchableOpacity onPress={onShowAllPress}>
-            <Typography variant="button" color={theme.colors.Primary.Resting}>
-              Show all ({totalComments})
+    <View style={styles.container}>
+      <View style={[styles.commentsSection, styles.commentSectionBackground]}>
+        <View style={styles.commentsSectionHeader}>
+          <View style={styles.headerTitle}>
+            <Typography variant="h5" color={theme.colors.Text.Primary}>
+              Comments
             </Typography>
-          </TouchableOpacity>
-        )}
-      </View>
+          </View>
+          {totalComments > 0 && (
+            <TouchableOpacity 
+              style={styles.headerAction}
+              onPress={onShowAllPress}
+            >
+              <Typography variant="button" color={theme.colors.Primary.Resting}>
+                Show all ({totalComments})
+              </Typography>
+            </TouchableOpacity>
+          )}
+        </View>
 
-      {/* Comments list */}
-      <FlatList
-        data={comments}
-        renderItem={renderComment}
-        keyExtractor={item => item.id.toString()}
-        scrollEnabled={false}
-        contentContainerStyle={styles.commentsList}
-      />
-
-      {/* Add comment input */}
-      <View style={[styles.addCommentContainer, { backgroundColor: theme.colors.Surface.Primary }]}>
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Leave a comment"
-          placeholderTextColor={theme.colors.Text.Secondary}
-          value={commentText}
-          onChangeText={setCommentText}
-          multiline
-          onSubmitEditing={() => {
-            if (commentText.trim() && onSubmitComment) {
-              onSubmitComment(commentText.trim());
-              setCommentText('');
-            }
-          }}
+        {/* Comments list */}
+        <FlatList
+          data={validComments}
+          renderItem={renderComment}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          ListFooterComponent={
+            totalComments > comments.length && onShowAllPress ? (
+              <TouchableOpacity onPress={onShowAllPress}>
+                <Typography variant="body-02" color={theme.colors.Primary.Resting}>
+                  Show all {totalComments} comments
+                </Typography>
+              </TouchableOpacity>
+            ) : null
+          }
         />
+
+        {/* Add comment input */}
+        <View style={styles.addCommentContainer}>
+          <TextInput
+            style={styles.input}
+            value={commentText}
+            onChangeText={setCommentText}
+            placeholder="Add a comment..."
+            placeholderTextColor={theme.colors.Text.Secondary}
+            multiline
+          />
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={handleSubmitComment}
+            disabled={!commentText.trim()}
+          >
+            <Ionicons
+              name="send"
+              size={24}
+              color={commentText.trim() ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

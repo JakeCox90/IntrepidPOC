@@ -14,7 +14,7 @@ import { createAccordionStyles } from '../components/styles/Accordion.styles';
 import { debugNavigation } from '../utils/debugUtils';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Article } from '../types/article';
+import { Article, Comment } from '../types';
 import { createStyles } from './styles/ArticleScreen.styles';
 import { useArticle } from '../hooks/useArticle';
 
@@ -63,36 +63,62 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   // Determine if we should show the skeleton
   const showSkeleton = loading && !article;
 
-  // Mock comments data with replies
-  const comments = [
+  // Mock comments data with replies - updated to match new Comment interface
+  const comments: Comment[] = [
     {
       id: 1,
-      author: 'Sharon McDonald',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.',
-      time: '10 mins ago',
+      userId: "user1",
+      author: {
+        id: "user1",
+        name: "Sharon McDonald",
+        avatar: "https://randomuser.me/api/portraits/women/1.jpg"
+      },
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
+      createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // 10 mins ago
+      updatedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
       likes: 1,
       replies: [
         {
           id: 101,
-          author: 'John Smith',
-          text: 'I agree with your point!',
-          time: '5 mins ago',
+          userId: "user2",
+          author: {
+            id: "user2",
+            name: "John Smith",
+            avatar: "https://randomuser.me/api/portraits/men/1.jpg"
+          },
+          text: "I agree with your point!",
+          createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 mins ago
+          updatedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
           likes: 0,
+          parentId: 1
         },
         {
           id: 102,
-          author: 'Jane Doe',
-          text: 'Interesting perspective.',
-          time: '2 mins ago',
+          userId: "user3",
+          author: {
+            id: "user3",
+            name: "Jane Doe",
+            avatar: "https://randomuser.me/api/portraits/women/2.jpg"
+          },
+          text: "Interesting perspective.",
+          createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 mins ago
+          updatedAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
           likes: 0,
+          parentId: 1
         },
       ],
     },
     {
       id: 2,
-      author: 'Sharon McDonald',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.',
-      time: '10 mins ago',
+      userId: "user1",
+      author: {
+        id: "user1",
+        name: "Sharon McDonald",
+        avatar: "https://randomuser.me/api/portraits/women/1.jpg"
+      },
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
+      createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // 10 mins ago
+      updatedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
       likes: 8,
       replies: [],
     },

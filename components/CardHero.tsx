@@ -8,18 +8,7 @@ import Card from './Card';
 import { createCardHeroStyles } from './styles/CardHero.styles';
 import { getCategoryColor } from '../utils/categoryColors';
 import { Feather } from '@expo/vector-icons';
-
-interface CardHeroProps {
-  title: string;
-  subtitle?: string;
-  imageUrl: string;
-  category?: string;
-  flag?: string;
-  readTime?: string;
-  onPress: () => void;
-  onBookmark?: () => void;
-  onShare?: () => void;
-}
+import type { CardHeroProps } from '../types/components';
 
 // Common flags used by The Sun
 const COMMON_FLAGS = [
@@ -67,10 +56,10 @@ const CardHero = ({
   // Function to render title with colored all-caps text
   const renderTitleWithColoredCaps = () => {
     // Split the title into words
-    const words = title.split(' ');
+    const words: string[] = title.split(' ');
     
     // Check if any word is in all caps, not a common acronym, and not a number
-    const hasAllCaps = words.some(word => 
+    const hasAllCaps = words.some((word: string) => 
       word === word.toUpperCase() && 
       word.length > 1 && 
       !COMMON_ACRONYMS.includes(word) &&
@@ -89,7 +78,7 @@ const CardHero = ({
     // If there are all-caps words, render them with the section color
     return (
       <View style={styles.titleContainer}>
-        {words.map((word, index) => {
+        {words.map((word: string, index: number) => {
           // Check if the word is in all caps, longer than 1 character, not a common acronym, and not a number
           const isAllCaps = 
             word === word.toUpperCase() && 

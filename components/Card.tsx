@@ -5,19 +5,7 @@ import { useTheme } from '../theme/ThemeProvider';
 import { Feather } from '@expo/vector-icons';
 import Typography from './Typography';
 import { formatRelativeTime } from '../utils/timeFormat';
-
-export interface CardBaseProps {
-  id?: number | string;
-  onPress?: () => void;
-  onBookmark?: () => void;
-  onShare?: () => void;
-  style?: StyleProp<ViewStyle>;
-  footerStyle?: StyleProp<ViewStyle>;
-  children?: React.ReactNode;
-  readTime?: string;
-  timestamp?: string;
-  renderFooter?: boolean;
-}
+import type { CardBaseProps } from '../types/components';
 
 const Card: React.FC<CardBaseProps> = ({
   id,

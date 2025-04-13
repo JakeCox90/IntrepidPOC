@@ -3,18 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
-
-interface TabsProps {
-  tabs: string[];
-  activeTab: string;
-  onTabPress: (tab: string) => void;
-  variant?: 'primary' | 'secondary';
-  backgroundColor?: string;
-  activeTextColor?: string;
-  inactiveTextColor?: string;
-  textVariant?: 'overline' | 'body-02' | 'subtitle-02';
-  animated?: boolean;
-}
+import { TabsProps } from '../types/components';
 
 const Tabs = ({
   tabs,
@@ -102,6 +91,10 @@ const Tabs = ({
     }
   };
 
+  const getTabTextStyle = (isActive: boolean) => {
+    return isActive ? { fontWeight: '700' as const } : {};
+  };
+
   return (
     <View
       style={[
@@ -145,7 +138,7 @@ const Tabs = ({
             <Typography
               variant={textVariant}
               color={activeTab === tab ? defaultActiveTextColor : defaultInactiveTextColor}
-              style={[styles.tabText, activeTab === tab && styles.activeTabText]}
+              style={[styles.tabText, getTabTextStyle(activeTab === tab)]}
             >
               {tab}
             </Typography>

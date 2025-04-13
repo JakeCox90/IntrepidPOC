@@ -1,13 +1,7 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import { SvgProps } from 'react-native-svg';
-
-interface SvgIconProps extends Omit<SvgProps, 'width' | 'height'> {
-  source: React.FC<SvgProps>;  // More explicit type definition
-  width?: number;
-  height?: number;
-  color?: string;
-}
+import { SvgIconProps } from '../types/components';
 
 const SvgIcon: React.FC<SvgIconProps> = ({ 
   source: SvgComponent, 

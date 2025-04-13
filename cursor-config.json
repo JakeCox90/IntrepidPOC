@@ -15,7 +15,8 @@
       "Always handle errors in async operations. Never assume the happy path.",
       "Avoid business logic or side effects inside UI components.",
       "Optimize performance by avoiding unnecessary re-renders and using tools like FlatList appropriately.",
-      "Do not introduce unoptimized or unnecessary state logic. Use existing patterns where possible."
+      "Do not introduce unoptimized or unnecessary state logic. Use existing patterns where possible.",
+      "Always check if a file exists for something that you are trying to do. Ensure that you are keeping all similar functions consolidated in a single approach and file. Do not have duplicate files doing the same thing to avoid duplication and improve maintenanability"
     ]
   }
   

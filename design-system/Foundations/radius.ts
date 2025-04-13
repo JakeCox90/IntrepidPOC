@@ -9,7 +9,7 @@ export const radius = {
   'radius-45': 20,
   'radius-50': 24,
   'radius-60': 32,
-  'radius-default': 8,
+  'radius-default': 12,
   'radius-full': 9999,
   'radius-pill': 9999,
 };

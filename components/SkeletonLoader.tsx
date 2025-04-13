@@ -8,23 +8,8 @@ import SkeletonArticle from './SkeletonArticle';
 import Stack from './Stack';
 import Typography from './Typography';
 import { useTheme } from '../theme/ThemeProvider';
+import { SkeletonLoaderProps, SkeletonType } from '../types/components';
 
-type SkeletonType =
-  | 'today'
-  | 'allNews'
-  | 'search'
-  | 'article'
-  | 'catchUp'
-  | 'hero'
-  | 'horizontal'
-  | 'forYou';
-
-interface SkeletonLoaderProps {
-  type: SkeletonType;
-  count?: number;
-  showTitle?: boolean;
-  title?: string;
-}
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   type,
   count = 3,

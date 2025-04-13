@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { Share } from 'react-native';
 import { useContentCache } from './useContentCache';
 import { getArticleById } from '../services/mockArticleService';
-import { Article } from '../types/article';
+import { Article, Comment } from '../types';
+import { isValidArticle, isValidComment, validateComments } from '../utils/typeValidation';
 
 // Cache key prefix for articles
 const ARTICLE_CACHE_PREFIX = 'article_';
@@ -26,7 +27,7 @@ interface UseArticleReturn {
 
 export const useArticle = ({ articleId, initialArticle }: UseArticleProps): UseArticleReturn => {
   // Use the useContentCache hook to manage article data
-  const { data: article, loading, error, setData } = useContentCache<Article>(
+  const { data: rawArticle, loading, error, setData } = useContentCache<Article>(
     `${ARTICLE_CACHE_PREFIX}${articleId}`,
     async () => {
       // If we have the article in initial data, use that instead of fetching
@@ -42,6 +43,9 @@ export const useArticle = ({ articleId, initialArticle }: UseArticleProps): UseA
     },
     initialArticle // Use the article passed as initial data if available
   );
+
+  // Validate the article data
+  const article = rawArticle && isValidArticle(rawArticle) ? rawArticle : null;
 
   // Share functionality
   const handleShare = useCallback(async () => {

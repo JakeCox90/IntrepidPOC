@@ -3,13 +3,7 @@
 import React from 'react';
 import { View, StyleSheet, Animated, Easing, StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
-
-interface SkeletonProps {
-  width?: number | string;
-  height?: number | string;
-  borderRadius?: number;
-  style?: StyleProp<ViewStyle>;
-}
+import { SkeletonProps } from '../types/components';
 
 const Skeleton: React.FC<SkeletonProps> = ({
   width = '100%',
