@@ -1,15 +1,17 @@
 'use client';
 
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import { CommentProps } from '../types';
 import { formatRelativeTime } from '../utils/timeFormat';
 import { useState } from 'react';
+import { createCommentItemStyles } from './styles/CommentItem.styles';
 
 const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onViewReplies }: CommentProps) => {
   const theme = useTheme();
+  const styles = createCommentItemStyles(theme);
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likesCount, setLikesCount] = useState(comment.likes);
 
@@ -97,7 +99,7 @@ const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onView
           <View style={styles.likeContainer}>
             <Ionicons
               name={isLiked ? 'heart' : 'heart-outline'}
-              size={20}
+              size={theme.space['40']}
               color={isLiked ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
             />
             {likesCount > 0 && (
@@ -115,15 +117,13 @@ const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onView
 
       {/* View replies button */}
       {hasReplies && onViewReplies && (
-        <View>
+        <View style={styles.repliesContainer}>
           <View 
             style={[
               styles.divider, 
               { 
                 borderTopWidth: theme.borderWidth['10'],
                 borderTopColor: theme.colors.Border.Primary,
-                marginTop: theme.space['20'],
-                marginBottom: theme.space['20']
               }
             ]} 
           />
@@ -140,73 +140,5 @@ const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onView
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  authorName: {
-    marginRight: 8,
-  },
-  avatar: {
-    backgroundColor: '#E5E5E5',
-    height: 32,
-    width: 32,
-  },
-  avatarContainer: {
-    marginRight: 12,
-  },
-  bulletPoint: {
-    marginHorizontal: 8,
-  },
-  commentAuthorContainer: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  commentContent: {
-    flex: 1,
-  },
-  commentFooter: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  commentHeader: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 40,
-  },
-  commentItem: {
-    marginBottom: 16,
-    padding: 16,
-  },
-  commentText: {
-    marginBottom: 8,
-  },
-  commentTime: {},
-  divider: {
-    width: '100%',
-  },
-  likeButton: {
-    padding: 4,
-    marginLeft: 8,
-  },
-  likeContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  likeCount: {
-    marginLeft: 4,
-  },
-  nameTimeContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginBottom: 4,
-  },
-  replyButton: {
-    marginTop: 8,
-  },
-  replyText: {},
-  viewRepliesContainer: {
-    marginTop: 8,
-  },
-});
 
 export default CommentItem; 
