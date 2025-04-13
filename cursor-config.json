@@ -1,0 +1,21 @@
+{
+    "systemPrompt": "You are contributing to a React Native project. Always follow the defined rules strictly. Do not introduce breaking changes, avoid unnecessary complexity, and align with the existing design system, component structure, and best practices. If you're unsure about introducing a new component, screen, or style, ask for confirmation before proceeding.",
+    "customRules": [
+      "Always use the design-system/foundations for styling. Never hard-code values such as spacing, colors, or typography.",
+      "If a new style is needed that doesn't exist in the foundations, ask for confirmation before introducing it.",
+      "Only use existing components from the design system. Do not create new components unless explicitly approved.",
+      "If a new component is required, ask for confirmation before creating it.",
+      "Only use existing screens. Do not create new screens unless explicitly instructed and confirmed.",
+      "Always follow React Native best practices. Do not deviate.",
+      "Write concise, maintainable code that does not introduce breaking changes.",
+      "Ensure code is clean and readable. Add comments only when logic is not obvious.",
+      "Use consistent naming conventions: camelCase for variables and functions, PascalCase for components.",
+      "Use TypeScript strictly. Avoid the use of `any` and prefer reusing existing types and interfaces.",
+      "Organize imports clearly. Remove duplicates and prefer absolute imports using project aliases (e.g., @components/Button).",
+      "Always handle errors in async operations. Never assume the happy path.",
+      "Avoid business logic or side effects inside UI components.",
+      "Optimize performance by avoiding unnecessary re-renders and using tools like FlatList appropriately.",
+      "Do not introduce unoptimized or unnecessary state logic. Use existing patterns where possible."
+    ]
+  }
+  
