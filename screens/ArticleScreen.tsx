@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { View, ScrollView, StatusBar, ActivityIndicator } from 'react-native';
+import { View, FlatList, StatusBar, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from '../components/Typography';
@@ -196,88 +196,95 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
         </>
       )}
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
-        {/* Content Container */}
-        <View style={styles.contentContainer}>
-          {/* Article Header */}
-          <ArticleHeader
-            title={article.title}
-            subtitle={article.summary}
-            imageUrl={article.imageUrl}
-            category={article.category}
-            readTime={article.readTime}
-            flag={article.flag}
-            timestamp={article.timestamp}
-          />
+      <FlatList
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+        data={[{ key: 'content' }]}
+        renderItem={() => (
+          <>
+            {/* Content Container */}
+            <View style={styles.contentContainer}>
+              {/* Article Header */}
+              <ArticleHeader
+                title={article.title}
+                subtitle={article.summary}
+                imageUrl={article.imageUrl}
+                category={article.category}
+                readTime={article.readTime}
+                flag={article.flag}
+                timestamp={article.timestamp}
+              />
 
-          {/* Audio Player */}
-          <View style={styles.audioPlayerContainer}>
-            <AudioPlayer
-              title={article.title}
-              category={article.category}
-              duration={120}
-              onPlay={() => console.log('Play audio')}
-              onPause={() => console.log('Pause audio')}
-              onComplete={() => console.log('Audio completed')}
-            />
-          </View>
+              {/* Audio Player */}
+              <View style={styles.audioPlayerContainer}>
+                <AudioPlayer
+                  title={article.title}
+                  category={article.category}
+                  duration={120}
+                  onPlay={() => console.log('Play audio')}
+                  onPause={() => console.log('Pause audio')}
+                  onComplete={() => console.log('Audio completed')}
+                />
+              </View>
 
-          {/* Key Points Accordion */}
-          <View style={styles.accordionContainer}>
-            <Accordion
-              title="Key Points"
-              initialExpanded={true}
-            >
-              <View style={accordionStyles.keyPointsContainer}>
+              {/* Key Points Accordion */}
+              <View style={styles.accordionContainer}>
+                <Accordion
+                  title="Key Points"
+                  initialExpanded={true}
+                >
+                  <View style={accordionStyles.keyPointsContainer}>
+                    {article.content.split('.')
+                      .filter(sentence => sentence.trim().length > 0)
+                      .slice(0, 2)
+                      .map((sentence, index) => (
+                        <Typography
+                          key={index}
+                          variant="body-02"
+                          color={theme.colors.Text.Secondary}
+                          style={accordionStyles.keyPoint}
+                        >
+                          • {sentence.trim()}.
+                        </Typography>
+                      ))}
+                  </View>
+                </Accordion>
+              </View>
+
+              {/* Article content */}
+              <View style={styles.articleContent}>
                 {article.content.split('.')
                   .filter(sentence => sentence.trim().length > 0)
-                  .slice(0, 2)
-                  .map((sentence, index) => (
+                  .slice(2)
+                  .map((paragraph, index) => (
                     <Typography
                       key={index}
-                      variant="body-02"
+                      variant="body-01"
                       color={theme.colors.Text.Secondary}
-                      style={accordionStyles.keyPoint}
+                      style={styles.paragraph}
                     >
-                      • {sentence.trim()}.
+                      {paragraph.trim()}.
                     </Typography>
                   ))}
               </View>
-            </Accordion>
-          </View>
+            </View>
 
-          {/* Article content */}
-          <View style={styles.articleContent}>
-            {article.content.split('.')
-              .filter(sentence => sentence.trim().length > 0)
-              .slice(2)
-              .map((paragraph, index) => (
-                <Typography
-                  key={index}
-                  variant="body-01"
-                  color={theme.colors.Text.Secondary}
-                  style={styles.paragraph}
-                >
-                  {paragraph.trim()}.
-                </Typography>
-              ))}
-          </View>
-        </View>
+            {/* Comments Section using Comments component */}
+            <Comments
+              comments={comments}
+              totalComments={8}
+              onShowAllPress={handleShowAllComments}
+              onSubmitComment={handleSubmitComment}
+              onLikeComment={handleLikeComment}
+              onReplyComment={handleReplyComment}
+              onViewReplies={handleViewReplies}
+            />
 
-        {/* Comments Section using Comments component */}
-        <Comments
-          comments={comments}
-          totalComments={8}
-          onShowAllPress={handleShowAllComments}
-          onSubmitComment={handleSubmitComment}
-          onLikeComment={handleLikeComment}
-          onReplyComment={handleReplyComment}
-          onViewReplies={handleViewReplies}
-        />
-
-        {/* Bottom spacing */}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
+            {/* Bottom spacing */}
+            <View style={styles.bottomSpacing} />
+          </>
+        )}
+      />
     </View>
   );
 };
