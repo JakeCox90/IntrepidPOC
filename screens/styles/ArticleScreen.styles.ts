@@ -23,7 +23,6 @@ export const createStyles = (theme: ThemeType) => {
       paddingBottom: theme.space['20'],
     },
     contentContainer: {
-      paddingHorizontal: theme.space['40'],
       paddingVertical: theme.space['40'],
     },
     container: {
