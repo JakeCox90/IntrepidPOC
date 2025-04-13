@@ -22,6 +22,7 @@
       "Ensure that the hardcoded values align to the values defined in any spacing e.g. 16px hardcoded = Space 40 = Sizing 40 (16px)",
       "Ensure that all padding and margin values use space tokens only",
       "Ensure that all size values e.g. icon sizing use the sizing primitive tokens",
-      "When adding a new function or change, review the components that you've affected and ensure that you are cleaning up any redundant code that is no longer needed due to the changes"
+      "When adding a new function or change, review the components that you've affected and ensure that you are cleaning up any redundant code that is no longer needed due to the changes",
+      "When adjusting the values of an SVG, NEVER change the icon shape from its original shape"
     ]
   }

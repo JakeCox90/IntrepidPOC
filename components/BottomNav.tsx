@@ -58,36 +58,53 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
 
   // Function to render the appropriate icon based on tab name
   const renderIcon = (tabName: ValidTabName, isActive: boolean) => {
+    const iconColor = isActive ? theme.colors.Primary.Resting : theme.colors.Text.Secondary;
+    
     switch (tabName) {
       case 'Today':
-        return isActive ? (
-          <SvgIcon source={TodaySelected} width={24} height={24} color={theme.colors.Primary.Resting} />
-        ) : (
-          <SvgIcon source={TodayResting} width={24} height={24} />
+        return (
+          <SvgIcon 
+            source={isActive ? TodaySelected : TodayResting} 
+            width={24} 
+            height={24} 
+            color={iconColor} 
+          />
         );
       case 'ForYou':
-        return isActive ? (
-          <SvgIcon source={ForYouSelected} width={24} height={24} color={theme.colors.Primary.Resting} />
-        ) : (
-          <SvgIcon source={ForYouResting} width={24} height={24} />
+        return (
+          <SvgIcon 
+            source={isActive ? ForYouSelected : ForYouResting} 
+            width={24} 
+            height={24} 
+            color={iconColor} 
+          />
         );
       case 'AllNews':
-        return isActive ? (
-          <SvgIcon source={AllNewsSelected} width={24} height={24} color={theme.colors.Primary.Resting} />
-        ) : (
-          <SvgIcon source={AllNewsResting} width={24} height={24} />
+        return (
+          <SvgIcon 
+            source={isActive ? AllNewsSelected : AllNewsResting} 
+            width={24} 
+            height={24} 
+            color={iconColor} 
+          />
         );
       case 'Search':
-        return isActive ? (
-          <SvgIcon source={SearchSelected} width={24} height={24} color={theme.colors.Primary.Resting} />
-        ) : (
-          <SvgIcon source={SearchResting} width={24} height={24} />
+        return (
+          <SvgIcon 
+            source={isActive ? SearchSelected : SearchResting} 
+            width={24} 
+            height={24} 
+            color={iconColor} 
+          />
         );
       case 'Saved':
-        return isActive ? (
-          <SvgIcon source={SavedSelected} width={24} height={24} color={theme.colors.Primary.Resting} />
-        ) : (
-          <SvgIcon source={SavedResting} width={24} height={24} />
+        return (
+          <SvgIcon 
+            source={isActive ? SavedSelected : SavedResting} 
+            width={24} 
+            height={24} 
+            color={iconColor} 
+          />
         );
       default:
         return null;
