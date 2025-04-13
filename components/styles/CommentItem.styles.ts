@@ -43,6 +43,9 @@ export const createCommentItemStyles = (theme: ThemeType) =>
     authorName: {
       marginRight: theme.space['20'],
     },
+    commentTime: {
+      color: theme.colors.Text.Secondary,
+    },
 
     // Content section
     commentContent: {
