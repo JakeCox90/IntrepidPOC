@@ -95,8 +95,8 @@ export function isValidArticle(article: any): article is Article {
     typeof article.date === 'string' &&
     typeof article.imageUrl === 'string' &&
     typeof article.category === 'string' &&
+    typeof article.subheading === 'string' &&
     typeof article.timestamp === 'string' &&
-    typeof article.summary === 'string' &&
     (article.subcategory === undefined || typeof article.subcategory === 'string') &&
     (article.flag === undefined || typeof article.flag === 'string') &&
     (article.readTime === undefined || typeof article.readTime === 'string') &&

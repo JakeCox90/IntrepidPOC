@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { View, ViewStyle, StyleProp, TextStyle } from 'react-native';
 import Typography from '../components/Typography';
 import { ThemeType } from '../theme/ThemeProvider';
 import { getCategoryColor } from './categoryColors';
@@ -18,7 +18,7 @@ interface RenderColoredTextProps {
   category: string;
   theme: ThemeType;
   typographyVariant: 'h5' | 'h6';
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -58,7 +58,7 @@ export const renderColoredText = ({
       <Typography
         variant={typographyVariant}
         color={theme.colors.Text.Primary}
-        style={containerStyle}
+        style={containerStyle as StyleProp<TextStyle>}
       >
         {text}
       </Typography>
@@ -67,7 +67,7 @@ export const renderColoredText = ({
   
   // If there are all-caps words, render them with the section color
   return (
-    <View style={containerStyle}>
+    <View style={[containerStyle, { flexDirection: 'row', flexWrap: 'wrap' }]}>
       {words.map((word: string, index: number): JSX.Element => {
         const isAllCaps = word === word.toUpperCase() && 
           word.length > 1 && 

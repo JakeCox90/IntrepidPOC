@@ -10,7 +10,7 @@ export interface Article {
   flag?: string;
   readTime?: string;
   timestamp: string;
-  summary: string;
+  subheading: string;
   tags?: string[];
   relatedArticles?: Article[];
 } 

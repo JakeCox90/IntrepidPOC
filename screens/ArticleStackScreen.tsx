@@ -136,7 +136,7 @@ const ArticleStackScreen = ({ route, navigation }: ArticleStackScreenProps) => {
       content: item.content || '',
       author: item.author || 'The Sun',
       date: item.date || new Date().toISOString(),
-      summary: item.summary || item.title || 'No summary available'
+      subheading: item.subheading || item.title || 'No subheading available'
     };
 
     // Pass both articleId and article to the ArticleScreen component

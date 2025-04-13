@@ -77,6 +77,7 @@ const mockArticles: Article[] = [
   {
     id: '1',
     title: 'ROYAL EXCLUSIVE: Prince Harry and Meghan set for UK return',
+    subheading: 'Duke and Duchess of Sussex in talks for UK return, marking first joint visit since 2023',
     content: `In a surprising turn of events, Prince Harry and Meghan Markle are planning their first joint return to the UK since 2023.
 
 The Duke and Duchess of Sussex are reportedly in talks to attend a major royal event this summer, marking a significant step in healing family relations.
@@ -92,7 +93,6 @@ The potential reunion comes as the Royal Family continues to adapt to recent cha
     flag: 'Exclusive',
     readTime: '3 min read',
     timestamp: '2024-03-15T09:30:00Z',
-    summary: 'Duke and Duchess of Sussex in talks for UK return, marking first joint visit since 2023',
     tags: ['Royal Family', 'Prince Harry', 'Meghan Markle', 'UK News']
   },
   {
@@ -113,7 +113,7 @@ The Red Devils are also monitoring several targets, including Crystal Palace's M
     flag: 'Breaking',
     readTime: '4 min read',
     timestamp: '2024-03-15T10:15:00Z',
-    summary: 'Latest transfer news as Arsenal target Osimhen and Man Utd plan summer exodus',
+    subheading: 'Latest transfer news as Arsenal target Osimhen and Man Utd plan summer exodus',
     tags: ['Football', 'Transfer News', 'Arsenal', 'Manchester United']
   },
   {
@@ -134,7 +134,7 @@ The character's departure is expected to air during the show's crucial summer ra
     flag: 'Exclusive',
     readTime: '2 min read',
     timestamp: '2024-03-15T11:00:00Z',
-    summary: 'Long-standing Coronation Street character to leave in dramatic summer storyline',
+    subheading: 'Long-standing Coronation Street character to leave in dramatic summer storyline',
     tags: ['Coronation Street', 'Soaps', 'TV Drama']
   },
   {
@@ -155,7 +155,7 @@ He advised viewers to check their current tariffs and consider switching provide
     flag: 'Breaking',
     readTime: '3 min read',
     timestamp: '2024-03-15T12:00:00Z',
-    summary: 'Martin Lewis warns about upcoming changes to energy bills and price caps',
+    subheading: 'Martin Lewis warns about upcoming changes to energy bills and price caps',
     tags: ['Money Saving', 'Energy Bills', 'Martin Lewis', 'Cost of Living']
   },
   {
@@ -176,7 +176,7 @@ The incident has added extra spice to what was already shaping up to be a crucia
     flag: 'Breaking',
     readTime: '4 min read',
     timestamp: '2024-03-15T13:30:00Z',
-    summary: 'Hamilton and Verstappen involved in close call during Australian GP practice',
+    subheading: 'Hamilton and Verstappen involved in close call during Australian GP practice',
     tags: ['F1', 'Lewis Hamilton', 'Max Verstappen', 'Australian GP']
   },
   {
@@ -197,7 +197,7 @@ Fans have expressed their disappointment at the news, with many having followed 
     flag: 'Exclusive',
     readTime: '3 min read',
     timestamp: '2024-03-15T14:45:00Z',
-    summary: 'Love Island winners announce their separation after eight months together',
+    subheading: 'Love Island winners announce their separation after eight months together',
     tags: ['Love Island', 'Reality TV', 'Celebrity News']
   },
   {
@@ -218,8 +218,8 @@ Fashion influencers have been showcasing the items on social media, leading to u
     flag: 'Trending',
     readTime: '3 min read',
     timestamp: '2024-03-15T15:15:00Z',
-    summary: 'High street retailer launches affordable designer-inspired collection',
-    tags: ['Fashion', 'Shopping', 'Designer Dupes', 'High Street']
+    subheading: 'High street retailer launches affordable designer-inspired collection',
+    tags: ['Fashion', 'Shopping', 'High Street']
   },
   {
     id: '8',
@@ -238,9 +238,9 @@ The visit comes ahead of Swift's highly anticipated European tour dates, which i
     subcategory: 'Celebrity News',
     flag: 'Exclusive',
     readTime: '4 min read',
-    timestamp: '2024-03-15T16:00:00Z',
-    summary: 'Taylor Swift and Travis Kelce spotted house-hunting in London',
-    tags: ['Taylor Swift', 'Travis Kelce', 'Celebrity News', 'Music']
+    timestamp: '2024-03-15T16:15:00Z',
+    subheading: 'Taylor Swift and Travis Kelce spotted house-hunting in London',
+    tags: ['Celebrity News', 'Taylor Swift', 'Travis Kelce']
   },
   {
     id: '9',
@@ -259,9 +259,9 @@ The fight is expected to be the biggest boxing event in British history, with pa
     subcategory: 'Boxing',
     flag: 'Breaking',
     readTime: '5 min read',
-    timestamp: '2024-03-15T16:30:00Z',
-    summary: 'Anthony Joshua and Tyson Fury agree terms for December showdown at Wembley',
-    tags: ['Boxing', 'Anthony Joshua', 'Tyson Fury', 'Heavyweight Boxing']
+    timestamp: '2024-03-15T17:00:00Z',
+    subheading: 'Anthony Joshua and Tyson Fury agree terms for December showdown at Wembley',
+    tags: ['Boxing', 'Anthony Joshua', 'Tyson Fury']
   },
   {
     id: '10',
@@ -280,9 +280,9 @@ However, with prices starting at £1,199, potential buyers will need to carefull
     subcategory: 'Tech',
     flag: 'Analysis',
     readTime: '6 min read',
-    timestamp: '2024-03-15T17:00:00Z',
-    summary: "Comprehensive review of Apple's latest flagship smartphone",
-    tags: ['iPhone', 'Apple', 'Tech Review', 'Smartphones']
+    timestamp: '2024-03-15T17:45:00Z',
+    subheading: "Comprehensive review of Apple's latest flagship smartphone",
+    tags: ['Tech', 'Apple', 'Smartphones']
   },
   {
     id: '11',
@@ -301,9 +301,9 @@ The aftermath of the death will play out over several weeks, leading to a explos
     subcategory: 'Soaps',
     flag: 'Exclusive',
     readTime: '3 min read',
-    timestamp: '2024-03-15T17:30:00Z',
-    summary: 'Major death to shock Emmerdale viewers in upcoming episodes',
-    tags: ['Emmerdale', 'Soaps', 'TV Drama', 'ITV']
+    timestamp: '2024-03-15T18:30:00Z',
+    subheading: 'Major death to shock Emmerdale viewers in upcoming episodes',
+    tags: ['Emmerdale', 'Soaps', 'TV Drama']
   },
   {
     id: '12',
@@ -322,9 +322,9 @@ The deal is available for selected dates between May and October, with peak summ
     subcategory: 'Travel',
     flag: 'Featured',
     readTime: '4 min read',
-    timestamp: '2024-03-15T18:00:00Z',
-    summary: 'Incredible deal on luxury Turkey holidays perfect for summer getaway',
-    tags: ['Travel Deals', 'Turkey', 'Holidays', 'All Inclusive']
+    timestamp: '2024-03-15T19:15:00Z',
+    subheading: 'Incredible deal on luxury Turkey holidays perfect for summer getaway',
+    tags: ['Travel', 'Holidays', 'Deals']
   },
   {
     id: '13',
@@ -343,9 +343,9 @@ Scientists have warned that without immediate and substantial action, the world 
     subcategory: 'World News',
     flag: 'Breaking',
     readTime: '4 min read',
-    timestamp: '2024-03-14T10:15:00Z',
-    summary: 'Global leaders gather in Paris for crucial climate summit',
-    tags: ['Climate Change', 'World News', 'Politics', 'Environment']
+    timestamp: '2024-03-15T20:00:00Z',
+    subheading: 'Global leaders gather in Paris for crucial climate summit',
+    tags: ['World News', 'Climate Change', 'Politics']
   },
   {
     id: '14',
@@ -364,9 +364,9 @@ Opposition parties have criticized the announcement as "too little, too late" an
     subcategory: 'Politics',
     flag: 'Analysis',
     readTime: '5 min read',
-    timestamp: '2024-03-14T11:30:00Z',
-    summary: 'Government unveils new housing policy to address crisis',
-    tags: ['Politics', 'Housing', 'Government', 'UK News']
+    timestamp: '2024-03-15T20:45:00Z',
+    subheading: 'Government unveils new housing policy to address crisis',
+    tags: ['UK News', 'Politics', 'Housing']
   },
   {
     id: '15',
@@ -385,9 +385,9 @@ The first legs will be played on April 9-10, with the return fixtures scheduled 
     subcategory: 'Football',
     flag: 'Breaking',
     readTime: '3 min read',
-    timestamp: '2024-03-15T14:00:00Z',
-    summary: 'Champions League quarter-finals draw sets up exciting matches',
-    tags: ['Football', 'Champions League', 'Manchester City', 'Arsenal']
+    timestamp: '2024-03-15T21:30:00Z',
+    subheading: 'Champions League quarter-finals draw sets up exciting matches',
+    tags: ['Football', 'Champions League', 'Sport']
   },
   {
     id: '16',
@@ -407,7 +407,7 @@ The fight is expected to be the biggest boxing event in British history, with pa
     flag: 'Exclusive',
     readTime: '4 min read',
     timestamp: '2024-03-15T15:30:00Z',
-    summary: 'Fury vs Joshua finally confirmed for summer showdown',
+    subheading: 'Fury vs Joshua finally confirmed for summer showdown',
     tags: ['Boxing', 'Tyson Fury', 'Anthony Joshua', 'Heavyweight Boxing']
   },
   {
@@ -428,7 +428,7 @@ The announcement comes as the broadcaster continues to face competition from str
     flag: 'Exclusive',
     readTime: '3 min read',
     timestamp: '2024-03-14T16:45:00Z',
-    summary: 'BBC announces new drama series with A-list cast',
+    subheading: 'BBC announces new drama series with A-list cast',
     tags: ['TV', 'BBC', 'Drama', 'Entertainment']
   },
   {
@@ -449,7 +449,7 @@ The departure will have major repercussions for several key storylines and will 
     flag: 'Exclusive',
     readTime: '3 min read',
     timestamp: '2024-03-15T17:15:00Z',
-    summary: 'EastEnders star announces departure after 15 years',
+    subheading: 'EastEnders star announces departure after 15 years',
     tags: ['TV', 'Soaps', 'EastEnders', 'Entertainment']
   },
   {
@@ -470,7 +470,7 @@ The visit comes amid speculation that the actor is looking to expand their caree
     flag: 'Exclusive',
     readTime: '3 min read',
     timestamp: '2024-03-15T18:00:00Z',
-    summary: 'Hollywood star spotted in London amid project rumors',
+    subheading: 'Hollywood star spotted in London amid project rumors',
     tags: ['Celebrity', 'Hollywood', 'London', 'Entertainment']
   },
   {
@@ -491,7 +491,7 @@ Tickets for the shows are expected to sell out within minutes when they go on sa
     flag: 'Breaking',
     readTime: '4 min read',
     timestamp: '2024-03-14T19:30:00Z',
-    summary: 'Legendary band announce reunion tour after 15 years',
+    subheading: 'Legendary band announce reunion tour after 15 years',
     tags: ['Music', 'Tour', 'Reunion', 'Entertainment']
   },
   {
@@ -512,7 +512,7 @@ The data suggests that the housing market is entering a period of adjustment aft
     flag: 'Analysis',
     readTime: '5 min read',
     timestamp: '2024-03-15T09:45:00Z',
-    summary: 'House prices fall for sixth consecutive month',
+    subheading: 'House prices fall for sixth consecutive month',
     tags: ['Property', 'House Prices', 'Money', 'Economy']
   },
   {
@@ -533,7 +533,7 @@ The announcement has sparked concern among consumer groups, who warn that vulner
     flag: 'Breaking',
     readTime: '4 min read',
     timestamp: '2024-03-14T11:15:00Z',
-    summary: 'Major bank announces closure of 100 branches',
+    subheading: 'Major bank announces closure of 100 branches',
     tags: ['Banking', 'Branches', 'Money', 'Finance']
   },
   {
@@ -554,7 +554,7 @@ Other destinations offering good value include Bulgaria, Greece, and Portugal, t
     flag: 'Featured',
     readTime: '5 min read',
     timestamp: '2024-03-15T10:30:00Z',
-    summary: 'Best value beach destinations for summer 2024 revealed',
+    subheading: 'Best value beach destinations for summer 2024 revealed',
     tags: ['Travel', 'Beach Holidays', 'Summer', 'Holidays']
   },
   {
@@ -575,7 +575,7 @@ Paris and London were among the most expensive destinations, though the study no
     flag: 'Analysis',
     readTime: '4 min read',
     timestamp: '2024-03-14T13:45:00Z',
-    summary: 'European capitals ranked by value for money',
+    subheading: 'European capitals ranked by value for money',
     tags: ['Travel', 'City Breaks', 'Europe', 'Holidays']
   },
   {
@@ -596,7 +596,7 @@ The leaks also suggest that the next wave of smartphones will place a greater em
     flag: 'Exclusive',
     readTime: '4 min read',
     timestamp: '2024-03-15T14:30:00Z',
-    summary: 'Next generation smartphone features revealed in leak',
+    subheading: 'Next generation smartphone features revealed in leak',
     tags: ['Tech', 'Smartphones', 'Innovation', 'Technology']
   },
   {
@@ -617,7 +617,7 @@ The console will launch with a strong lineup of exclusive games, including sever
     flag: 'Breaking',
     readTime: '3 min read',
     timestamp: '2024-03-14T15:15:00Z',
-    summary: 'Release date confirmed for major new gaming console',
+    subheading: 'Release date confirmed for major new gaming console',
     tags: ['Gaming', 'Console', 'Technology', 'Entertainment']
   },
   {
@@ -638,7 +638,7 @@ Manufacturers are now racing to incorporate similar battery technology into thei
     flag: 'Breaking',
     readTime: '4 min read',
     timestamp: '2024-03-15T16:00:00Z',
-    summary: 'Electric vehicle breaks range record with 600-mile journey',
+    subheading: 'Electric vehicle breaks range record with 600-mile journey',
     tags: ['Motors', 'Electric Vehicles', 'Technology', 'Cars']
   },
   {
@@ -659,7 +659,7 @@ The study also highlighted the growing value of used electric and hybrid vehicle
     flag: 'Analysis',
     readTime: '5 min read',
     timestamp: '2024-03-14T17:30:00Z',
-    summary: 'Best value used cars revealed in new study',
+    subheading: 'Best value used cars revealed in new study',
     tags: ['Motors', 'Used Cars', 'Value', 'Cars']
   },
   {
@@ -680,7 +680,7 @@ The phenomenon has also sparked a broader conversation about how social media is
     flag: 'Trending',
     readTime: '4 min read',
     timestamp: '2024-03-15T18:30:00Z',
-    summary: 'New fitness trend goes viral on social media',
+    subheading: 'New fitness trend goes viral on social media',
     tags: ['Health', 'Fitness', 'Social Media', 'Exercise']
   },
   {
@@ -701,7 +701,7 @@ The study's authors hope that these findings will lead to more personalized and 
     flag: 'Analysis',
     readTime: '5 min read',
     timestamp: '2024-03-14T19:00:00Z',
-    summary: 'Revolutionary weight loss study challenges dieting assumptions',
+    subheading: 'Revolutionary weight loss study challenges dieting assumptions',
     tags: ['Health', 'Diet', 'Weight Loss', 'Science']
   }
 ];

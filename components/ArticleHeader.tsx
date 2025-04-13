@@ -10,6 +10,7 @@ import ReadTime from './ReadTime';
 import { baseStyles, getThemedStyles } from './styles/ArticleHeaderStyles';
 import { formatRelativeTime } from '../utils/timeFormat';
 import { Byline } from './Byline';
+import { renderColoredText } from '../utils/textColouring';
 
 // Add the COMMON_FLAGS constant
 // Common flags used by The Sun
@@ -26,6 +27,23 @@ const COMMON_FLAGS = [
   'HORROR',
   'URGENT',
   'WARNING',
+];
+
+// Add the COMMON_ACRONYMS constant
+// Common acronyms used by The Sun
+const COMMON_ACRONYMS = [
+  'BBC',
+  'ITV',
+  'CNN',
+  'NHS',
+  'NASA',
+  'WHO',
+  'UN',
+  'EU',
+  'IMF',
+  'G7',
+  'G20',
+  'OPEC',
 ];
 
 interface ArticleHeaderProps {
@@ -93,30 +111,84 @@ const ArticleHeader = ({
   }, [category]);
 
   // Memoize the title component
-  const TitleComponent = useMemo(() => (
-    <Typography
-      variant="h3"
-      color={theme.colors.Text.Primary}
-      style={[baseStyles.title, themedStyles.title]}
-    >
-      {title || 'No title available'}
-    </Typography>
-  ), [title, theme.colors.Text.Primary, baseStyles.title, themedStyles.title]);
+  const TitleComponent = useMemo(() => {
+    const titleText = title || 'No title available';
+    
+    // Check if the title has any all-caps words that need coloring
+    const words = titleText.split(' ');
+    const hasAllCaps = words.some((word: string): boolean => {
+      const isAllCaps = word === word.toUpperCase() && 
+        word.length > 1 && 
+        !COMMON_ACRONYMS.includes(word) &&
+        !(/^\d+$/.test(word));
+      return isAllCaps;
+    });
+    
+    if (hasAllCaps) {
+      // Use renderColoredText for titles with all-caps words
+      return (
+        <View style={[baseStyles.title, themedStyles.title]}>
+          {renderColoredText({
+            text: titleText,
+            category: category || '',
+            theme,
+            typographyVariant: 'h3'
+          })}
+        </View>
+      );
+    } else {
+      // Use regular Typography for titles without all-caps words
+      return (
+        <Typography
+          variant="h3"
+          color={theme.colors.Text.Primary}
+          style={[baseStyles.title, themedStyles.title]}
+        >
+          {titleText}
+        </Typography>
+      );
+    }
+  }, [title, category, theme, baseStyles.title, themedStyles.title]);
 
   // Memoize the subtitle component
   const SubtitleComponent = useMemo(() => {
     if (!subtitle) return null;
     
-    return (
-      <Typography
-        variant="subtitle-01"
-        color={theme.colors.Text.Secondary}
-        style={[baseStyles.subtitle, themedStyles.subtitle]}
-      >
-        {subtitle}
-      </Typography>
-    );
-  }, [subtitle, theme.colors.Text.Secondary, baseStyles.subtitle, themedStyles.subtitle]);
+    // Check if the subtitle has any all-caps words that need coloring
+    const words = subtitle.split(' ');
+    const hasAllCaps = words.some((word: string): boolean => {
+      const isAllCaps = word === word.toUpperCase() && 
+        word.length > 1 && 
+        !COMMON_ACRONYMS.includes(word) &&
+        !(/^\d+$/.test(word));
+      return isAllCaps;
+    });
+    
+    if (hasAllCaps) {
+      // Use renderColoredText for subtitles with all-caps words
+      return (
+        <View style={[baseStyles.subtitle, themedStyles.subtitle]}>
+          {renderColoredText({
+            text: subtitle,
+            category: category || '',
+            theme,
+            typographyVariant: 'h6'
+          })}
+        </View>
+      );
+    } else {
+      // Use regular Typography for subtitles without all-caps words
+      return (
+        <Typography
+          variant="subtitle-01"
+          color={theme.colors.Text.Secondary}
+          style={[baseStyles.subtitle, themedStyles.subtitle]}
+        >
+          {subtitle}
+        </Typography>
+      );
+    }
+  }, [subtitle, category, theme, baseStyles.subtitle, themedStyles.subtitle]);
 
   // Memoize the image component
   const ImageComponent = useMemo(() => {

@@ -162,80 +162,86 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
   ], []);
 
   // Memoize the render item function
-  const renderItem = useCallback(() => (
-    <>
-      {/* Content Container */}
-      <View style={styles.contentContainer}>
-        {/* Article Header */}
-        <ArticleHeader
-          title={article?.title || ''}
-          subtitle={article?.summary || ''}
-          imageUrl={article?.imageUrl || ''}
-          category={article?.category || ''}
-          readTime={article?.readTime || ''}
-          flag={article?.flag || ''}
-          timestamp={article?.timestamp || ''}
-        />
-
-        {/* Audio Player */}
-        <View style={styles.audioPlayerContainer}>
-          <AudioPlayer
+  const renderItem = useCallback(() => {
+    // Generate a subheading from the content if the subheading field is missing
+    const articleSubheading = article?.subheading || 
+      (article?.content ? article.content.split('.')[0] + '.' : '');
+    
+    return (
+      <>
+        {/* Content Container */}
+        <View style={styles.contentContainer}>
+          {/* Article Header */}
+          <ArticleHeader
             title={article?.title || ''}
+            subtitle={articleSubheading}
+            imageUrl={article?.imageUrl || ''}
             category={article?.category || ''}
-            duration={120}
-            onPlay={() => console.log('Play audio')}
-            onPause={() => console.log('Pause audio')}
+            readTime={article?.readTime || ''}
+            flag={article?.flag || ''}
+            timestamp={article?.timestamp || ''}
+          />
+
+          {/* Audio Player */}
+          <View style={styles.audioPlayerContainer}>
+            <AudioPlayer
+              title={article?.title || ''}
+              category={article?.category || ''}
+              duration={120}
+              onPlay={() => console.log('Play audio')}
+              onPause={() => console.log('Pause audio')}
+            />
+          </View>
+
+          {/* Key Points Accordion */}
+          <View style={styles.accordionContainer}>
+            <Accordion
+              title="Key Points"
+              initialExpanded={true}
+            >
+              <View style={accordionStyles.keyPointsContainer}>
+                {article?.content?.split('.')
+                  .filter(sentence => sentence.trim().length > 0)
+                  .slice(0, 2)
+                  .map((sentence, index) => (
+                    <Typography
+                      key={index}
+                      variant="body-02"
+                      color={theme.colors.Text.Secondary}
+                      style={accordionStyles.keyPoint}
+                    >
+                      • {sentence.trim()}.
+                    </Typography>
+                  ))}
+              </View>
+            </Accordion>
+          </View>
+
+          {/* Article Body Content */}
+          <View style={styles.articleContent}>
+            <Typography
+              variant="body-01"
+              color={theme.colors.Text.Secondary}
+              style={styles.paragraph}
+            >
+              {article?.content}
+            </Typography>
+          </View>
+
+          {/* Comments Section */}
+          <Comments
+            comments={comments}
+            totalComments={comments.length}
+            onShowAllPress={handleShowAllComments}
+            onSubmitComment={handleSubmitComment}
+            onLikeComment={handleLikeComment}
+            onReplyComment={handleReplyComment}
+            onViewReplies={handleViewReplies}
           />
         </View>
-
-        {/* Key Points Accordion */}
-        <View style={styles.accordionContainer}>
-          <Accordion
-            title="Key Points"
-            initialExpanded={true}
-          >
-            <View style={accordionStyles.keyPointsContainer}>
-              {article?.content?.split('.')
-                .filter(sentence => sentence.trim().length > 0)
-                .slice(0, 2)
-                .map((sentence, index) => (
-                  <Typography
-                    key={index}
-                    variant="body-02"
-                    color={theme.colors.Text.Secondary}
-                    style={accordionStyles.keyPoint}
-                  >
-                    • {sentence.trim()}.
-                  </Typography>
-                ))}
-            </View>
-          </Accordion>
-        </View>
-
-        {/* Article Body Content */}
-        <View style={styles.articleContent}>
-          <Typography
-            variant="body-01"
-            color={theme.colors.Text.Secondary}
-            style={styles.paragraph}
-          >
-            {article?.content}
-          </Typography>
-        </View>
-
-        {/* Comments Section */}
-        <Comments
-          comments={comments}
-          totalComments={comments.length}
-          onShowAllPress={handleShowAllComments}
-          onSubmitComment={handleSubmitComment}
-          onLikeComment={handleLikeComment}
-          onReplyComment={handleReplyComment}
-          onViewReplies={handleViewReplies}
-        />
-      </View>
-    </>
-  ), [article, styles, comments, handleShowAllComments, handleSubmitComment, handleLikeComment, handleReplyComment, handleViewReplies]);
+      </>
+    );
+  }, [article, styles, comments, handleShowAllComments, handleSubmitComment, handleLikeComment, handleReplyComment, handleViewReplies]);
 
   if (error) {
     return (
