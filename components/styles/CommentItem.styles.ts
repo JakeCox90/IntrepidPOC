@@ -8,8 +8,8 @@ export const createCommentItemStyles = (theme: ThemeType) =>
     },
     avatar: {
       backgroundColor: theme.colors.Surface.Secondary,
-      height: theme.space['40'],
-      width: theme.space['40'],
+      height: theme.space['80'],
+      width: theme.space['80'],
     },
     avatarContainer: {
       marginRight: theme.space['30'],

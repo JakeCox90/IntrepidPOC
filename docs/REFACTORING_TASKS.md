@@ -23,7 +23,7 @@ This document tracks all identified refactoring tasks in the codebase, their cur
 
 ### 2. Component Structure
 
-#### ArticleScreen.tsx Business Logic
+#### ArticleScreen.tsx Business Logic ✅
 - **Current State**: Business logic mixed with UI components
 - **Required Changes**:
   - Extract business logic into custom hooks
@@ -37,7 +37,7 @@ This document tracks all identified refactoring tasks in the codebase, their cur
 
 ## Type Safety
 
-### 3. Type Definitions
+### 3. Type Definitions ✅
 - **Current State**: 
   - Incomplete `Comment` interface
   - Implicit `any` types
@@ -52,6 +52,14 @@ This document tracks all identified refactoring tasks in the codebase, their cur
   - Fewer runtime errors
   - Improved code documentation
   - Better IDE support
+- **Status**: Completed
+  - Enhanced Comment interface with additional properties
+  - Added comprehensive type validation utilities
+  - Centralized all comment-related types
+  - Added proper JSDoc documentation
+  - Implemented type guards for runtime safety
+  - Added new types for sorting and filtering
+  - Updated mock data to match enhanced types
 
 ## Error Handling
 

@@ -7,7 +7,6 @@ export const createStyles = (theme: ThemeType) => {
       marginBottom: theme.space['30'],
     },
     articleContent: {
-      marginBottom: theme.space['30'],
     },
     audioPlayerContainer: {
       marginBottom: theme.space['20'],
@@ -17,10 +16,8 @@ export const createStyles = (theme: ThemeType) => {
       borderRadius: theme.radius['radius-20'],
       marginTop: theme.space['30'],
       paddingHorizontal: theme.space['30'],
-      paddingVertical: theme.space['20'],
     },
     bottomSpacing: {
-      height: theme.space['30'],
     },
     contentContainer: {
       paddingHorizontal: theme.space['40'],
@@ -37,7 +34,6 @@ export const createStyles = (theme: ThemeType) => {
       padding: theme.space['30'],
     },
     paragraph: {
-      marginBottom: theme.space['20'],
     },
     scrollView: {
       flex: 1,
