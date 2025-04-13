@@ -1,12 +1,15 @@
 'use client';
+import React from 'react';
 import { View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import Flag from './Flag';
 import LazyImage from './LazyImage';
+import ReadTime from './ReadTime';
 import { baseStyles, getThemedStyles } from './styles/ArticleHeaderStyles';
 import { formatRelativeTime } from '../utils/timeFormat';
+import { Byline } from './Byline';
 
 // Add the COMMON_FLAGS constant
 // Common flags used by The Sun
@@ -100,25 +103,11 @@ const ArticleHeader = ({
 
       {/* Reading time */}
       <View style={[baseStyles.readingTimeContainer, themedStyles.readingTimeContainer]}>
-        <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-        <Typography
-          variant="subtitle-02"
-          color={theme.colors.Text.Secondary}
-          style={[baseStyles.readingTime, themedStyles.readingTime]}
-        >
-          {readTime}
-        </Typography>
+        <ReadTime readTime={readTime} />
       </View>
 
       {/* Author info */}
-      <View style={[baseStyles.authorContainer, themedStyles.authorContainer]}>
-        <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-          {author || 'The Sun'}
-        </Typography>
-        <Typography variant="body-02" color={theme.colors.Text.Secondary}>
-          Published {formattedTime}
-        </Typography>
-      </View>
+      <Byline authorName={author || 'The Sun'} publishDate={formattedTime} />
 
       {/* Article Image */}
       <View style={[baseStyles.articleImage, themedStyles.imageContainer]}>

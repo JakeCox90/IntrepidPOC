@@ -5,6 +5,7 @@ import Flag from './Flag';
 import Typography from './Typography';
 import LazyImage from './LazyImage';
 import Card from './Card';
+import ReadTime from './ReadTime';
 import { createCardHeroStyles } from './styles/CardHero.styles';
 import { getCategoryColor } from '../utils/categoryColors';
 import { Feather } from '@expo/vector-icons';
@@ -143,14 +144,7 @@ const CardHero = ({
       {/* Footer with read time and actions - moved outside of heroContent */}
       <View style={styles.footer}>
         <View style={styles.readTimeContainer}>
-          <Feather name="book-open" size={16} color={theme.colors.Text.Secondary} />
-          <Typography
-            variant="body-02"
-            color={theme.colors.Text.Secondary}
-            style={styles.readTimeText}
-          >
-            {readTime}
-          </Typography>
+          <ReadTime readTime={readTime || '3 min read'} />
         </View>
 
         <View style={styles.actionsContainer}>

@@ -4,6 +4,7 @@ import { View, TouchableOpacity, StyleSheet, type StyleProp, type ViewStyle } fr
 import { useTheme } from '../theme/ThemeProvider';
 import { Feather } from '@expo/vector-icons';
 import Typography from './Typography';
+import ReadTime from './ReadTime';
 import { formatRelativeTime } from '../utils/timeFormat';
 import type { CardBaseProps } from '../types/components';
 import { useBookmark } from '../contexts/BookmarkContext';
@@ -41,14 +42,7 @@ const Card: React.FC<CardBaseProps> = ({
           <View style={styles.metaContainer}>
             {readTime && (
               <View style={styles.readTimeContainer}>
-                <Feather name="clock" size={14} color={theme.colors.Text.Secondary} />
-                <Typography
-                  variant="body-02"
-                  color={theme.colors.Text.Secondary}
-                  style={styles.metaText}
-                >
-                  {readTime}
-                </Typography>
+                <ReadTime readTime={readTime} />
               </View>
             )}
             {formattedTime && (

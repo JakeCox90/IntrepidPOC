@@ -26,8 +26,7 @@ export const baseStyles = StyleSheet.create({
     width: '100%',
   },
   readingTimeContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    marginBottom: 8,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -41,12 +40,6 @@ export const baseStyles = StyleSheet.create({
   },
   subtitle: {
     marginBottom: 12,
-  },
-  readingTime: {
-    marginLeft: 4,
-  },
-  authorContainer: {
-    marginBottom: 16,
   },
 });
 
@@ -63,14 +56,8 @@ export const getThemedStyles = (theme: ThemeType) => {
       marginBottom: theme?.space?.['40'] || 16,
       overflow: 'hidden',
     },
-    authorContainer: {
-      marginBottom: theme?.space?.['40'] || 16,
-    },
     flag: {
       marginRight: theme?.space?.['20'] || 8,
-    },
-    readingTime: {
-      marginLeft: theme?.space?.['10'] || 4,
     },
     readingTimeContainer: {
       marginBottom: theme?.space?.['20'] || 8,
