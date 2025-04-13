@@ -13,6 +13,10 @@ export interface CommentAuthor {
   name: string;
   /** Optional URL to the user's avatar image */
   avatar?: string;
+  /** Optional role or title of the user */
+  role?: string;
+  /** Optional verification status of the user */
+  isVerified?: boolean;
 }
 
 /**
@@ -39,6 +43,21 @@ export interface Comment {
   isEdited?: boolean;
   /** ID of the parent comment if this is a reply */
   parentId?: string | number;
+  /** Optional metadata about the comment */
+  metadata?: {
+    /** Whether the comment is pinned */
+    isPinned?: boolean;
+    /** Whether the comment is hidden */
+    isHidden?: boolean;
+    /** Whether the comment is reported */
+    isReported?: boolean;
+    /** Optional reason for hiding/reporting */
+    moderationReason?: string;
+  };
+  /** Optional array of user IDs who have liked this comment */
+  likedBy?: string[];
+  /** Optional array of user IDs who have reported this comment */
+  reportedBy?: string[];
 }
 
 /**
@@ -55,6 +74,18 @@ export interface CommentProps {
   onReply: (commentId: string | number) => void;
   /** Optional callback when viewing replies */
   onViewReplies?: (commentId: string | number) => void;
+  /** Optional callback when reporting a comment */
+  onReport?: (commentId: string | number, reason: string) => void;
+  /** Optional callback when editing a comment */
+  onEdit?: (commentId: string | number, newText: string) => void;
+  /** Optional callback when deleting a comment */
+  onDelete?: (commentId: string | number) => void;
+  /** Whether the current user can moderate this comment */
+  canModerate?: boolean;
+  /** Whether the current user can edit this comment */
+  canEdit?: boolean;
+  /** Whether the current user can delete this comment */
+  canDelete?: boolean;
 }
 
 /**
@@ -75,4 +106,44 @@ export interface CommentsProps {
   onReplyComment?: (commentId: string | number) => void;
   /** Optional callback when viewing replies to a comment */
   onViewReplies?: (commentId: string | number) => void;
+  /** Optional callback when reporting a comment */
+  onReportComment?: (commentId: string | number, reason: string) => void;
+  /** Optional callback when editing a comment */
+  onEditComment?: (commentId: string | number, newText: string) => void;
+  /** Optional callback when deleting a comment */
+  onDeleteComment?: (commentId: string | number) => void;
+  /** Whether comments are currently loading */
+  isLoading?: boolean;
+  /** Optional error message to display */
+  error?: string;
+  /** Whether to show the comment input field */
+  showCommentInput?: boolean;
+  /** Maximum number of replies to show before "View more" */
+  maxRepliesToShow?: number;
+  /** Whether to enable comment moderation features */
+  enableModeration?: boolean;
+}
+
+/**
+ * Type for comment sorting options
+ */
+export type CommentSortOption = 'newest' | 'oldest' | 'mostLiked' | 'mostReplied';
+
+/**
+ * Type for comment filtering options
+ */
+export interface CommentFilterOptions {
+  /** Whether to show only top-level comments */
+  topLevelOnly?: boolean;
+  /** Whether to show only comments with replies */
+  withRepliesOnly?: boolean;
+  /** Whether to show only comments from verified users */
+  verifiedOnly?: boolean;
+  /** Optional search term to filter comments */
+  searchTerm?: string;
+  /** Optional date range to filter comments */
+  dateRange?: {
+    start: string;
+    end: string;
+  };
 } 

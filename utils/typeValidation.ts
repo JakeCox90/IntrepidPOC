@@ -16,7 +16,23 @@ export function isValidCommentAuthor(author: any): author is CommentAuthor {
     typeof author === 'object' &&
     typeof author.id === 'string' &&
     typeof author.name === 'string' &&
-    (author.avatar === undefined || typeof author.avatar === 'string')
+    (author.avatar === undefined || typeof author.avatar === 'string') &&
+    (author.role === undefined || typeof author.role === 'string') &&
+    (author.isVerified === undefined || typeof author.isVerified === 'boolean')
+  );
+}
+
+/**
+ * Type guard to check if an object is a valid Comment metadata
+ */
+export function isValidCommentMetadata(metadata: any): boolean {
+  if (!metadata || typeof metadata !== 'object') return false;
+  
+  return (
+    (metadata.isPinned === undefined || typeof metadata.isPinned === 'boolean') &&
+    (metadata.isHidden === undefined || typeof metadata.isHidden === 'boolean') &&
+    (metadata.isReported === undefined || typeof metadata.isReported === 'boolean') &&
+    (metadata.moderationReason === undefined || typeof metadata.moderationReason === 'string')
   );
 }
 
@@ -47,6 +63,20 @@ export function isValidComment(comment: any): comment is Comment {
   
   if (comment.isEdited !== undefined && typeof comment.isEdited !== 'boolean') return false;
   if (comment.parentId !== undefined && typeof comment.parentId !== 'string' && typeof comment.parentId !== 'number') return false;
+  
+  // Check metadata if it exists
+  if (comment.metadata !== undefined && !isValidCommentMetadata(comment.metadata)) return false;
+  
+  // Check arrays if they exist
+  if (comment.likedBy !== undefined) {
+    if (!Array.isArray(comment.likedBy)) return false;
+    if (!comment.likedBy.every((id: any) => typeof id === 'string')) return false;
+  }
+  
+  if (comment.reportedBy !== undefined) {
+    if (!Array.isArray(comment.reportedBy)) return false;
+    if (!comment.reportedBy.every((id: any) => typeof id === 'string')) return false;
+  }
   
   return true;
 }
@@ -105,4 +135,30 @@ export function validateComments(comments: any[]): Comment[] {
  */
 export function validateComment(comment: any): Comment | null {
   return isValidComment(comment) ? comment : null;
+}
+
+/**
+ * Validates comment filter options
+ */
+export function isValidCommentFilterOptions(options: any): boolean {
+  if (!options || typeof options !== 'object') return false;
+  
+  return (
+    (options.topLevelOnly === undefined || typeof options.topLevelOnly === 'boolean') &&
+    (options.withRepliesOnly === undefined || typeof options.withRepliesOnly === 'boolean') &&
+    (options.verifiedOnly === undefined || typeof options.verifiedOnly === 'boolean') &&
+    (options.searchTerm === undefined || typeof options.searchTerm === 'string') &&
+    (options.dateRange === undefined || (
+      typeof options.dateRange === 'object' &&
+      typeof options.dateRange.start === 'string' &&
+      typeof options.dateRange.end === 'string'
+    ))
+  );
+}
+
+/**
+ * Validates a comment sort option
+ */
+export function isValidCommentSortOption(option: any): boolean {
+  return ['newest', 'oldest', 'mostLiked', 'mostReplied'].includes(option);
 } 

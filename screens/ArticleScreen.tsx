@@ -71,12 +71,20 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
       author: {
         id: "user1",
         name: "Sharon McDonald",
-        avatar: "https://randomuser.me/api/portraits/women/1.jpg"
+        avatar: "https://randomuser.me/api/portraits/women/1.jpg",
+        role: "Senior Editor",
+        isVerified: true
       },
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
       createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // 10 mins ago
       updatedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
       likes: 1,
+      likedBy: ["user2", "user3"],
+      metadata: {
+        isPinned: true,
+        isHidden: false,
+        isReported: false
+      },
       replies: [
         {
           id: 101,
@@ -84,13 +92,18 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           author: {
             id: "user2",
             name: "John Smith",
-            avatar: "https://randomuser.me/api/portraits/men/1.jpg"
+            avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+            isVerified: true
           },
           text: "I agree with your point!",
           createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 mins ago
           updatedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
           likes: 0,
-          parentId: 1
+          parentId: 1,
+          metadata: {
+            isHidden: false,
+            isReported: false
+          }
         },
         {
           id: 102,
@@ -98,13 +111,18 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           author: {
             id: "user3",
             name: "Jane Doe",
-            avatar: "https://randomuser.me/api/portraits/women/2.jpg"
+            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+            isVerified: false
           },
           text: "Interesting perspective.",
           createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 mins ago
           updatedAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
           likes: 0,
-          parentId: 1
+          parentId: 1,
+          metadata: {
+            isHidden: false,
+            isReported: false
+          }
         },
       ],
     },
@@ -114,12 +132,20 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
       author: {
         id: "user1",
         name: "Sharon McDonald",
-        avatar: "https://randomuser.me/api/portraits/women/1.jpg"
+        avatar: "https://randomuser.me/api/portraits/women/1.jpg",
+        role: "Senior Editor",
+        isVerified: true
       },
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.",
       createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // 10 mins ago
       updatedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
       likes: 8,
+      likedBy: ["user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9"],
+      metadata: {
+        isPinned: false,
+        isHidden: false,
+        isReported: false
+      },
       replies: [],
     },
   ];

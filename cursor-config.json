@@ -19,8 +19,8 @@
       "Always check if a file exists for something that you are trying to do. Ensure that you are keeping all similar functions consolidated in a single approach and file. Do not have duplicate files doing the same thing to avoid duplication and improve maintainability",
       "Ensure all component styles are added to a 'Styles' file in the related directory. If this is a component, add those styles to components/styles, if it's a screen then add them to screens/",
       "When converting any hardcoded values to a token, ensure that you are reviewing the value of both the hardcoded value and the token and converting it e.g. Space 40 is 16px. Not 40px.",
-      "Ensure that the hardcoded values align to the values defined in any spacing e.g. 16px hardcoded = Space 40 = Sizing 40 (16px)"
-      "Ensure that all padding and margin values use space tokens only"
-      "Ensure that all size values e.g. icon sizing use the sizing primitive tokens",
+      "Ensure that the hardcoded values align to the values defined in any spacing e.g. 16px hardcoded = Space 40 = Sizing 40 (16px)",
+      "Ensure that all padding and margin values use space tokens only",
+      "Ensure that all size values e.g. icon sizing use the sizing primitive tokens"
     ]
   }
