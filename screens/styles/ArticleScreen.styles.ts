@@ -19,7 +19,8 @@ export const createStyles = (theme: ThemeType) => {
       paddingHorizontal: theme.space['30'],
     },
     bottomSpacing: {
-      height: theme.space['20'],
+      height: theme.space['80'],
+      paddingBottom: theme.space['20'],
     },
     contentContainer: {
       paddingHorizontal: theme.space['40'],

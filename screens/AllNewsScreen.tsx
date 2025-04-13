@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform } from 'react-native';
+import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import CardHorizontal from '../components/CardHorizontal';
@@ -10,6 +10,7 @@ import Typography from '../components/Typography';
 import Tabs from '../components/Tabs';
 import { fetchNewsByCategory } from '../services/sunNewsService';
 import { getCategoryColor } from '../utils/categoryColors';
+import { createSharedStyles } from '../utils/sharedStyles';
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === 'ios' ? 44 : 0);
@@ -66,6 +67,7 @@ const SUBCATEGORIES = {
 // Simplified component without animations
 const AllNewsScreen = ({ navigation }) => {
   const theme = useTheme();
+  const sharedStyles = createSharedStyles(theme);
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -146,6 +148,36 @@ const AllNewsScreen = ({ navigation }) => {
   // Safely get subcategories
   const subcategories = SUBCATEGORIES[selectedMainCategory] || [];
 
+  const renderItem = ({ item }) => (
+    <CardHorizontal
+      id={item.id}
+      title={item.title}
+      imageUrl={item.imageUrl}
+      category={item.category}
+      readTime={item.readTime}
+      onPress={() => handleNewsPress(item)}
+      onBookmark={() => handleBookmark(item.id)}
+      onShare={() => handleShare(item.id)}
+    />
+  );
+
+  const renderEmptyComponent = (
+    <View style={styles.emptyContainer}>
+      <Typography
+        variant="body-01"
+        color={theme.colors.Text.Secondary}
+        style={styles.emptyText}
+      >
+        No articles found for this category.
+      </Typography>
+    </View>
+  );
+
+  const handleRefresh = () => {
+    // Refresh logic would go here
+    console.log('Refreshing news...');
+  };
+
   return (
     <View style={[styles.safeArea, { backgroundColor: theme.colors.Surface.Secondary }]}>
       {/* Status bar with fixed color */}
@@ -223,17 +255,7 @@ const AllNewsScreen = ({ navigation }) => {
               />
             )}
             contentContainerStyle={styles.newsList}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Typography
-                  variant="body-01"
-                  color={theme.colors.Text.Secondary}
-                  style={styles.emptyText}
-                >
-                  No articles found for this category.
-                </Typography>
-              </View>
-            }
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

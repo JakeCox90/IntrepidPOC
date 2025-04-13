@@ -20,6 +20,7 @@ import TopNav from '../components/TopNav';
 import Typography from '../components/Typography';
 import { fetchSunNews } from '../services/sunNewsService';
 import { Article } from '../types/article';
+import { createSharedStyles } from '../utils/sharedStyles';
 
 type RootStackParamList = {
   TodayArticle: { article: Article };
@@ -33,6 +34,7 @@ interface TodayScreenProps {
 
 const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   const theme = useTheme();
+  const sharedStyles = createSharedStyles(theme);
   const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -272,6 +274,9 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
         <View style={[styles.contentContainer, { backgroundColor: theme.colors.Surface.Secondary }]}>
           {renderContent()}
         </View>
+
+        {/* Bottom spacing for navigation */}
+        <View style={sharedStyles.bottomNavSpacing} />
       </ScrollView>
 
       {/* Fixed Logo Area */}

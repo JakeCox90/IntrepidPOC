@@ -13,6 +13,7 @@ export const createCommentsStyles = (theme: ThemeType) =>
     commentsSection: {
       flex: 1,
       backgroundColor: theme.colors.Surface.Primary,
+      paddingHorizontal: theme.space['40'],
     },
     commentSectionBackground: {
       backgroundColor: theme.colors.Surface.Secondary,
@@ -23,9 +24,7 @@ export const createCommentsStyles = (theme: ThemeType) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: theme.space['40'],
-      paddingTop: theme.space['60'],
-      paddingBottom: theme.space['20'],
+      paddingVertical: theme.space['60'],
     },
     headerTitle: {
       flex: 1,

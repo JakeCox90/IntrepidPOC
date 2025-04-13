@@ -93,40 +93,25 @@ export const Comments: React.FC<CommentsProps> = ({
           data={validComments}
           renderItem={renderComment}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[styles.listContent, { paddingBottom: theme.space['60'] }]}
           ListFooterComponent={
-            totalComments > comments.length && onShowAllPress ? (
-              <TouchableOpacity onPress={onShowAllPress}>
-                <Typography variant="body-02" color={theme.colors.Primary.Resting}>
-                  Show all {totalComments} comments
-                </Typography>
-              </TouchableOpacity>
-            ) : null
+            <>
+              <View style={{ height: theme.space['40'] }} />
+              {totalComments > comments.length && onShowAllPress && (
+                <TouchableOpacity onPress={onShowAllPress} style={{ alignItems: 'center' }}>
+                  <Typography 
+                    variant="body-02" 
+                    color={theme.colors.Primary.Resting}
+                    style={{ textAlign: 'center' }}
+                  >
+                    Show all {totalComments} comments
+                  </Typography>
+                </TouchableOpacity>
+              )}
+              <View style={{ height: theme.space['70'] }} />
+            </>
           }
         />
-
-        {/* Add comment input */}
-        <View style={styles.addCommentContainer}>
-          <TextInput
-            style={styles.input}
-            value={commentText}
-            onChangeText={setCommentText}
-            placeholder="Add a comment..."
-            placeholderTextColor={theme.colors.Text.Secondary}
-            multiline
-          />
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={handleSubmitComment}
-            disabled={!commentText.trim()}
-          >
-            <Ionicons
-              name="send"
-              size={24}
-              color={commentText.trim() ? theme.colors.Primary.Resting : theme.colors.Text.Secondary}
-            />
-          </TouchableOpacity>
-        </View>
       </View>
     </View>
   );

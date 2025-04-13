@@ -198,7 +198,10 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
 
       <FlatList
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
+        contentContainerStyle={[
+          styles.scrollViewContent,
+          { paddingBottom: theme.space['80'] } // Add extra padding at the bottom
+        ]}
         data={[{ key: 'content' }]}
         renderItem={() => (
           <>
@@ -281,9 +284,13 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
             />
 
             {/* Bottom spacing */}
-            <View style={styles.bottomSpacing} />
+            <View style={[styles.bottomSpacing, { height: theme.space['100'] }]} />
           </>
         )}
+        showsVerticalScrollIndicator={true}
+        bounces={true}
+        overScrollMode="always"
+        scrollEventThrottle={16}
       />
     </View>
   );

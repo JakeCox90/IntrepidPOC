@@ -5,6 +5,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import Typography from '../components/Typography';
 import { useTheme } from '../theme/ThemeProvider';
 import { styles, createDynamicStyles } from './styles/SavedScreen.styles';
+import { createSharedStyles } from '../utils/sharedStyles';
 
 // Define types for screen navigation props
 type SavedStackParamList = {
@@ -19,6 +20,7 @@ type SavedScreenProps = StackScreenProps<SavedStackParamList, 'SavedMain'>;
 const SavedScreen: React.FC<SavedScreenProps> = ({ navigation }) => {
   const theme = useTheme();
   const dynamicStyles = createDynamicStyles(theme);
+  const sharedStyles = createSharedStyles(theme);
 
   // Placeholder data for saved articles
   const placeholderSavedArticles = [
@@ -98,6 +100,9 @@ const SavedScreen: React.FC<SavedScreenProps> = ({ navigation }) => {
             </Typography>
           </View>
         )}
+
+        {/* Bottom spacing for navigation */}
+        <View style={sharedStyles.bottomNavSpacing} />
       </ScrollView>
     </SafeAreaView>
   );

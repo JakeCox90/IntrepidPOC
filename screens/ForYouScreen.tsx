@@ -11,6 +11,7 @@ import { fetchSunNews } from '../services/sunNewsService';
 import Stack from '../components/Stack';
 import NewsCard from '../components/NewsCard';
 import BundleCard from '../components/BundleCard';
+import { createSharedStyles } from '../utils/sharedStyles';
 
 // Sample bundle data
 const bundles = [
@@ -63,6 +64,7 @@ interface Bundle {
 // ForYou screen with simplified implementation
 const ForYouScreen = ({ navigation }: { navigation: any }) => {
   const theme = useTheme();
+  const sharedStyles = createSharedStyles(theme);
   const [news, setNews] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -333,6 +335,9 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
 
           {/* Bottom padding */}
           <View style={styles.bottomPadding} />
+
+          {/* Bottom spacing for navigation */}
+          <View style={sharedStyles.bottomNavSpacing} />
         </ScrollView>
       )}
     </View>
