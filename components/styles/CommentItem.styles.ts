@@ -10,6 +10,7 @@ export const createCommentItemStyles = (theme: ThemeType) =>
       backgroundColor: theme.colors.Surface.Secondary,
       height: theme.space['80'],
       width: theme.space['80'],
+      borderRadius: theme.radius['radius-default'],
     },
     avatarContainer: {
       marginRight: theme.space['30'],
@@ -39,6 +40,10 @@ export const createCommentItemStyles = (theme: ThemeType) =>
     commentItem: {
       marginBottom: theme.space['40'],
       overflow: 'hidden',
+      backgroundColor: theme.colors.Surface.Primary,
+      borderColor: theme.colors.Border.Primary,
+      borderWidth: theme.borderWidth['10'],
+      borderRadius: theme.radius['radius-default'],
     },
     commentText: {
       marginBottom: theme.space['20'],
@@ -46,6 +51,8 @@ export const createCommentItemStyles = (theme: ThemeType) =>
     commentTime: {},
     divider: {
       width: '100%',
+      borderTopWidth: theme.borderWidth['10'],
+      borderTopColor: theme.colors.Border.Primary,
     },
     likeButton: {
       padding: theme.space['10'],

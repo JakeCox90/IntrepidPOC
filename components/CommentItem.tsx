@@ -19,8 +19,8 @@ const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onView
   const formattedTime = formatRelativeTime(comment.createdAt);
   
   // Check if the comment has replies
-  const hasReplies = Array.isArray(comment.replies) && comment.replies.length > 0;
-  const repliesCount = hasReplies ? comment.replies.length : 0;
+  const hasReplies = comment.replies !== undefined && Array.isArray(comment.replies) && comment.replies.length > 0;
+  const repliesCount = hasReplies && comment.replies ? comment.replies.length : 0;
 
   const handleLike = () => {
     if (!isLiked) {
@@ -34,22 +34,12 @@ const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onView
   };
 
   return (
-    <View
-      style={[
-        styles.commentItem,
-        {
-          backgroundColor: theme.colors.Surface.Primary,
-          borderColor: theme.colors.Border.Primary,
-          borderWidth: theme.borderWidth['10'],
-          borderRadius: theme.radius['radius-default'],
-        },
-      ]}
-    >
+    <View style={styles.commentItem}>
       <View style={styles.commentHeader}>
         <View style={styles.commentAuthorContainer}>
           <View style={styles.avatarContainer}>
             {/* Placeholder avatar - in a real app, you would use the user's avatar */}
-            <View style={[styles.avatar, { borderRadius: theme.radius['radius-default'] }]} />
+            <View style={styles.avatar} />
           </View>
           <View style={styles.commentContent}>
             <View style={styles.nameTimeContainer}>
@@ -118,15 +108,7 @@ const CommentItem = ({ comment, isLiked: initialIsLiked, onLike, onReply, onView
       {/* View replies button */}
       {hasReplies && onViewReplies && (
         <View style={styles.repliesContainer}>
-          <View 
-            style={[
-              styles.divider, 
-              { 
-                borderTopWidth: theme.borderWidth['10'],
-                borderTopColor: theme.colors.Border.Primary,
-              }
-            ]} 
-          />
+          <View style={styles.divider} />
           <TouchableOpacity
             style={styles.viewRepliesContainer}
             onPress={() => onViewReplies(comment.id)}

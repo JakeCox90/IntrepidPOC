@@ -18,7 +18,9 @@ export const createCommentsStyles = (theme: ThemeType) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      padding: theme.space['40'],
+      paddingHorizontal: theme.space['40'],
+      paddingTop: theme.space['60'],
+      paddingBottom: theme.space['20'],
     },
     headerTitle: {
       flex: 1,
