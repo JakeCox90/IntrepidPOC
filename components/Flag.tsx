@@ -4,18 +4,7 @@ import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import { getCategoryColor } from '../utils/categoryColors';
 import { createFlagStyles } from './styles/Flag.styles';
-
-type FlagVariant = 'minimal' | 'filled';
-
-interface FlagProps {
-  text: string;
-  color?: string;
-  backgroundColor?: string;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-  category?: string;
-  variant?: FlagVariant;
-}
+import { FlagProps, FlagVariant } from '../types/shared';
 
 const Flag = ({
   text,
@@ -35,9 +24,9 @@ const Flag = ({
     : getCategoryColor(text, theme);
   const defaultTextColor = variant === 'filled' ? theme.colors.Text.Inverse : defaultBgColor;
 
-  const sharedTextStyle = [
+  const sharedTextStyle: TextStyle[] = [
     styles.text,
-    textStyle,
+    ...(textStyle ? [textStyle] : []),
   ];
 
   if (variant === 'minimal') {

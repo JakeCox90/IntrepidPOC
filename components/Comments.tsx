@@ -5,24 +5,16 @@ import { View, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-n
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
-
-interface CommentType {
-  id: number | string;
-  author: string;
-  text: string;
-  time: string;
-  likes: number;
-  replies?: CommentType[];
-}
+import { Comment } from '../types/shared';
 
 interface CommentsProps {
-  comments: CommentType[];
+  comments: Comment[];
   totalComments?: number;
   onShowAllPress?: () => void;
   onSubmitComment?: (text: string) => void;
-  onLikeComment?: (commentId: number | string, isLiked: boolean) => void;
-  onReplyComment?: (commentId: number | string) => void;
-  onViewReplies?: (commentId: number | string) => void;
+  onLikeComment?: (commentId: string | number, isLiked: boolean) => void;
+  onReplyComment?: (commentId: string | number) => void;
+  onViewReplies?: (commentId: string | number) => void;
 }
 
 const Comments = ({
@@ -39,7 +31,7 @@ const Comments = ({
   const [comments, setComments] = useState(initialComments);
   const [likedComments, setLikedComments] = useState<Record<string | number, boolean>>({});
 
-  const handleLikeComment = (commentId: number | string) => {
+  const handleLikeComment = (commentId: string | number) => {
     // Toggle like status
     const isCurrentlyLiked = likedComments[commentId] || false;
     const newLikedState = !isCurrentlyLiked;
@@ -69,7 +61,7 @@ const Comments = ({
     }
   };
 
-  const renderComment = ({ item }: { item: CommentType }) => {
+  const renderComment = ({ item }: { item: Comment }) => {
     const isLiked = likedComments[item.id] || false;
 
     return (
