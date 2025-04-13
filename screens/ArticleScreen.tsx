@@ -181,7 +181,6 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
             duration={120}
             onPlay={() => console.log('Play audio')}
             onPause={() => console.log('Pause audio')}
-            onComplete={() => console.log('Audio completed')}
           />
         </View>
 
@@ -207,6 +206,17 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
                 ))}
             </View>
           </Accordion>
+        </View>
+
+        {/* Article Body Content */}
+        <View style={styles.articleContent}>
+          <Typography
+            variant="body-01"
+            color={theme.colors.Text.Secondary}
+            style={styles.paragraph}
+          >
+            {article?.content}
+          </Typography>
         </View>
 
         {/* Comments Section */}

@@ -1,5 +1,6 @@
 'use client';
 import { View, type ViewStyle, type TextStyle } from 'react-native';
+import { useMemo, memo } from 'react';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import { getCategoryColor } from '../utils/categoryColors';
@@ -16,36 +17,53 @@ const Flag = ({
   variant = 'filled',
 }: FlagProps) => {
   const theme = useTheme();
-  const styles = createFlagStyles(theme);
+  const styles = useMemo(() => createFlagStyles(theme), [theme]);
 
-  // Default colors based on text or category
-  const defaultBgColor = category
-    ? getCategoryColor(category, theme)
-    : getCategoryColor(text, theme);
-  const defaultTextColor = variant === 'filled' ? theme.colors.Text.Inverse : defaultBgColor;
+  // Default colors based on text or category - memoize to prevent unnecessary calculations
+  const { defaultBgColor, defaultTextColor } = useMemo(() => {
+    const bgColor = category
+      ? getCategoryColor(category, theme)
+      : getCategoryColor(text, theme);
+    const txtColor = variant === 'filled' ? theme.colors.Text.Inverse : bgColor;
+    
+    return {
+      defaultBgColor: bgColor,
+      defaultTextColor: txtColor
+    };
+  }, [category, text, theme, variant]);
 
-  const sharedTextStyle: TextStyle[] = [
+  // Memoize the text style
+  const sharedTextStyle = useMemo((): TextStyle[] => [
     styles.text,
     ...(textStyle ? [textStyle] : []),
-  ];
+  ], [styles.text, textStyle]);
 
+  // Memoize the text component
+  const TextComponent = useMemo(() => (
+    <Typography 
+      variant="overline" 
+      color={color || (variant === 'minimal' ? defaultBgColor : defaultTextColor)} 
+      style={sharedTextStyle}
+    >
+      {text.toUpperCase()}
+    </Typography>
+  ), [color, variant, defaultBgColor, defaultTextColor, sharedTextStyle, text]);
+
+  // Render minimal variant
   if (variant === 'minimal') {
     return (
       <View style={[styles.minimalContainer, style]}>
-        <Typography variant="overline" color={color || defaultBgColor} style={sharedTextStyle}>
-          {text.toUpperCase()}
-        </Typography>
+        {TextComponent}
       </View>
     );
   }
 
+  // Render filled variant
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor || defaultBgColor }, style]}>
-      <Typography variant="overline" color={color || defaultTextColor} style={sharedTextStyle}>
-        {text.toUpperCase()}
-      </Typography>
+      {TextComponent}
     </View>
   );
 };
 
-export default Flag;
+export default memo(Flag);
