@@ -1,178 +1,134 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TouchableOpacity, Animated, Easing } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../theme/ThemeProvider';
+import { View, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import Typography from './Typography';
 import Flag from './Flag';
-import { createAudioPlayerStyles } from './styles/AudioPlayer.styles';
+import { useAudioPlayer } from '../contexts/AudioPlayerContext';
+import { useTheme } from '@theme/ThemeProvider';
+import { createAudioPlayerStyles } from '@components/styles/AudioPlayer.styles';
+import { Ionicons } from '@expo/vector-icons';
+import { Article as BaseArticle } from '../types';
 
-interface AudioPlayerProps {
-  title: string;
-  category?: string;
-  duration: number; // in seconds
-  onPlay?: () => void;
-  onPause?: () => void;
-  onComplete?: () => void;
+interface AudioArticle extends BaseArticle {
+  audioUrl?: string;
+  duration?: number;
 }
 
-const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}m ${secs}s`;
-};
+interface AudioPlayerProps {
+  article?: AudioArticle;
+}
 
-const AudioPlayer = ({
-  title,
-  category = 'US NEWS',
-  duration = 321, // 5m 21s default
-  onPlay,
-  onPause,
-  onComplete,
-}: AudioPlayerProps) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ article }) => {
+  const [remainingTime, setRemainingTime] = useState(article?.duration ?? 120); // Default to 2 minutes if no duration
+  const [contentWidth, setContentWidth] = useState(0);
+  const [needsScrolling, setNeedsScrolling] = useState(false);
+  const scrollAnim = useRef(new Animated.Value(0)).current;
   const theme = useTheme();
   const styles = createAudioPlayerStyles(theme);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(duration);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const [contentWidth, setContentWidth] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [shouldScroll, setShouldScroll] = useState(false);
+  const { isPlaying, currentArticle, showPlayer, playAudio, pauseAudio } = useAudioPlayer();
 
-  // Create the ticker animation function with useCallback
-  const startTickerAnimation = React.useCallback(() => {
-    // Reset to starting position
-    scrollX.setValue(containerWidth);
+  // If no article is provided, don't render anything
+  if (!article) {
+    return null;
+  }
 
-    // Create the scrolling animation
-    Animated.loop(
-      Animated.timing(scrollX, {
-        toValue: -contentWidth,
-        duration: 15000, // Adjust speed as needed
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
-  }, [containerWidth, contentWidth, scrollX]);
-
-  // Determine if scrolling is needed when content or container width changes
   useEffect(() => {
-    if (contentWidth > 0 && containerWidth > 0) {
-      const needsScrolling = contentWidth > containerWidth;
-      setShouldScroll(needsScrolling);
-
-      if (needsScrolling) {
-        startTickerAnimation();
-      }
+    if (contentWidth > 0) {
+      const screenWidth = Dimensions.get('window').width;
+      setNeedsScrolling(contentWidth > screenWidth - 200);
     }
-  }, [contentWidth, containerWidth, startTickerAnimation]);
+  }, [contentWidth]);
 
-  // Clean up timers on unmount
   useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, []);
+    if (needsScrolling) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(scrollAnim, {
+            toValue: -contentWidth,
+            duration: 10000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scrollAnim, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [needsScrolling, contentWidth]);
 
-  const togglePlayPause = () => {
-    if (isPlaying) {
-      // Pause
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      setIsPlaying(false);
-      if (onPause) onPause();
-    } else {
-      // Play
-      setIsPlaying(true);
-      timerRef.current = setInterval(() => {
-        setRemainingTime(prev => {
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (isPlaying && currentArticle?.id === article.id) {
+      timer = setInterval(() => {
+        setRemainingTime((prev) => {
           if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            setIsPlaying(false);
-            if (onComplete) onComplete();
+            clearInterval(timer);
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
-      if (onPlay) onPlay();
     }
+    return () => clearInterval(timer);
+  }, [isPlaying, currentArticle?.id, article.id]);
+
+  const handlePlayPress = () => {
+    if (currentArticle?.id === article.id) {
+      if (isPlaying) {
+        pauseAudio();
+      } else {
+        playAudio();
+      }
+    } else {
+      showPlayer(article);
+      playAudio();
+    }
+  };
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={handlePlayPress} style={styles.playButton}>
+        <Ionicons
+          name={isPlaying && currentArticle?.id === article.id ? 'pause' : 'play'}
+          size={24}
+          color={theme.colors.Text.Primary}
+        />
+      </TouchableOpacity>
       <View style={styles.contentContainer}>
-        <View
-          style={styles.leftSection}
-          onLayout={event => {
-            setContainerWidth(event.nativeEvent.layout.width);
-          }}
-        >
-          {shouldScroll ? (
-            // Scrolling ticker for long content
-            <View style={styles.tickerContainer}>
-              <Animated.View
-                style={[
-                  styles.tickerContent,
-                  {
-                    transform: [{ translateX: scrollX }],
-                  },
-                ]}
-                onLayout={event => {
-                  setContentWidth(event.nativeEvent.layout.width);
-                }}
-              >
-                <Flag text={category} category={category} variant="minimal" />
-                <Typography variant="subtitle-02" color={theme.colors.Text.Primary}>
-                  {' ' + title}
-                </Typography>
-              </Animated.View>
-            </View>
-          ) : (
-            // Static text with truncation for content that fits
-            <View
-              style={styles.staticTextContainer}
-              onLayout={event => {
-                setContentWidth(event.nativeEvent.layout.width);
-              }}
+        <View style={styles.leftSection}>
+          <View style={styles.tickerContainer}>
+            <Animated.View
+              style={[
+                styles.tickerContent,
+                needsScrolling && {
+                  transform: [{ translateX: scrollAnim }],
+                },
+              ]}
+              onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
             >
-              <Flag text={category} category={category} variant="minimal" />
-              <Typography
-                variant="subtitle-02"
-                color={theme.colors.Text.Primary}
-                numberOfLines={1}
-                style={styles.truncatedTitle}
-              >
-                {' ' + title}
+              <Typography variant="body-01" style={styles.truncatedTitle}>
+                {article.title}
+              </Typography>
+            </Animated.View>
+          </View>
+          <View style={styles.staticTextContainer}>
+            <Flag category={article.category} text={article.category} />
+            <View style={styles.durationContainer}>
+              <Typography variant="overline" style={styles.duration}>
+                {formatTime(remainingTime)}
               </Typography>
             </View>
-          )}
-
-          <View style={styles.durationContainer}>
-            <Ionicons name="volume-medium-outline" size={20} color={theme.colors.Text.Secondary} />
-            <Typography
-              variant="body-02"
-              color={theme.colors.Text.Secondary}
-              style={styles.duration}
-            >
-              {formatTime(remainingTime)} remaining
-            </Typography>
           </View>
         </View>
-
-        <TouchableOpacity style={styles.playButton} onPress={togglePlayPause} activeOpacity={0.7}>
-          <Ionicons
-            name={isPlaying ? 'pause' : 'play'}
-            size={32}
-            color={theme.colors.Text.Primary}
-          />
-        </TouchableOpacity>
       </View>
     </View>
   );

@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import { ActivityIndicator, View, LogBox, Platform, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import InterRegular from './assets/fonts/Inter-Regular.ttf';
 import InterMedium from './assets/fonts/Inter-Medium.ttf';
 import InterSemiBold from './assets/fonts/Inter-SemiBold.ttf';
@@ -12,6 +13,8 @@ import { ThemeProvider } from './theme/ThemeProvider';
 import { colors } from './design-system/Foundations/colors';
 import Typography from './components/Typography';
 import { BookmarkProvider } from './contexts/BookmarkContext';
+import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import { AudioPlayerDrawer } from './components/AudioPlayerDrawer';
 // Ignore specific warnings that might be related to third-party libraries
 LogBox.ignoreLogs([
   'Reanimated 2',
@@ -80,15 +83,20 @@ export default function App(): React.ReactElement {
   }
 
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <BookmarkProvider>
-          <NavigationContainer>
-            <TabNavigator />
-          </NavigationContainer>
-        </BookmarkProvider>
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <BookmarkProvider>
+            <AudioPlayerProvider>
+              <NavigationContainer>
+                <TabNavigator />
+                <AudioPlayerDrawer />
+              </NavigationContainer>
+            </AudioPlayerProvider>
+          </BookmarkProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

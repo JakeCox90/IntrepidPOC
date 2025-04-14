@@ -254,15 +254,11 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           />
 
           {/* Audio Player */}
-          <View style={styles.audioPlayerContainer}>
-            <AudioPlayer
-              title={articleData.title}
-              category={articleData.category}
-              duration={120}
-              onPlay={handleAudioPlay}
-              onPause={handleAudioPause}
-            />
-          </View>
+          {article && (
+            <View style={styles.audioPlayerContainer}>
+              <AudioPlayer article={article} />
+            </View>
+          )}
 
           {/* Key Points Accordion */}
           <KeyPoints
