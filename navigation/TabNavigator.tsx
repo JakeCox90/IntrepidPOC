@@ -172,9 +172,18 @@ function TodayStackScreen() {
   return (
     <TodayStack.Navigator screenOptions={{ headerShown: false }}>
       <TodayStack.Screen name="TodayMain" component={TodayScreen} />
-      <TodayStack.Screen name="TodayArticle" component={ArticleScreen} />
-      <TodayStack.Screen name="TodayCategory" component={CategoryScreen} />
-      <TodayStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
+      <TodayStack.Screen 
+        name="TodayArticle" 
+        component={ArticleScreen as React.ComponentType<any>} 
+      />
+      <TodayStack.Screen 
+        name="TodayCategory" 
+        component={CategoryScreen as React.ComponentType<any>} 
+      />
+      <TodayStack.Screen 
+        name="ArticleSwipeScreen" 
+        component={ArticleSwipeScreen as React.ComponentType<any>} 
+      />
     </TodayStack.Navigator>
   );
 }
@@ -184,10 +193,22 @@ function ForYouStackScreen() {
   return (
     <ForYouStack.Navigator screenOptions={{ headerShown: false }}>
       <ForYouStack.Screen name="ForYouMain" component={ForYouScreen} />
-      <ForYouStack.Screen name="ForYouArticle" component={ArticleScreen} />
-      <ForYouStack.Screen name="ArticleStackScreen" component={ArticleStackScreen} />
-      <ForYouStack.Screen name="ForYouCategory" component={CategoryScreen} />
-      <ForYouStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
+      <ForYouStack.Screen 
+        name="ForYouArticle" 
+        component={ArticleScreen as React.ComponentType<any>} 
+      />
+      <ForYouStack.Screen 
+        name="ArticleStackScreen" 
+        component={ArticleStackScreen as React.ComponentType<any>} 
+      />
+      <ForYouStack.Screen 
+        name="ForYouCategory" 
+        component={CategoryScreen as React.ComponentType<any>} 
+      />
+      <ForYouStack.Screen 
+        name="ArticleSwipeScreen" 
+        component={ArticleSwipeScreen as React.ComponentType<any>} 
+      />
     </ForYouStack.Navigator>
   );
 }
@@ -197,9 +218,18 @@ function AllNewsStackScreen() {
   return (
     <AllNewsStack.Navigator screenOptions={{ headerShown: false }}>
       <AllNewsStack.Screen name="AllNewsMain" component={AllNewsScreen} />
-      <AllNewsStack.Screen name="AllNewsArticle" component={ArticleScreen} />
-      <AllNewsStack.Screen name="AllNewsCategory" component={CategoryScreen} />
-      <AllNewsStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
+      <AllNewsStack.Screen 
+        name="AllNewsArticle" 
+        component={ArticleScreen as React.ComponentType<any>} 
+      />
+      <AllNewsStack.Screen 
+        name="AllNewsCategory" 
+        component={CategoryScreen as React.ComponentType<any>} 
+      />
+      <AllNewsStack.Screen 
+        name="ArticleSwipeScreen" 
+        component={ArticleSwipeScreen as React.ComponentType<any>} 
+      />
     </AllNewsStack.Navigator>
   );
 }
@@ -209,9 +239,18 @@ function SearchStackScreen() {
   return (
     <SearchStack.Navigator screenOptions={{ headerShown: false }}>
       <SearchStack.Screen name="SearchMain" component={SearchScreen} />
-      <SearchStack.Screen name="SearchArticle" component={ArticleScreen} />
-      <SearchStack.Screen name="SearchCategory" component={CategoryScreen} />
-      <SearchStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
+      <SearchStack.Screen 
+        name="SearchArticle" 
+        component={ArticleScreen as React.ComponentType<any>} 
+      />
+      <SearchStack.Screen 
+        name="SearchCategory" 
+        component={CategoryScreen as React.ComponentType<any>} 
+      />
+      <SearchStack.Screen 
+        name="ArticleSwipeScreen" 
+        component={ArticleSwipeScreen as React.ComponentType<any>} 
+      />
     </SearchStack.Navigator>
   );
 }
@@ -221,9 +260,18 @@ function SavedStackScreen() {
   return (
     <SavedStack.Navigator screenOptions={{ headerShown: false }}>
       <SavedStack.Screen name="SavedMain" component={SavedScreen} />
-      <SavedStack.Screen name="SavedArticle" component={ArticleScreen} />
-      <SavedStack.Screen name="SavedCategory" component={CategoryScreen} />
-      <SavedStack.Screen name="ArticleSwipeScreen" component={ArticleSwipeScreen} />
+      <SavedStack.Screen 
+        name="SavedArticle" 
+        component={ArticleScreen as React.ComponentType<any>} 
+      />
+      <SavedStack.Screen 
+        name="SavedCategory" 
+        component={CategoryScreen as React.ComponentType<any>} 
+      />
+      <SavedStack.Screen 
+        name="ArticleSwipeScreen" 
+        component={ArticleSwipeScreen as React.ComponentType<any>} 
+      />
     </SavedStack.Navigator>
   );
 }
@@ -359,7 +407,7 @@ export default function TabNavigator() {
             // Check if we're in a stack navigator and the current screen is ArticleSwipeScreen
             const currentStackState = props.state.routes[props.state.index].state;
             if (currentStackState && currentStackState.routes) {
-              const currentScreen = currentStackState.routes[currentStackState.index]?.name;
+              const currentScreen = currentStackState.routes[currentStackState.index || 0]?.name;
               if (currentScreen === 'ArticleSwipeScreen') {
                 return null; // Hide tab bar when ArticleSwipeScreen is active
               }
