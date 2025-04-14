@@ -65,6 +65,7 @@ export const AudioPlayerDrawer: React.FC = () => {
     // Move down to show only the mini player
     translateY.value = withSpring(0, SPRING_CONFIG);
     isMaximized.value = false;
+    // Do not pause audio when minimizing
   }, [translateY, isMaximized]);
 
   const handleMiniPlayerPress = useCallback(() => {
