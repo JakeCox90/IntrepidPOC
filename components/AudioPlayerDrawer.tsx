@@ -9,6 +9,8 @@ import Animated, {
   useSharedValue,
   withSpring,
   runOnJS,
+  interpolate,
+  Extrapolate,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
@@ -37,7 +39,7 @@ export const AudioPlayerDrawer: React.FC = () => {
   } = useAudioPlayer();
 
   // Animation values
-  const translateY = useSharedValue(SCREEN_HEIGHT); // Start off-screen
+  const translateY = useSharedValue(0);
   const isMaximized = useSharedValue(false);
   const context = useSharedValue({ y: 0 });
 
@@ -77,13 +79,8 @@ export const AudioPlayerDrawer: React.FC = () => {
       context.value = { y: translateY.value };
     })
     .onUpdate((event) => {
-      // Only allow dragging within bounds
+      // Allow dragging within bounds
       const newPosition = context.value.y + event.translationY;
-      
-      // If we're at the bottom (0) and trying to drag up, prevent it
-      if (translateY.value === 0 && event.translationY < 0) {
-        return;
-      }
       
       // Allow dragging down to dismiss
       if (newPosition >= 0) {
@@ -96,8 +93,11 @@ export const AudioPlayerDrawer: React.FC = () => {
     })
     .onEnd((event) => {
       // If dragged down significantly, dismiss
-      if (translateY.value > 50 || event.velocityY > 500) {
-        runOnJS(hidePlayer)();
+      if (translateY.value > 100 || event.velocityY > 500) {
+        // Animate to the bottom of the screen before hiding
+        translateY.value = withSpring(SCREEN_HEIGHT, SPRING_CONFIG, () => {
+          runOnJS(hidePlayer)();
+        });
         return;
       }
 
@@ -109,7 +109,7 @@ export const AudioPlayerDrawer: React.FC = () => {
       }
     });
 
-  // Animated styles
+  // Animated styles for the drawer
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: translateY.value }],
@@ -130,6 +130,43 @@ export const AudioPlayerDrawer: React.FC = () => {
     };
   });
 
+  // Animated styles for the header
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    // Interpolate opacity based on position
+    const opacity = interpolate(
+      translateY.value,
+      [-MAX_TRANSLATE, -MAX_TRANSLATE / 2, 0],
+      [1, 0.5, 0],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      opacity,
+      height: MINI_PLAYER_HEIGHT,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+      backgroundColor: 'transparent',
+      borderTopWidth: 1,
+      borderTopColor: 'rgba(0,0,0,0.1)',
+      paddingHorizontal: 16,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+    };
+  });
+
+  // Animated styles for the content
+  const contentAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      flex: 1,
+      padding: 16,
+      paddingTop: MINI_PLAYER_HEIGHT + 16,
+      paddingBottom: 16 + TAB_NAV_HEIGHT,
+    };
+  });
+
   // Only render when visible and there's a current article
   if (!isVisible || !currentArticle) {
     return null;
@@ -138,13 +175,13 @@ export const AudioPlayerDrawer: React.FC = () => {
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={animatedStyle}>
-        {/* Mini Player */}
-        <TouchableOpacity 
-          style={styles.miniPlayerContainer}
-          onPress={handleMiniPlayerPress}
-          activeOpacity={0.9}
-        >
-          <View style={styles.miniPlayerContent}>
+        {/* Header that transitions between minimized and expanded states */}
+        <Animated.View style={headerAnimatedStyle}>
+          <TouchableOpacity 
+            onPress={handleMiniPlayerPress}
+            activeOpacity={0.9}
+            style={styles.headerContent}
+          >
             <View style={styles.miniPlayerImage} />
             <View style={styles.miniPlayerTextContainer}>
               <Typography variant="subtitle-02" color={theme.colors.Text.Primary} numberOfLines={1}>
@@ -161,11 +198,11 @@ export const AudioPlayerDrawer: React.FC = () => {
                 color={theme.colors.Text.Primary}
               />
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </Animated.View>
 
-        {/* Full Screen Player */}
-        <View style={styles.fullScreenContainer}>
+        {/* Full Screen Content */}
+        <Animated.View style={contentAnimatedStyle}>
           <View style={styles.header}>
             <TouchableOpacity onPress={minimizeDrawer} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
               <Ionicons
@@ -214,23 +251,14 @@ export const AudioPlayerDrawer: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </Animated.View>
     </GestureDetector>
   );
 };
 
 const styles = StyleSheet.create({
-  miniPlayerContainer: {
-    height: MINI_PLAYER_HEIGHT,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    backgroundColor: 'transparent',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.1)',
-    paddingHorizontal: 16,
-  },
-  miniPlayerContent: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     height: MINI_PLAYER_HEIGHT,
@@ -245,11 +273,6 @@ const styles = StyleSheet.create({
   miniPlayerTextContainer: {
     flex: 1,
     marginRight: 16,
-  },
-  fullScreenContainer: {
-    flex: 1,
-    padding: 16,
-    paddingBottom: 16 + TAB_NAV_HEIGHT,
   },
   header: {
     flexDirection: 'row',
