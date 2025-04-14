@@ -289,7 +289,7 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
         />
         {!hideHeader && (
           <TopNav
-            title="Article"
+            title=""
             showBackButton
             onBackPress={() => navigation.goBack()}
             rightButtons={[
