@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { View, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Dimensions, TouchableOpacity } from 'react-native';
 import { useTheme } from '@theme/ThemeProvider';
 import Typography from '@components/Typography';
 import { useAudioPlayer } from '../contexts/AudioPlayerContext';
@@ -13,20 +13,15 @@ import Animated, {
   Extrapolate,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { createAudioPlayerDrawerStyles, MINI_PLAYER_HEIGHT, TAB_NAV_HEIGHT, SPRING_CONFIG } from './styles/AudioPlayerDrawer.styles';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const MINI_PLAYER_HEIGHT = 60;
-const TAB_NAV_HEIGHT = 49;
 const FULL_SCREEN_HEIGHT = SCREEN_HEIGHT * 0.9;
 const MAX_TRANSLATE = FULL_SCREEN_HEIGHT - MINI_PLAYER_HEIGHT;
-const SPRING_CONFIG = {
-  damping: 20,
-  mass: 1,
-  stiffness: 200,
-};
 
 export const AudioPlayerDrawer: React.FC = () => {
   const theme = useTheme();
+  const styles = createAudioPlayerDrawerStyles(theme);
   const {
     isVisible,
     isPlaying,
@@ -114,20 +109,7 @@ export const AudioPlayerDrawer: React.FC = () => {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: translateY.value }],
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      height: SCREEN_HEIGHT,
-      backgroundColor: theme.colors.Surface.Primary,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
-      shadowColor: theme.colors.Text.Primary,
-      shadowOffset: { width: 0, height: -2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-      zIndex: 9999,
+      ...styles.container,
     };
   });
 
@@ -144,12 +126,12 @@ export const AudioPlayerDrawer: React.FC = () => {
     return {
       opacity,
       height: MINI_PLAYER_HEIGHT,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
+      borderTopLeftRadius: theme.radius['radius-40'],
+      borderTopRightRadius: theme.radius['radius-40'],
       backgroundColor: 'transparent',
       borderTopWidth: 1,
       borderTopColor: 'rgba(0,0,0,0.1)',
-      paddingHorizontal: 16,
+      paddingHorizontal: theme.space['40'],
       position: 'absolute',
       top: 0,
       left: 0,
@@ -161,10 +143,7 @@ export const AudioPlayerDrawer: React.FC = () => {
   // Animated styles for the content
   const contentAnimatedStyle = useAnimatedStyle(() => {
     return {
-      flex: 1,
-      padding: 16,
-      paddingTop: MINI_PLAYER_HEIGHT + 16,
-      paddingBottom: 16 + TAB_NAV_HEIGHT,
+      ...styles.content,
     };
   });
 
@@ -256,46 +235,4 @@ export const AudioPlayerDrawer: React.FC = () => {
       </Animated.View>
     </GestureDetector>
   );
-};
-
-const styles = StyleSheet.create({
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: MINI_PLAYER_HEIGHT,
-  },
-  miniPlayerImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    marginRight: 16,
-  },
-  miniPlayerTextContainer: {
-    flex: 1,
-    marginRight: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  albumArt: {
-    width: '100%',
-    aspectRatio: 1,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    marginBottom: 16,
-  },
-  controls: {
-    alignItems: 'center',
-  },
-  playbackControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginTop: 16,
-  },
-}); 
+}; 
