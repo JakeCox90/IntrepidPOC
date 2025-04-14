@@ -3,12 +3,12 @@ import {
   TouchableOpacity,
   Text,
   View,
-  StyleSheet,
   ViewStyle,
   StyleProp,
   TouchableOpacityProps,
 } from 'react-native';
-import { colors } from '../design-system/Foundations/colors';
+import { useTheme } from '@theme/ThemeProvider';
+import { createButtonStyles } from './styles/Button.styles';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'minimal';
 export type ButtonState = 'resting' | 'pressed' | 'disabled';
@@ -35,13 +35,16 @@ export const Button: React.FC<ButtonProps> = ({
   iconPosition = 'left',
   testID,
 }) => {
+  const theme = useTheme();
+  const styles = createButtonStyles(theme);
+
   const getBackgroundColor = (variant: ButtonVariant, disabled: boolean, pressed: boolean) => {
     if (disabled) {
       switch (variant) {
         case 'primary':
-          return colors.Primary.Disabled;
+          return theme.colors.Primary.Disabled;
         case 'secondary':
-          return colors.Secondary.Disabled;
+          return theme.colors.Secondary.Disabled;
         case 'minimal':
           return 'transparent';
       }
@@ -50,9 +53,9 @@ export const Button: React.FC<ButtonProps> = ({
     if (pressed) {
       switch (variant) {
         case 'primary':
-          return colors.Primary.Pressed;
+          return theme.colors.Primary.Pressed;
         case 'secondary':
-          return colors.Secondary.Pressed;
+          return theme.colors.Secondary.Pressed;
         case 'minimal':
           return 'transparent';
       }
@@ -60,9 +63,9 @@ export const Button: React.FC<ButtonProps> = ({
 
     switch (variant) {
       case 'primary':
-        return colors.Primary.Resting;
+        return theme.colors.Primary.Resting;
       case 'secondary':
-        return colors.Secondary.Resting;
+        return theme.colors.Secondary.Resting;
       case 'minimal':
         return 'transparent';
     }
@@ -70,15 +73,15 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getTextColor = (variant: ButtonVariant, disabled: boolean) => {
     if (disabled) {
-      return colors.Text.Disabled;
+      return theme.colors.Text.Disabled;
     }
 
     switch (variant) {
       case 'primary':
-        return colors.Text.Inverse;
+        return theme.colors.Text.Inverse;
       case 'secondary':
       case 'minimal':
-        return colors.Text.Primary;
+        return theme.colors.Text.Primary;
     }
   };
 
@@ -128,37 +131,4 @@ export const Button: React.FC<ButtonProps> = ({
       {renderContent()}
     </TouchableOpacity>
   );
-};
-
-const styles = StyleSheet.create({
-  button: {
-    height: 44,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  secondaryBorder: {
-    borderWidth: 1,
-    borderColor: colors.Border.Primary,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contentWithIcon: {
-    marginHorizontal: 8,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  iconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-}); 
+}; 

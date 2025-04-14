@@ -12,28 +12,28 @@ This document outlines the tasks required to move inline styles from components 
 
 ### 🔴 AudioPlayerDrawer Component
 **File**: `components/AudioPlayerDrawer.tsx`
-- [ ] Create new file `components/styles/AudioPlayerDrawer.styles.ts`
-- [ ] Move animated styles to separate functions:
-  - [ ] `createDrawerAnimatedStyle`
-  - [ ] `createHeaderAnimatedStyle`
-  - [ ] `createContentAnimatedStyle`
-- [ ] Move static styles to StyleSheet
-- [ ] Use theme values for colors, spacing, and borders
-- [ ] Update component to use new style functions
+- [x] Create new file `components/styles/AudioPlayerDrawer.styles.ts`
+- [x] Move animated styles to separate functions:
+  - [x] `createDrawerAnimatedStyle`
+  - [x] `createHeaderAnimatedStyle`
+  - [x] `createContentAnimatedStyle`
+- [x] Move static styles to StyleSheet
+- [x] Use theme values for colors, spacing, and borders
+- [x] Update component to use new style functions
 
 ### 🔴 Button Component
 **File**: `components/Button.tsx`
-- [ ] Create new file `components/styles/Button.styles.ts`
-- [ ] Move text color styles to StyleSheet
-- [ ] Update renderContent function to use StyleSheet styles
-- [ ] Ensure proper theme integration
+- [x] Create new file `components/styles/Button.styles.ts`
+- [x] Move text color styles to StyleSheet
+- [x] Update renderContent function to use StyleSheet styles
+- [x] Ensure proper theme integration
 
 ### 🔴 TopNav Component
 **File**: `components/TopNav.tsx`
-- [ ] Create new file `components/styles/TopNav.styles.ts`
-- [ ] Move all inline styles to StyleSheet
-- [ ] Use theme values for spacing and borders
-- [ ] Update component to use new styles
+- [x] Create new file `components/styles/TopNav.styles.ts`
+- [x] Move all inline styles to StyleSheet
+- [x] Use theme values for spacing and borders
+- [x] Update component to use new styles
 
 ### 🔴 Header Component
 **File**: `components/Header.tsx`

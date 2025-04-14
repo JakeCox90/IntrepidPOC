@@ -1,10 +1,11 @@
 'use client';
-import { View, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import { View, TouchableOpacity, Platform, StatusBar } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Typography from './Typography';
+import { createTopNavStyles } from './styles/TopNav.styles';
 
 interface TopNavProps {
   title: string;
@@ -32,6 +33,7 @@ const TopNav = ({
   hasStepper = false,
 }: TopNavProps) => {
   const theme = useTheme();
+  const styles = createTopNavStyles(theme);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -44,11 +46,8 @@ const TopNav = ({
   };
 
   // Safely get theme values with fallbacks
-  const bgColor = backgroundColor || theme?.colors?.Surface?.Primary || '#FFFFFF';
-  const txtColor = textColor || theme?.colors?.Text?.Primary || '#1D1D1B';
-  const spacing = theme?.space?.['40'] || 16;
-  const smallSpacing = theme?.space?.['20'] || 8;
-  const borderColor = theme?.colors?.Border?.Primary || '#E5E5E5';
+  const bgColor = backgroundColor || theme.colors.Surface.Primary;
+  const txtColor = textColor || theme.colors.Text.Primary;
 
   if (variant === 'explore') {
     return (
@@ -58,7 +57,6 @@ const TopNav = ({
           {
             backgroundColor: bgColor,
             paddingTop: insets.top || (Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0),
-            paddingHorizontal: spacing,
           },
         ]}
       >
@@ -84,8 +82,6 @@ const TopNav = ({
         {
           backgroundColor: bgColor,
           paddingTop: insets.top || (Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0),
-          paddingHorizontal: spacing,
-          borderBottomColor: borderColor,
         },
         !hasStepper && styles.borderBottom,
       ]}
@@ -93,7 +89,7 @@ const TopNav = ({
       <View style={[styles.content, hasStepper && styles.contentWithStepper]}>
         {showBackButton && (
           <TouchableOpacity
-            style={[styles.backButton, { marginRight: smallSpacing }]}
+            style={styles.backButton}
             onPress={handleBackPress}
           >
             <Ionicons name="arrow-back" size={24} color={txtColor} />
@@ -125,45 +121,5 @@ const TopNav = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  backButton: {
-    padding: 4,
-  },
-  borderBottom: {
-    borderBottomWidth: 1,
-  },
-  container: {
-    width: '100%',
-  },
-  content: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    height: 48,
-    paddingVertical: 8,
-  },
-  contentWithStepper: {
-    height: 64,
-    paddingVertical: 12,
-  },
-  exploreContainer: {
-    paddingBottom: 16,
-    width: '100%',
-  },
-  exploreTitle: {
-    marginBottom: 8,
-    marginTop: 24,
-  },
-  rightButton: {
-    marginLeft: 16,
-  },
-  rightButtonsContainer: {
-    flexDirection: 'row',
-  },
-  title: {},
-  titleContainer: {
-    flex: 1,
-  },
-});
 
 export default TopNav;
