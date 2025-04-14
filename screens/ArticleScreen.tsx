@@ -272,6 +272,15 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
             theme={theme}
           />
 
+          {/* Article Content */}
+          <Typography
+            variant="body-01"
+            color={theme.colors.Text.Secondary}
+            style={styles.articleContent}
+          >
+            {article?.content}
+          </Typography>
+
           {/* Comments Section */}
         </View>
         <CommentList
