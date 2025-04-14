@@ -229,7 +229,8 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           </View>
 
           {/* Comments Section */}
-          <Comments
+        </View>
+        <Comments
             comments={comments}
             totalComments={comments.length}
             onShowAllPress={handleShowAllComments}
@@ -238,7 +239,6 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
             onReplyComment={handleReplyComment}
             onViewReplies={handleViewReplies}
           />
-        </View>
       </>
     );
   }, [article, styles, comments, handleShowAllComments, handleSubmitComment, handleLikeComment, handleReplyComment, handleViewReplies]);

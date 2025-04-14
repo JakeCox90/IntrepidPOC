@@ -721,10 +721,25 @@ export const getArticleById = async (id: string): Promise<Article | undefined> =
 
 export const getArticlesByCategory = async (category: string, subcategory?: string): Promise<Article[]> => {
   await new Promise(resolve => setTimeout(resolve, 400));
+  
+  // Log the category and subcategory for debugging
+  console.log(`Fetching articles for category: ${category}, subcategory: ${subcategory || 'none'}`);
+  
   return mockArticles.filter(article => {
+    // If subcategory is provided, check both category and subcategory
     if (subcategory) {
-      return article.category === category && article.subcategory === subcategory;
+      const categoryMatch = article.category === category;
+      const subcategoryMatch = article.subcategory === subcategory;
+      
+      // Log the match for debugging
+      if (categoryMatch && !subcategoryMatch) {
+        console.log(`Article "${article.title}" matches category but not subcategory: ${article.subcategory} !== ${subcategory}`);
+      }
+      
+      return categoryMatch && subcategoryMatch;
     }
+    
+    // Otherwise just check the category
     return article.category === category;
   });
 };
@@ -820,6 +835,11 @@ export const fetchNewsByCategory = async (category: string): Promise<Article[]> 
   // If we found a main category, use it with the mapped subcategory
   if (mainCategory) {
     return getArticlesByCategory(mainCategory, mappedCategory);
+  }
+  
+  // Special case for 'News' category - ensure it returns all news articles
+  if (category === 'News') {
+    return getArticlesByCategory('News');
   }
   
   // Fallback to just using the category as is

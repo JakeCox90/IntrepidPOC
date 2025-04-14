@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, SafeAreaView } from 'react-native';
+import { View, FlatList, StyleSheet, StatusBar as RNStatusBar, Platform, SafeAreaView, ListRenderItem } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeProvider';
 import CardHorizontal from '../components/CardHorizontal';
@@ -11,6 +11,19 @@ import Tabs from '../components/Tabs';
 import { fetchNewsByCategory } from '../services/sunNewsService';
 import { getCategoryColor } from '../utils/categoryColors';
 import { createSharedStyles } from '../utils/sharedStyles';
+import { Article } from '../types/article';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { CardHorizontalProps } from '../types/components/cards';
+
+// Define navigation types
+type RootStackParamList = {
+  AllNewsArticle: { article: Article };
+  AllNewsCategory: { category: { name: string }; source: string };
+};
+
+type AllNewsScreenProps = {
+  navigation: StackNavigationProp<RootStackParamList, 'AllNewsArticle'>;
+};
 
 // Get status bar height
 const STATUSBAR_HEIGHT = RNStatusBar.currentHeight || (Platform.OS === 'ios' ? 44 : 0);
@@ -29,50 +42,34 @@ const MAIN_CATEGORIES = [
   'Health',
 ];
 
-// Subcategories for each main category - updated to match The Sun's exact section hierarchy
-const SUBCATEGORIES = {
-  News: [
-    'UKNews',
-    'WorldNews',
-    'Politics',
-    'RoyalFamily',
-    'USNews',
-    'IrishNews',
-    'ScottishNews',
-    'Opinion',
-  ],
-  Sport: [
-    'Football',
-    'Boxing',
-    'Racing',
-    'UFC',
-    'F1',
-    'Cricket',
-    'Rugby',
-    'Golf',
-    'Tennis',
-    'NFL',
-    'DreamTeam',
-  ],
-  TV: ['TVNews', 'Soaps', 'RealityTV'],
-  Showbiz: ['Celebrity', 'Music', 'Film'],
-  Fabulous: ['Fashion', 'Beauty', 'Food', 'Parenting'],
-  Money: ['Property', 'Bills', 'Banking', 'Pensions'],
-  Travel: ['BeachHolidays', 'UKHolidays', 'CityBreaks', 'Cruises'],
-  Tech: ['Phones', 'Gaming', 'Science'],
-  Motors: ['NewCars', 'UsedCars'],
-  Health: ['Fitness', 'Diet', 'HealthNews'],
+// Define the subcategories type
+type SubcategoriesType = {
+  [key: string]: string[];
+};
+
+// Define the subcategories
+const SUBCATEGORIES: SubcategoriesType = {
+  News: ['UKNews', 'WorldNews', 'Politics', 'Crime'],
+  Sport: ['Football', 'Rugby', 'Cricket', 'Tennis'],
+  TV: ['TVNews', 'TVReviews', 'Soaps'],
+  Showbiz: ['Celebrity', 'Movies', 'Music'],
+  Fabulous: ['Fashion', 'Beauty', 'Health'],
+  Money: ['PersonalFinance', 'Property', 'Investments'],
+  Travel: ['UKTravel', 'WorldTravel', 'Cruises'],
+  Tech: ['Gadgets', 'Apps', 'Gaming'],
+  Motors: ['Cars', 'Motorbikes', 'EVs'],
+  Health: ['Wellbeing', 'Fitness', 'Diet']
 };
 
 // Simplified component without animations
-const AllNewsScreen = ({ navigation }) => {
+const AllNewsScreen = ({ navigation }: AllNewsScreenProps) => {
   const theme = useTheme();
   const sharedStyles = createSharedStyles(theme);
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [selectedMainCategory, setSelectedMainCategory] = useState('News');
-  const [selectedSubCategory, setSelectedSubCategory] = useState('UK News');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('UKNews');
 
   // Get the current color for the header
   const currentColor = getCategoryColor(selectedMainCategory, theme);
@@ -90,14 +87,17 @@ const AllNewsScreen = ({ navigation }) => {
           let data;
           // If a subcategory is selected, fetch by subcategory
           if (selectedSubCategory) {
+            console.log(`Fetching news for subcategory: ${selectedSubCategory}`);
             data = await fetchNewsByCategory(selectedSubCategory);
           }
           // Otherwise fetch by main category
           else {
+            console.log(`Fetching news for main category: ${selectedMainCategory}`);
             data = await fetchNewsByCategory(selectedMainCategory);
           }
 
           if (isMounted) {
+            console.log(`Received ${data.length} articles`);
             setNews(data);
             setLoading(false);
             setError(data.length === 0 ? 'No articles found for this category.' : null);
@@ -119,28 +119,28 @@ const AllNewsScreen = ({ navigation }) => {
     }, [selectedMainCategory, selectedSubCategory]),
   );
 
-  const handleMainCategoryPress = category => {
+  const handleMainCategoryPress = (category: string) => {
     if (!category) return;
     setSelectedMainCategory(category);
-    setSelectedSubCategory(SUBCATEGORIES[category]?.[0] || null);
+    setSelectedSubCategory(SUBCATEGORIES[category as keyof typeof SUBCATEGORIES]?.[0] || '');
   };
 
-  const handleSubCategoryPress = category => {
+  const handleSubCategoryPress = (category: string) => {
     if (!category) return;
     setSelectedSubCategory(category);
   };
 
-  const handleNewsPress = article => {
+  const handleNewsPress = (article: Article) => {
     if (!article) return;
     navigation.navigate('AllNewsArticle', { article });
   };
 
-  const handleBookmark = id => {
+  const handleBookmark = (id: string) => {
     if (!id) return;
     console.log('Bookmark article:', id);
   };
 
-  const handleShare = id => {
+  const handleShare = (id: string) => {
     if (!id) return;
     console.log('Share article:', id);
   };
@@ -148,7 +148,7 @@ const AllNewsScreen = ({ navigation }) => {
   // Safely get subcategories
   const subcategories = SUBCATEGORIES[selectedMainCategory] || [];
 
-  const renderItem = ({ item }) => (
+  const renderItem: ListRenderItem<Article> = ({ item }) => (
     <CardHorizontal
       id={item.id}
       title={item.title}
@@ -239,21 +239,10 @@ const AllNewsScreen = ({ navigation }) => {
           </View>
         ) : (
           // Actual content
-          <FlatList
+          <FlatList<Article>
             data={news}
-            keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
-            renderItem={({ item }) => (
-              <CardHorizontal
-                id={item.id}
-                title={item.title}
-                imageUrl={item.imageUrl}
-                category={item.category}
-                readTime={item.readTime}
-                onPress={() => handleNewsPress(item)}
-                onBookmark={() => handleBookmark(item.id)}
-                onShare={() => handleShare(item.id)}
-              />
-            )}
+            renderItem={renderItem}
+            keyExtractor={(item: Article) => item.id}
             contentContainerStyle={styles.newsList}
             ListEmptyComponent={renderEmptyComponent}
           />
