@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useMemo, useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
@@ -8,6 +9,7 @@ import LazyImage from './LazyImage';
 import { formatRelativeTime } from '../utils/timeFormat';
 import { getCategoryColor } from '../utils/categoryColors';
 import { renderColoredText } from '../utils/textColouring';
+import { withPerformanceTracking } from '../utils/performance';
 
 interface NewsCardProps {
   title: string;
@@ -19,7 +21,7 @@ interface NewsCardProps {
 
 const cardWidth = 200; // Width for horizontal scrolling cards
 
-const styles = StyleSheet.create({
+const baseStyles = StyleSheet.create({
   container: {
     width: cardWidth,
     marginRight: 16,
@@ -54,47 +56,72 @@ const styles = StyleSheet.create({
 
 const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardProps) => {
   const theme = useTheme();
-  const categoryColor = getCategoryColor(category, theme);
+  
+  const styles = useMemo(() => ({
+    ...baseStyles,
+    container: [
+      baseStyles.container,
+      {
+        backgroundColor: theme.colors.Surface.Primary,
+        borderRadius: theme.radius['radius-default'],
+        borderWidth: theme.borderWidth['10'],
+        borderColor: theme.colors.Border.Primary,
+      },
+    ],
+  }), [theme]);
+
+  const categoryColor = useMemo(() => getCategoryColor(category, theme), [category, theme]);
 
   // Format the timestamp
-  const formattedTime = formatRelativeTime(timestamp);
+  const formattedTime = useMemo(() => formatRelativeTime(timestamp), [timestamp]);
+
+  const handlePress = useCallback(() => {
+    onPress();
+  }, [onPress]);
+
+  const CategoryComponent = useMemo(() => {
+    if (!category) return null;
+    
+    return (
+      <View style={styles.flagContainer}>
+        <Flag text={category} category={category} variant="minimal" />
+      </View>
+    );
+  }, [category, styles.flagContainer]);
+
+  const TitleComponent = useMemo(() => 
+    renderColoredText({
+      text: title,
+      category,
+      theme,
+      typographyVariant: 'h6',
+      containerStyle: styles.titleContainer
+    }),
+    [title, category, theme, styles.titleContainer]
+  );
+
+  const ImageComponent = useMemo(() => (
+    <LazyImage
+      source={{ uri: imageUrl }}
+      style={styles.image}
+      resizeMode="cover"
+      showLoader={false}
+    />
+  ), [imageUrl, styles.image]);
 
   return (
     <TouchableOpacity
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.Surface.Primary,
-          borderRadius: theme.radius['radius-default'],
-          borderWidth: theme.borderWidth['10'],
-          borderColor: theme.colors.Border.Primary,
-        },
-      ]}
-      onPress={onPress}
+      style={styles.container}
+      onPress={handlePress}
       activeOpacity={0.9}
       testID="news-card-touchable"
     >
       <View style={styles.imageContainer}>
-        <LazyImage
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="cover"
-          showLoader={false}
-        />
+        {ImageComponent}
       </View>
       <View style={styles.content}>
-        {category && (
-          <View style={styles.flagContainer}>
-            <Flag text={category} category={category} variant="minimal" />
-          </View>
-        )}
-        {renderColoredText({
-          text: title,
-          category,
-          theme,
-          typographyVariant: 'h6',
-          containerStyle: styles.titleContainer
-        })}
+        {CategoryComponent}
+        {TitleComponent}
         <Typography
           variant="annotation"
           color={theme.colors.Text.Secondary}
@@ -107,4 +134,4 @@ const NewsCard = ({ title, imageUrl, category, timestamp, onPress }: NewsCardPro
   );
 };
 
-export default NewsCard;
+export default withPerformanceTracking(React.memo(NewsCard), 'NewsCard');

@@ -11,6 +11,7 @@ import { baseStyles, getThemedStyles } from './styles/ArticleHeaderStyles';
 import { formatRelativeTime } from '../utils/timeFormat';
 import { Byline } from './Byline';
 import { renderColoredText } from '../utils/textColouring';
+import { withPerformanceTracking } from '../utils/performance';
 
 // Add the COMMON_FLAGS constant
 // Common flags used by The Sun
@@ -27,7 +28,7 @@ const COMMON_FLAGS = [
   'HORROR',
   'URGENT',
   'WARNING',
-];
+] as const;
 
 // Add the COMMON_ACRONYMS constant
 // Common acronyms used by The Sun
@@ -44,7 +45,7 @@ const COMMON_ACRONYMS = [
   'G7',
   'G20',
   'OPEC',
-];
+] as const;
 
 interface ArticleHeaderProps {
   title: string;
@@ -80,7 +81,7 @@ const ArticleHeader = ({
 
   // Memoize the flag component
   const FlagComponent = useMemo(() => {
-    if (!flag || !COMMON_FLAGS.includes(flag.toUpperCase())) return null;
+    if (!flag || !COMMON_FLAGS.includes(flag.toUpperCase() as typeof COMMON_FLAGS[number])) return null;
     
     const flagColor = flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
                      flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
@@ -119,7 +120,7 @@ const ArticleHeader = ({
     const hasAllCaps = words.some((word: string): boolean => {
       const isAllCaps = word === word.toUpperCase() && 
         word.length > 1 && 
-        !COMMON_ACRONYMS.includes(word) &&
+        !COMMON_ACRONYMS.includes(word as typeof COMMON_ACRONYMS[number]) &&
         !(/^\d+$/.test(word));
       return isAllCaps;
     });
@@ -132,7 +133,7 @@ const ArticleHeader = ({
             text: titleText,
             category: category || '',
             theme,
-            typographyVariant: 'h3'
+            typographyVariant: 'h5'
           })}
         </View>
       );
@@ -159,7 +160,7 @@ const ArticleHeader = ({
     const hasAllCaps = words.some((word: string): boolean => {
       const isAllCaps = word === word.toUpperCase() && 
         word.length > 1 && 
-        !COMMON_ACRONYMS.includes(word) &&
+        !COMMON_ACRONYMS.includes(word as typeof COMMON_ACRONYMS[number]) &&
         !(/^\d+$/.test(word));
       return isAllCaps;
     });
@@ -239,4 +240,4 @@ const ArticleHeader = ({
   );
 };
 
-export default memo(ArticleHeader);
+export default withPerformanceTracking(memo(ArticleHeader), 'ArticleHeader');

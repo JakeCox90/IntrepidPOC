@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, StatusBar, RefreshControl } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import CardHero from '../components/CardHero';
@@ -61,14 +61,97 @@ interface Bundle {
   imageUrl: string;
 }
 
-// ForYou screen with simplified implementation
+// Extract list components for better performance
+const TopStoriesList = React.memo(({ 
+  stories, 
+  onPress 
+}: { 
+  stories: Article[], 
+  onPress: (article: Article, index: number) => void 
+}) => (
+  <Stack spacing={12} style={styles.topStoriesStack}>
+    {stories.map((article, index) => (
+      <NewsCard
+        key={article.id || `top-story-${index}`}
+        title={article.title || ''}
+        imageUrl={article.imageUrl || ''}
+        category={article.category || ''}
+        timestamp={article.timestamp || 'Today'}
+        onPress={() => onPress(article, index)}
+      />
+    ))}
+  </Stack>
+));
+
+const RecommendedList = React.memo(({ 
+  articles, 
+  onPress, 
+  onBookmark, 
+  onShare 
+}: { 
+  articles: Article[], 
+  onPress: (article: Article) => void,
+  onBookmark: (id: string) => void,
+  onShare: (id: string) => void
+}) => (
+  <>
+    {articles.map(article => (
+      <CardHorizontal
+        key={article.id || Math.random().toString()}
+        id={article.id}
+        title={article.title || ''}
+        imageUrl={article.imageUrl || ''}
+        category={article.category || ''}
+        flag={article.flag || ''}
+        readTime={article.readTime || '3 min read'}
+        onPress={() => onPress(article)}
+        onBookmark={() => onBookmark(article.id)}
+        onShare={() => onShare(article.id)}
+      />
+    ))}
+  </>
+));
+
+const BundlesList = React.memo(({ 
+  bundles, 
+  onPress, 
+  onNotify 
+}: { 
+  bundles: Bundle[], 
+  onPress: (bundle: Bundle) => void,
+  onNotify: (bundle: Bundle) => void
+}) => (
+  <Stack spacing={16} style={styles.bundlesStack}>
+    {bundles.map(bundle => (
+      <BundleCard
+        key={bundle.id}
+        title={bundle.title}
+        subtitle={bundle.subtitle}
+        storyCount={bundle.storyCount}
+        imageUrl={bundle.imageUrl}
+        onPress={() => onPress(bundle)}
+        onNotify={() => onNotify(bundle)}
+      />
+    ))}
+  </Stack>
+));
+
+// ForYou screen with optimized implementation
 const ForYouScreen = ({ navigation }: { navigation: any }) => {
   const theme = useTheme();
-  const sharedStyles = createSharedStyles(theme);
+  const sharedStyles = useMemo(() => createSharedStyles(theme), [theme]);
   const [news, setNews] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Memoize article data processing
+  const { topStories, featuredArticles, recommendedArticles, topicBasedArticles } = useMemo(() => ({
+    topStories: news.slice(0, 8),
+    featuredArticles: news.slice(8, 9),
+    recommendedArticles: news.slice(9, 14),
+    topicBasedArticles: news.slice(14, 19)
+  }), [news]);
 
   // Function to load articles
   const loadArticles = useCallback(async (forceRefresh = false) => {
@@ -90,7 +173,8 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
     loadArticles();
   }, [loadArticles]);
 
-  const handleArticlePress = (article: Article) => {
+  // Memoize handlers
+  const handleArticlePress = useCallback((article: Article) => {
     try {
       navigation.navigate('ForYouArticle', { 
         articleId: article.id || 'fallback-id',
@@ -99,11 +183,10 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
     } catch (error) {
       console.error('Navigation error in handleArticlePress:', error);
     }
-  };
+  }, [navigation]);
 
-  const handleTopStoryPress = (article: Article, index: number) => {
+  const handleTopStoryPress = useCallback((article: Article, index: number) => {
     try {
-      // Create a safe copy of all articles with default values for missing properties
       const safeArticles = topStories.map(item => ({
         id: item.id || `article-${Math.random().toString(36).substr(2, 9)}`,
         title: item.title || 'Untitled Article',
@@ -117,7 +200,6 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
         url: item.url || '',
       }));
 
-      // Navigate to the ArticleStack screen with properly formatted data
       navigation.navigate('ArticleStackScreen', {
         articles: safeArticles,
         initialIndex: index,
@@ -125,43 +207,32 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
       });
     } catch (error) {
       console.error('Navigation error:', error);
-      // Fallback to single article view if stack navigation fails
       navigation.navigate('ForYouArticle', { 
         articleId: article.id || 'fallback-id',
         article: article
       });
     }
-  };
+  }, [navigation, topStories]);
 
-  const handleBookmark = (id: string) => {
+  const handleBookmark = useCallback((id: string) => {
     console.log('Bookmark article:', id);
-  };
+  }, []);
 
-  const handleShare = (id: string) => {
+  const handleShare = useCallback((id: string) => {
     console.log('Share article:', id);
-  };
+  }, []);
 
-  const handleProfilePress = () => {
+  const handleProfilePress = useCallback(() => {
     console.log('Profile pressed');
-  };
+  }, []);
 
-  const handleBundlePress = (bundle: Bundle) => {
+  const handleBundlePress = useCallback((bundle: Bundle) => {
     console.log('Bundle pressed:', bundle.title);
-    // In a real app, this would navigate to a bundle detail screen
-  };
+  }, []);
 
-  const handleBundleNotify = (bundle: Bundle) => {
+  const handleBundleNotify = useCallback((bundle: Bundle) => {
     console.log('Bundle notification toggled:', bundle.title);
-    // In a real app, this would toggle notifications for the bundle
-  };
-
-  // Get top stories for the horizontal rail (8 stories)
-  const topStories = React.useMemo(() => news.slice(0, 8), [news]);
-
-  // Get featured and recommended articles (adjust indices to avoid overlap)
-  const featuredArticles = React.useMemo(() => news.slice(8, 9), [news]);
-  const recommendedArticles = React.useMemo(() => news.slice(9, 14), [news]);
-  const topicBasedArticles = React.useMemo(() => news.slice(14, 19), [news]);
+  }, []);
 
   // Add a simple usage of navigation to resolve the unused variable warning
   const handleRefresh = useCallback(() => {
@@ -232,7 +303,7 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
             />
           }
         >
-          {/* Top Stories Section (renamed from Featured For You) */}
+          {/* Top Stories Section */}
           <View style={styles.section}>
             <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
               Top stories
@@ -252,20 +323,12 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
             )}
           </View>
 
-          {/* Top Stories Horizontal Rail (without title) */}
+          {/* Top Stories Horizontal Rail */}
           <View style={styles.horizontalRailContainer}>
-            <Stack spacing={12} style={styles.topStoriesStack}>
-              {topStories.map((article, index) => (
-                <NewsCard
-                  key={article.id || `top-story-${index}`}
-                  title={article.title || ''}
-                  imageUrl={article.imageUrl || ''}
-                  category={article.category || ''}
-                  timestamp={article.timestamp || 'Today'}
-                  onPress={() => handleTopStoryPress(article, index)}
-                />
-              ))}
-            </Stack>
+            <TopStoriesList 
+              stories={topStories} 
+              onPress={handleTopStoryPress} 
+            />
           </View>
 
           {/* Recommended Section */}
@@ -273,21 +336,12 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
             <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
               Recommended
             </Typography>
-
-            {recommendedArticles.map(article => (
-              <CardHorizontal
-                key={article.id || Math.random().toString()}
-                id={article.id}
-                title={article.title || ''}
-                imageUrl={article.imageUrl || ''}
-                category={article.category || ''}
-                flag={article.flag || ''}
-                readTime={article.readTime || '3 min read'}
-                onPress={() => handleArticlePress(article)}
-                onBookmark={() => handleBookmark(article.id)}
-                onShare={() => handleShare(article.id)}
-              />
-            ))}
+            <RecommendedList 
+              articles={recommendedArticles}
+              onPress={handleArticlePress}
+              onBookmark={handleBookmark}
+              onShare={handleShare}
+            />
           </View>
 
           {/* Bundles For You Section */}
@@ -295,20 +349,11 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
             <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
               Bundles for you
             </Typography>
-
-            <Stack spacing={16} style={styles.bundlesStack}>
-              {bundles.map(bundle => (
-                <BundleCard
-                  key={bundle.id}
-                  title={bundle.title}
-                  subtitle={bundle.subtitle}
-                  storyCount={bundle.storyCount}
-                  imageUrl={bundle.imageUrl}
-                  onPress={() => handleBundlePress(bundle)}
-                  onNotify={() => handleBundleNotify(bundle)}
-                />
-              ))}
-            </Stack>
+            <BundlesList 
+              bundles={bundles}
+              onPress={handleBundlePress}
+              onNotify={handleBundleNotify}
+            />
           </View>
 
           {/* Topics You Follow Section */}
@@ -316,21 +361,12 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
             <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
               Topics You Follow
             </Typography>
-
-            {topicBasedArticles.map(article => (
-              <CardHorizontal
-                key={article.id || Math.random().toString()}
-                id={article.id}
-                title={article.title || ''}
-                imageUrl={article.imageUrl || ''}
-                category={article.category || ''}
-                flag={article.flag || ''}
-                readTime={article.readTime || '3 min read'}
-                onPress={() => handleArticlePress(article)}
-                onBookmark={() => handleBookmark(article.id)}
-                onShare={() => handleShare(article.id)}
-              />
-            ))}
+            <RecommendedList 
+              articles={topicBasedArticles}
+              onPress={handleArticlePress}
+              onBookmark={handleBookmark}
+              onShare={handleShare}
+            />
           </View>
 
           {/* Bottom padding */}

@@ -36,11 +36,64 @@ interface ArticleScreenProps {
   hideHeader?: boolean;
 }
 
+// Extract CommentList component for better performance
+const CommentList = React.memo(({ 
+  comments,
+  onLike,
+  onReply,
+  onViewReplies
+}: {
+  comments: Comment[];
+  onLike: (commentId: string | number, isLiked: boolean) => void;
+  onReply: (commentId: string | number) => void;
+  onViewReplies: (commentId: string | number) => void;
+}) => (
+  <Comments
+    comments={comments}
+    onLikeComment={onLike}
+    onReplyComment={onReply}
+    onViewReplies={onViewReplies}
+  />
+));
+
+// Extract KeyPoints component
+const KeyPoints = React.memo(({ 
+  points,
+  styles,
+  accordionStyles,
+  theme
+}: {
+  points: string[];
+  styles: any;
+  accordionStyles: any;
+  theme: any;
+}) => (
+  <View style={styles.accordionContainer}>
+    <Accordion
+      title="Key Points"
+      initialExpanded={true}
+    >
+      <View style={accordionStyles.keyPointsContainer}>
+        {points.map((point, index) => (
+          <Typography
+            key={index}
+            variant="body-02"
+            color={theme.colors.Text.Secondary}
+            style={accordionStyles.keyPoint}
+          >
+            • {point.trim()}.
+          </Typography>
+        ))}
+      </View>
+    </Accordion>
+  </View>
+));
+
 const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenProps) => {
   const theme = useTheme();
   const { articleId, article: routeArticle } = route.params || {};
-  const accordionStyles = createAccordionStyles(theme);
-  const styles = createStyles(theme);
+  const accordionStyles = useMemo(() => createAccordionStyles(theme), [theme]);
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const [isBookmarked, setIsBookmarked] = React.useState(false);
   const { handleError, lastError, clearError } = useErrorHandling();
 
@@ -60,11 +113,33 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
     initialArticle: routeArticle,
   });
 
-  // Toggle bookmark state
+  // Memoize handlers
   const handleBookmark = useCallback(() => {
     setIsBookmarked(prev => !prev);
     console.log('Bookmark toggled:', !isBookmarked);
   }, [isBookmarked]);
+
+  const handleAudioPlay = useCallback(() => {
+    console.log('Play audio');
+  }, []);
+
+  const handleAudioPause = useCallback(() => {
+    console.log('Pause audio');
+  }, []);
+
+  // Memoize article data processing
+  const articleData = useMemo(() => ({
+    title: article?.title || '',
+    subtitle: article?.subheading || (article?.content ? article.content.split('.')[0] + '.' : ''),
+    imageUrl: article?.imageUrl || '',
+    category: article?.category || '',
+    readTime: article?.readTime || '',
+    flag: article?.flag || '',
+    timestamp: article?.timestamp || '',
+    keyPoints: article?.content?.split('.')
+      .filter(sentence => sentence.trim().length > 0)
+      .slice(0, 2) || []
+  }), [article]);
 
   // Debug navigation
   useEffect(() => {
@@ -163,85 +238,51 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
 
   // Memoize the render item function
   const renderItem = useCallback(() => {
-    // Generate a subheading from the content if the subheading field is missing
-    const articleSubheading = article?.subheading || 
-      (article?.content ? article.content.split('.')[0] + '.' : '');
-    
     return (
       <>
         {/* Content Container */}
         <View style={styles.contentContainer}>
           {/* Article Header */}
           <ArticleHeader
-            title={article?.title || ''}
-            subtitle={articleSubheading}
-            imageUrl={article?.imageUrl || ''}
-            category={article?.category || ''}
-            readTime={article?.readTime || ''}
-            flag={article?.flag || ''}
-            timestamp={article?.timestamp || ''}
+            title={articleData.title}
+            subtitle={articleData.subtitle}
+            imageUrl={articleData.imageUrl}
+            category={articleData.category}
+            readTime={articleData.readTime}
+            flag={articleData.flag}
+            timestamp={articleData.timestamp}
           />
 
           {/* Audio Player */}
           <View style={styles.audioPlayerContainer}>
             <AudioPlayer
-              title={article?.title || ''}
-              category={article?.category || ''}
+              title={articleData.title}
+              category={articleData.category}
               duration={120}
-              onPlay={() => console.log('Play audio')}
-              onPause={() => console.log('Pause audio')}
+              onPlay={handleAudioPlay}
+              onPause={handleAudioPause}
             />
           </View>
 
           {/* Key Points Accordion */}
-          <View style={styles.accordionContainer}>
-            <Accordion
-              title="Key Points"
-              initialExpanded={true}
-            >
-              <View style={accordionStyles.keyPointsContainer}>
-                {article?.content?.split('.')
-                  .filter(sentence => sentence.trim().length > 0)
-                  .slice(0, 2)
-                  .map((sentence, index) => (
-                    <Typography
-                      key={index}
-                      variant="body-02"
-                      color={theme.colors.Text.Secondary}
-                      style={accordionStyles.keyPoint}
-                    >
-                      • {sentence.trim()}.
-                    </Typography>
-                  ))}
-              </View>
-            </Accordion>
-          </View>
-
-          {/* Article Body Content */}
-          <View style={styles.articleContent}>
-            <Typography
-              variant="body-01"
-              color={theme.colors.Text.Secondary}
-              style={styles.paragraph}
-            >
-              {article?.content}
-            </Typography>
-          </View>
+          <KeyPoints
+            points={articleData.keyPoints}
+            styles={styles}
+            accordionStyles={accordionStyles}
+            theme={theme}
+          />
 
           {/* Comments Section */}
-        </View>
-        <Comments
+          <CommentList
             comments={comments}
-            totalComments={comments.length}
-            onShowAllPress={handleShowAllComments}
-            onSubmitComment={handleSubmitComment}
-            onLikeComment={handleLikeComment}
-            onReplyComment={handleReplyComment}
+            onLike={handleLikeComment}
+            onReply={handleReplyComment}
             onViewReplies={handleViewReplies}
           />
+        </View>
       </>
     );
-  }, [article, styles, comments, handleShowAllComments, handleSubmitComment, handleLikeComment, handleReplyComment, handleViewReplies]);
+  }, [articleData, styles, accordionStyles, comments, handleAudioPlay, handleAudioPause, handleLikeComment, handleReplyComment, handleViewReplies]);
 
   if (error) {
     return (

@@ -9,11 +9,12 @@ import { Comment as CommentType, CommentsProps } from '../types';
 import CommentItem from './CommentItem';
 import { validateComments } from '../utils/typeValidation';
 import { createCommentsStyles } from './styles/Comments.styles';
+import { withPerformanceTracking } from '../utils/performance';
 
 // Memoize the CommentItem component to prevent unnecessary re-renders
 const MemoizedCommentItem = React.memo(CommentItem);
 
-export const Comments: React.FC<CommentsProps> = ({
+const Comments: React.FC<CommentsProps> = ({
   comments,
   totalComments = 0,
   onShowAllPress,
@@ -23,7 +24,7 @@ export const Comments: React.FC<CommentsProps> = ({
   onViewReplies,
 }) => {
   const theme = useTheme();
-  const styles = createCommentsStyles(theme);
+  const styles = useMemo(() => createCommentsStyles(theme), [theme]);
   const [commentText, setCommentText] = React.useState('');
   const [likedComments, setLikedComments] = React.useState<Record<string | number, boolean>>({});
 
@@ -72,6 +73,12 @@ export const Comments: React.FC<CommentsProps> = ({
 
   const keyExtractor = useCallback((item: CommentType) => item.id.toString(), []);
 
+  const getItemLayout = useCallback((data: any, index: number) => ({
+    length: 100, // Approximate height of each comment
+    offset: 100 * index,
+    index,
+  }), []);
+
   const ListFooterComponent = useMemo(() => (
     <>
       <View style={{ height: theme.space['40'] }} />
@@ -116,17 +123,21 @@ export const Comments: React.FC<CommentsProps> = ({
           data={validComments}
           renderItem={renderComment}
           keyExtractor={keyExtractor}
+          getItemLayout={getItemLayout}
           contentContainerStyle={[styles.listContent, { paddingBottom: theme.space['60'] }]}
           ListFooterComponent={ListFooterComponent}
           removeClippedSubviews={true}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={3}
+          initialNumToRender={3}
           updateCellsBatchingPeriod={50}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+          }}
         />
       </View>
     </View>
   );
 };
 
-export default React.memo(Comments);
+export default withPerformanceTracking(React.memo(Comments), 'Comments');

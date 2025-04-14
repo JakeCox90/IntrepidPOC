@@ -1,4 +1,5 @@
 'use client';
+import React, { useMemo, useCallback } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Flag from './Flag';
@@ -11,6 +12,7 @@ import { getCategoryColor } from '../utils/categoryColors';
 import { Feather } from '@expo/vector-icons';
 import type { CardHeroProps } from '../types/components';
 import { renderColoredText } from '../utils/textColouring';
+import { withPerformanceTracking } from '../utils/performance';
 
 // Common flags used by The Sun
 const COMMON_FLAGS = [
@@ -26,7 +28,7 @@ const COMMON_FLAGS = [
   'HORROR',
   'URGENT',
   'WARNING',
-];
+] as const;
 
 const CardHero = ({
   title,
@@ -41,11 +43,92 @@ const CardHero = ({
   style,
 }: CardHeroProps) => {
   const theme = useTheme();
-  const styles = createCardHeroStyles(theme);
-  const categoryColor = getCategoryColor(category, theme);
+  const styles = useMemo(() => createCardHeroStyles(theme), [theme]);
+  const categoryColor = useMemo(() => getCategoryColor(category, theme), [category, theme]);
 
   // Check if the flag is a common flag type
-  const isCommonFlag = flag && COMMON_FLAGS.includes(flag.toUpperCase());
+  const isCommonFlag = useMemo(() => 
+    flag && COMMON_FLAGS.includes(flag.toUpperCase() as typeof COMMON_FLAGS[number]),
+    [flag]
+  );
+
+  const handleBookmark = useCallback(() => {
+    if (onBookmark) {
+      onBookmark();
+    }
+  }, [onBookmark]);
+
+  const handleShare = useCallback(() => {
+    if (onShare) {
+      onShare();
+    }
+  }, [onShare]);
+
+  const flagColor = useMemo(() => 
+    flag?.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
+    flag?.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
+    theme.colors.Error.Resting,
+    [flag, theme.colors.Status.Breaking, theme.colors.Status.Exclusive, theme.colors.Error.Resting]
+  );
+
+  const FlagComponent = useMemo(() => {
+    if (!isCommonFlag || !flag) return null;
+    
+    return (
+      <Flag 
+        text={flag} 
+        style={styles.flag} 
+        variant="minimal"
+        color={flagColor}
+      />
+    );
+  }, [isCommonFlag, flag, styles.flag, flagColor]);
+
+  const CategoryComponent = useMemo(() => {
+    if (!category) return null;
+    
+    return (
+      <Flag 
+        text={category} 
+        category={category} 
+        variant="minimal" 
+      />
+    );
+  }, [category]);
+
+  const TitleComponent = useMemo(() => 
+    renderColoredText({
+      text: title,
+      category,
+      theme,
+      typographyVariant: 'h5',
+      containerStyle: styles.titleContainer
+    }),
+    [title, category, theme, styles.titleContainer]
+  );
+
+  const SubtitleComponent = useMemo(() => {
+    if (!subtitle) return null;
+    
+    return (
+      <Typography
+        variant="subtitle-01"
+        color={theme.colors.Text.Secondary}
+        numberOfLines={2}
+        style={styles.subtitle}
+      >
+        {subtitle}
+      </Typography>
+    );
+  }, [subtitle, theme.colors.Text.Secondary, styles.subtitle]);
+
+  const ImageComponent = useMemo(() => (
+    <LazyImage 
+      source={{ uri: imageUrl }} 
+      style={styles.image} 
+      resizeMode="cover" 
+    />
+  ), [imageUrl, styles.image]);
 
   return (
     <Card
@@ -55,41 +138,16 @@ const CardHero = ({
       readTime={readTime}
       style={styles.container}
     >
-      <LazyImage source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+      {ImageComponent}
 
       <View style={styles.heroContent}>
         <View style={styles.flagContainer}>
-          {isCommonFlag && (
-            <Flag 
-              text={flag} 
-              style={styles.flag} 
-              variant="minimal"
-              color={flag.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
-                     flag.toUpperCase() === 'EXCLUSIVE' ? theme.colors.Status.Exclusive :
-                     theme.colors.Error.Resting}
-            />
-          )}
-          {category && <Flag text={category} category={category} variant="minimal" />}
+          {FlagComponent}
+          {CategoryComponent}
         </View>
 
-        {renderColoredText({
-          text: title,
-          category,
-          theme,
-          typographyVariant: 'h5',
-          containerStyle: styles.titleContainer
-        })}
-
-        {subtitle && (
-          <Typography
-            variant="subtitle-01"
-            color={theme.colors.Text.Secondary}
-            numberOfLines={2}
-            style={styles.subtitle}
-          >
-            {subtitle}
-          </Typography>
-        )}
+        {TitleComponent}
+        {SubtitleComponent}
       </View>
 
       {/* Footer with read time and actions - moved outside of heroContent */}
@@ -100,13 +158,13 @@ const CardHero = ({
 
         <View style={styles.actionsContainer}>
           {onBookmark && (
-            <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
+            <TouchableOpacity onPress={handleBookmark} style={styles.actionButton}>
               <Feather name="bookmark" size={20} color={theme.colors.Text.Secondary} />
             </TouchableOpacity>
           )}
 
           {onShare && (
-            <TouchableOpacity onPress={onShare} style={styles.actionButton}>
+            <TouchableOpacity onPress={handleShare} style={styles.actionButton}>
               <Feather name="share" size={20} color={theme.colors.Text.Secondary} />
             </TouchableOpacity>
           )}
@@ -123,4 +181,4 @@ const CardHero = ({
 //   },
 // });
 
-export default CardHero;
+export default withPerformanceTracking(React.memo(CardHero), 'CardHero');
