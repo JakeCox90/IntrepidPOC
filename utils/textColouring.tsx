@@ -17,7 +17,7 @@ interface RenderColoredTextProps {
   text: string;
   category: string;
   theme: ThemeType;
-  typographyVariant: 'h5' | 'h6';
+  typographyVariant: 'h3' | 'h5' | 'h6';
   containerStyle?: StyleProp<ViewStyle>;
 }
 
@@ -26,7 +26,7 @@ interface RenderColoredTextProps {
  * @param text The text to render
  * @param category The category to determine the color
  * @param theme The current theme
- * @param typographyVariant The typography variant to use (h5 or h6)
+ * @param typographyVariant The typography variant to use (h3, h5, or h6)
  * @param containerStyle Optional style for the container
  * @returns JSX element with colored text
  */

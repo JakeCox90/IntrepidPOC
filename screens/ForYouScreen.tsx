@@ -1,17 +1,23 @@
 'use client';
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, StyleSheet, ScrollView, StatusBar, RefreshControl } from 'react-native';
-import { useTheme } from '../theme/ThemeProvider';
-import CardHero from '../components/CardHero';
+import { View, StyleSheet, ScrollView, StatusBar, RefreshControl, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
+import { useTheme, type ThemeType } from '../theme/ThemeProvider';
 import CardHorizontal from '../components/CardHorizontal';
 import SkeletonLoader from '../components/SkeletonLoader';
 import TopNav from '../components/TopNav';
 import Typography from '../components/Typography';
+import Tabs from '../components/Tabs';
 import { fetchSunNews } from '../services/sunNewsService';
 import Stack from '../components/Stack';
-import NewsCard from '../components/NewsCard';
 import BundleCard from '../components/BundleCard';
 import { createSharedStyles } from '../utils/sharedStyles';
+import { Article, Bundle } from '../types';
+import { useNavigation } from '@react-navigation/native';
+
+// Define the ForYouScreenProps interface
+interface ForYouScreenProps {
+  navigation: any;
+}
 
 // Sample bundle data
 const bundles = [
@@ -38,112 +44,168 @@ const bundles = [
   },
 ];
 
-// Define Article interface
-interface Article {
-  id: string;
-  title: string;
-  category?: string;
-  flag?: string;
-  imageUrl?: string;
-  readTime?: string;
-  timestamp?: string;
-  content?: string;
-  author?: string;
-  url?: string;
-}
-
-// Define Bundle interface
-interface Bundle {
-  id: string;
-  title: string;
-  subtitle: string;
-  storyCount: number;
-  imageUrl: string;
-}
-
-// Extract list components for better performance
-const TopStoriesList = React.memo(({ 
-  stories, 
-  onPress 
-}: { 
-  stories: Article[], 
-  onPress: (article: Article, index: number) => void 
-}) => (
-  <Stack spacing={12} style={styles.topStoriesStack}>
-    {stories.map((article, index) => (
-      <NewsCard
-        key={article.id || `top-story-${index}`}
-        title={article.title || ''}
-        imageUrl={article.imageUrl || ''}
-        category={article.category || ''}
-        timestamp={article.timestamp || 'Today'}
-        onPress={() => onPress(article, index)}
-      />
-    ))}
-  </Stack>
-));
-
-const RecommendedList = React.memo(({ 
-  articles, 
-  onPress, 
-  onBookmark, 
-  onShare 
-}: { 
-  articles: Article[], 
-  onPress: (article: Article) => void,
-  onBookmark: (id: string) => void,
-  onShare: (id: string) => void
-}) => (
-  <>
-    {articles.map(article => (
-      <CardHorizontal
-        key={article.id || Math.random().toString()}
-        id={article.id}
-        title={article.title || ''}
-        imageUrl={article.imageUrl || ''}
-        category={article.category || ''}
-        flag={article.flag || ''}
-        readTime={article.readTime || '3 min read'}
-        onPress={() => onPress(article)}
-        onBookmark={() => onBookmark(article.id)}
-        onShare={() => onShare(article.id)}
-      />
-    ))}
-  </>
-));
-
-const BundlesList = React.memo(({ 
-  bundles, 
-  onPress, 
-  onNotify 
-}: { 
-  bundles: Bundle[], 
-  onPress: (bundle: Bundle) => void,
-  onNotify: (bundle: Bundle) => void
-}) => (
-  <Stack spacing={16} style={styles.bundlesStack}>
-    {bundles.map(bundle => (
-      <BundleCard
-        key={bundle.id}
-        title={bundle.title}
-        subtitle={bundle.subtitle}
-        storyCount={bundle.storyCount}
-        imageUrl={bundle.imageUrl}
-        onPress={() => onPress(bundle)}
-        onNotify={() => onNotify(bundle)}
-      />
-    ))}
-  </Stack>
-));
-
 // ForYou screen with optimized implementation
-const ForYouScreen = ({ navigation }: { navigation: any }) => {
+const ForYouScreen: React.FC<ForYouScreenProps> = ({ navigation }) => {
   const theme = useTheme();
   const sharedStyles = useMemo(() => createSharedStyles(theme), [theme]);
+  const [selectedTab, setSelectedTab] = useState<string>('Top Stories');
   const [news, setNews] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isTabTransitioning, setIsTabTransitioning] = useState(false);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.Surface.Primary,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: theme.space['40'],
+    },
+    errorText: {
+      ...theme.typography.variants['body-01'],
+      color: theme.colors.Error.Text,
+      textAlign: 'center',
+      margin: theme.space['40'],
+    },
+    tabTransitioning: {
+      opacity: 0.7,
+    },
+    bottomPadding: {
+      height: theme.space['70'],
+    },
+    bundlesStack: {
+      marginBottom: theme.space['40'],
+    },
+    centerContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    horizontalRailContainer: {
+      marginTop: theme.space['40'],
+      paddingBottom: theme.space['40'],
+    },
+    scrollView: {
+      flex: 1,
+    },
+    section: {
+      padding: theme.space['40'],
+      paddingBottom: 0,
+    },
+    sectionTitle: {
+      marginBottom: theme.space['40'],
+    },
+    topStoriesStack: {
+      marginBottom: theme.space['40'],
+    },
+  });
+
+  // Extract list components for better performance
+  const TopStoriesList = React.memo(({ 
+    stories, 
+    onPress 
+  }: { 
+    stories: Article[], 
+    onPress: (article: Article) => void 
+  }) => (
+    <Stack spacing={12} style={styles.topStoriesStack}>
+      {stories.map((article, index) => (
+        <CardHorizontal
+          key={article.id || `top-story-${index}`}
+          id={article.id}
+          title={article.title || ''}
+          imageUrl={article.imageUrl || ''}
+          category={article.category || ''}
+          flag={article.flag || ''}
+          readTime={article.readTime || '3 min read'}
+          onPress={() => onPress(article)}
+          onBookmark={() => handleBookmark(article.id)}
+          onShare={() => handleShare(article.id)}
+        />
+      ))}
+    </Stack>
+  ));
+
+  const RecommendedList = React.memo(({ 
+    articles, 
+    onPress, 
+    onBookmark, 
+    onShare 
+  }: { 
+    articles: Article[], 
+    onPress: (article: Article) => void,
+    onBookmark: (id: string) => void,
+    onShare: (id: string) => void
+  }) => (
+    <>
+      {articles.map(article => (
+        <CardHorizontal
+          key={article.id || Math.random().toString()}
+          id={article.id}
+          title={article.title || ''}
+          imageUrl={article.imageUrl || ''}
+          category={article.category || ''}
+          flag={article.flag || ''}
+          readTime={article.readTime || '3 min read'}
+          onPress={() => onPress(article)}
+          onBookmark={() => onBookmark(article.id)}
+          onShare={() => onShare(article.id)}
+        />
+      ))}
+    </>
+  ));
+
+  const BundlesList = React.memo(({ 
+    bundles, 
+    onPress, 
+    onNotify 
+  }: { 
+    bundles: Bundle[], 
+    onPress: (bundle: Bundle) => void,
+    onNotify: (bundle: Bundle) => void
+  }) => (
+    <Stack spacing={16} style={styles.bundlesStack}>
+      {bundles.map(bundle => (
+        <BundleCard
+          key={bundle.id}
+          title={bundle.title}
+          subtitle={bundle.subtitle}
+          storyCount={bundle.storyCount}
+          imageUrl={bundle.imageUrl}
+          onPress={() => onPress(bundle)}
+          onNotify={() => onNotify(bundle)}
+        />
+      ))}
+    </Stack>
+  ));
+
+  // Memoize the tabs to prevent unnecessary re-renders
+  const tabs = useMemo(() => [
+    'Top Stories',
+    'Recommended',
+    'Bundles'
+  ], []);
+
+  // Memoize the tab press handler
+  const handleTabPress = useCallback((tabId: string) => {
+    if (tabId === selectedTab || isTabTransitioning) return;
+    
+    setIsTabTransitioning(true);
+    setSelectedTab(tabId);
+    
+    // Use a short timeout to prevent rapid tab switching
+    setTimeout(() => {
+      setIsTabTransitioning(false);
+    }, 100);
+  }, [selectedTab, isTabTransitioning]);
 
   // Memoize article data processing
   const { topStories, featuredArticles, recommendedArticles, topicBasedArticles } = useMemo(() => ({
@@ -173,16 +235,9 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
     loadArticles();
   }, [loadArticles]);
 
-  // Memoize handlers
+  // Fix the handleArticlePress function to not require an index parameter
   const handleArticlePress = useCallback((article: Article) => {
-    try {
-      navigation.navigate('ForYouArticle', { 
-        articleId: article.id || 'fallback-id',
-        article: article
-      });
-    } catch (error) {
-      console.error('Navigation error in handleArticlePress:', error);
-    }
+    navigation.navigate('ArticleDetail', { article });
   }, [navigation]);
 
   const handleTopStoryPress = useCallback((article: Article, index: number) => {
@@ -197,7 +252,6 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
         timestamp: item.timestamp || 'Today',
         content: item.content || '',
         author: item.author || 'The Sun',
-        url: item.url || '',
       }));
 
       navigation.navigate('ArticleStackScreen', {
@@ -244,177 +298,146 @@ const ForYouScreen = ({ navigation }: { navigation: any }) => {
     });
   }, [loadArticles, navigation]);
 
-  return (
-    <View style={[styles.container, { backgroundColor: theme.colors.Surface.Secondary }]}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+  const handleLoadMore = useCallback(async () => {
+    if (!hasMore || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const newArticles = await fetchSunNews();
+      setNews(prevArticles => [...prevArticles, ...newArticles]);
+      setHasMore(newArticles.length > 0);
+      setPage(prevPage => prevPage + 1);
+    } catch (error) {
+      console.error('Error loading more articles:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, isLoadingMore]);
 
-      {/* Header - updated to use the explore variant */}
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* Replace custom header with TopNav component */}
       <TopNav
-        title="For you"
+        title="For You"
+        variant="explore"
         backgroundColor={theme.colors.Surface.Secondary}
         textColor={theme.colors.Text.Primary}
-        variant="explore"
-        rightButtons={[
-          {
-            label: 'Profile',
-            onPress: handleProfilePress,
-          },
-        ]}
       />
-
-      {loading ? (
-        // Show loading state
-        <ScrollView 
-          style={styles.scrollView}
-          refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
-              onRefresh={handleRefresh}
-              colors={[theme.colors.Primary.Resting]} 
-            />
-          }
-        >
-          <SkeletonLoader type="forYou" count={3} />
-        </ScrollView>
-      ) : error ? (
-        // Error state
-        <View style={[styles.container, styles.centerContainer]}>
-          <Typography
-            variant="subtitle-01"
-            color={theme.colors.Error.Resting}
-            style={styles.errorText}
-          >
+      
+      {/* Replace custom tabs with Tabs component */}
+      <Tabs
+        tabs={tabs}
+        activeTab={selectedTab}
+        onTabPress={handleTabPress}
+        variant="secondary"
+        backgroundColor={theme.colors.Surface.Primary}
+        activeTextColor={theme.colors.Primary.Resting}
+        inactiveTextColor={theme.colors.Text.Secondary}
+        textVariant="body-02"
+        animated={true}
+      />
+      
+      <View style={styles.content}>
+        {loading ? (
+          <ActivityIndicator size="large" color={theme.colors.Primary.Resting} />
+        ) : error ? (
+          <Typography variant="body-01" color={theme.colors.Error.Text} style={styles.errorText}>
             {error}
           </Typography>
-          <Typography variant="body-01" color={theme.colors.Text.Secondary}>
-            Please check your connection and try again.
-          </Typography>
-        </View>
-      ) : (
-        // Actual content
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={{ backgroundColor: theme.colors.Surface.Secondary }}
-          refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
-              onRefresh={handleRefresh}
-              colors={[theme.colors.Primary.Resting]} 
-            />
-          }
-        >
-          {/* Top Stories Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Top stories
-            </Typography>
-
-            {featuredArticles.length > 0 && (
-              <CardHero
-                title={featuredArticles[0].title}
-                imageUrl={featuredArticles[0].imageUrl || ''}
-                flag={featuredArticles[0].flag || ''}
-                category={featuredArticles[0].category || ''}
-                readTime={featuredArticles[0].readTime || '3 min read'}
-                onPress={() => handleTopStoryPress(featuredArticles[0], 0)}
-                onBookmark={() => handleBookmark(featuredArticles[0].id)}
-                onShare={() => handleShare(featuredArticles[0].id)}
-              />
+        ) : (
+          <>
+            {selectedTab === 'Top Stories' && (
+              <View style={styles.section}>
+                <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+                  Top stories
+                </Typography>
+                <ScrollView
+                  refreshControl={
+                    <RefreshControl 
+                      refreshing={refreshing} 
+                      onRefresh={handleRefresh}
+                      colors={[theme.colors.Primary.Resting]} 
+                    />
+                  }
+                >
+                  <TopStoriesList
+                    stories={topStories}
+                    onPress={handleArticlePress}
+                  />
+                </ScrollView>
+              </View>
             )}
-          </View>
-
-          {/* Top Stories Horizontal Rail */}
-          <View style={styles.horizontalRailContainer}>
-            <TopStoriesList 
-              stories={topStories} 
-              onPress={handleTopStoryPress} 
-            />
-          </View>
-
-          {/* Recommended Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Recommended
-            </Typography>
-            <RecommendedList 
-              articles={recommendedArticles}
-              onPress={handleArticlePress}
-              onBookmark={handleBookmark}
-              onShare={handleShare}
-            />
-          </View>
-
-          {/* Bundles For You Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Bundles for you
-            </Typography>
-            <BundlesList 
-              bundles={bundles}
-              onPress={handleBundlePress}
-              onNotify={handleBundleNotify}
-            />
-          </View>
-
-          {/* Topics You Follow Section */}
-          <View style={styles.section}>
-            <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
-              Topics You Follow
-            </Typography>
-            <RecommendedList 
-              articles={topicBasedArticles}
-              onPress={handleArticlePress}
-              onBookmark={handleBookmark}
-              onShare={handleShare}
-            />
-          </View>
-
-          {/* Bottom padding */}
-          <View style={styles.bottomPadding} />
-
-          {/* Bottom spacing for navigation */}
-          <View style={sharedStyles.bottomNavSpacing} />
-        </ScrollView>
-      )}
-    </View>
+            
+            {selectedTab === 'Recommended' && (
+              <View style={styles.section}>
+                <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+                  Recommended
+                </Typography>
+                <ScrollView
+                  refreshControl={
+                    <RefreshControl 
+                      refreshing={refreshing} 
+                      onRefresh={handleRefresh}
+                      colors={[theme.colors.Primary.Resting]} 
+                    />
+                  }
+                >
+                  <Stack spacing={12}>
+                    {recommendedArticles.map((article) => (
+                      <CardHorizontal
+                        key={article.id}
+                        id={article.id}
+                        title={article.title}
+                        imageUrl={article.imageUrl || ''}
+                        category={article.category || ''}
+                        flag={article.flag || ''}
+                        readTime={article.readTime || '3 min read'}
+                        onPress={() => handleArticlePress(article)}
+                        onBookmark={() => handleBookmark(article.id)}
+                        onShare={() => handleShare(article.id)}
+                      />
+                    ))}
+                  </Stack>
+                </ScrollView>
+              </View>
+            )}
+            
+            {selectedTab === 'Bundles' && (
+              <View style={styles.section}>
+                <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.sectionTitle}>
+                  Bundles for you
+                </Typography>
+                <ScrollView
+                  refreshControl={
+                    <RefreshControl 
+                      refreshing={refreshing} 
+                      onRefresh={handleRefresh}
+                      colors={[theme.colors.Primary.Resting]} 
+                    />
+                  }
+                >
+                  <Stack spacing={12}>
+                    {bundles.map((bundle) => (
+                      <BundleCard
+                        key={bundle.id}
+                        title={bundle.title}
+                        subtitle={bundle.subtitle}
+                        storyCount={bundle.storyCount}
+                        imageUrl={bundle.imageUrl}
+                        onPress={() => handleBundlePress(bundle)}
+                        onNotify={() => handleBundleNotify(bundle)}
+                      />
+                    ))}
+                  </Stack>
+                </ScrollView>
+              </View>
+            )}
+          </>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
-
-// Update the styles to include the bundlesStack
-const styles = StyleSheet.create({
-  bottomPadding: {
-    height: 24,
-  },
-  bundlesStack: {
-    marginBottom: 16,
-  },
-  centerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
-  },
-  errorText: {
-    marginBottom: 16,
-  },
-  horizontalRailContainer: {
-    marginTop: 0, // Reduced from 16 to 8 to halve the space between hero card and stack
-    paddingBottom: 16,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  section: {
-    padding: 16,
-    paddingBottom: 0,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-  },
-  topStoriesStack: {
-    marginBottom: 16,
-  },
-});
 
 export default ForYouScreen;

@@ -273,13 +273,13 @@ const ArticleScreen = ({ route, navigation, hideHeader = false }: ArticleScreenP
           />
 
           {/* Comments Section */}
-          <CommentList
-            comments={comments}
-            onLike={handleLikeComment}
-            onReply={handleReplyComment}
-            onViewReplies={handleViewReplies}
-          />
         </View>
+        <CommentList
+          comments={comments}
+          onLike={handleLikeComment}
+          onReply={handleReplyComment}
+          onViewReplies={handleViewReplies}
+        />
       </>
     );
   }, [articleData, styles, accordionStyles, comments, handleAudioPlay, handleAudioPause, handleLikeComment, handleReplyComment, handleViewReplies]);

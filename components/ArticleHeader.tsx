@@ -133,7 +133,7 @@ const ArticleHeader = ({
             text: titleText,
             category: category || '',
             theme,
-            typographyVariant: 'h5'
+            typographyVariant: 'h3'
           })}
         </View>
       );
