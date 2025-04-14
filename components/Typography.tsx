@@ -11,7 +11,7 @@ const Typography = ({ variant, color, style, children, ...props }: TypographyPro
   const theme = useTheme();
 
   // Get variant style from foundation tokens
-  const variantStyle = typography.styles[variant];
+  const variantStyle = typography.styles[variant] || typography.styles['body-01'];
 
   // Map numeric font weight to string key
   const getFontWeightKey = (weight: number): keyof typeof typography.fontFamily => {
@@ -45,8 +45,9 @@ const Typography = ({ variant, color, style, children, ...props }: TypographyPro
     }
   };
 
-  // Determine font family
-  const fontFamily = theme?.typography?.fontFamily?.[getFontWeightKey(variantStyle.fontWeight)] || variantStyle.fontFamily;
+  // Determine font family with fallback
+  const fontWeight = variantStyle.fontWeight || 400;
+  const fontFamily = theme?.typography?.fontFamily?.[getFontWeightKey(fontWeight)] || variantStyle.fontFamily || 'Inter-Regular';
 
   // Create properly typed style object
   const textStyle: TextStyle = {
@@ -54,7 +55,7 @@ const Typography = ({ variant, color, style, children, ...props }: TypographyPro
     lineHeight: variantStyle.lineHeight,
     fontFamily,
     color: color || theme?.colors?.Text?.Primary || '#000000',
-    fontWeight: getFontWeightString(variantStyle.fontWeight),
+    fontWeight: getFontWeightString(fontWeight),
   };
 
   // Add textTransform if it exists and is a valid value
