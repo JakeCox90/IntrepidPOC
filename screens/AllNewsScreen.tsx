@@ -13,21 +13,36 @@ import { createAllNewsScreenStyles } from './styles/AllNewsScreen.styles';
 import { fetchSunNews, fetchNewsByCategory, SECTIONS } from '../services/sunNewsService';
 import { Article } from '../types/article';
 
-const MAIN_TABS = Object.entries(SECTIONS).map(([key, value]) => ({ key, name: value.name }));
-const CATEGORY_TABS: Record<string, string[]> = Object.entries(SECTIONS).reduce((acc, [key, value]) => {
-  acc[key] = value.subsections || [];
+// Define the type for section keys
+type SectionKey = keyof typeof SECTIONS;
+
+const MAIN_TABS = Object.entries(SECTIONS).map(([key, value]) => ({ key: key as SectionKey, name: value.name }));
+const CATEGORY_TABS: Record<SectionKey, string[]> = Object.entries(SECTIONS).reduce((acc, [key, value]) => {
+  acc[key as SectionKey] = value.subsections || [];
   return acc;
-}, {} as Record<string, string[]>);
+}, {} as Record<SectionKey, string[]>);
 
 const AllNewsScreen: React.FC = () => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const styles = useMemo(() => createAllNewsScreenStyles(theme), [theme]);
-  const [mainTab, setMainTab] = useState<string>(MAIN_TABS[0].key);
+  const [mainTab, setMainTab] = useState<SectionKey>(MAIN_TABS[0].key);
   const [categoryTab, setCategoryTab] = useState<string>(CATEGORY_TABS[MAIN_TABS[0].key]?.[0] || '');
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper function to transform section key to color token format
+  const getSectionColorKey = useCallback((key: SectionKey): keyof typeof theme.colors.Section => {
+    // Special cases for TV and Lifestyle
+    if (key === 'TV') {
+      return 'TV';
+    }
+    if (key === 'LIFESTYLE') {
+      return 'Fabulous';
+    }
+    return key.charAt(0) + key.slice(1).toLowerCase() as keyof typeof theme.colors.Section;
+  }, [theme.colors.Section]);
 
   // Fetch articles when mainTab or categoryTab changes
   const loadArticles = useCallback(async () => {
@@ -59,7 +74,7 @@ const AllNewsScreen: React.FC = () => {
   };
   const handleBookmark = (id: string | number) => {};
   const handleShare = (id: string | number) => {};
-  const handleTabPress = (tab: string) => setMainTab(tab);
+  const handleTabPress = (tab: string) => setMainTab(tab as SectionKey);
   const handleCategoryTabPress = (tab: string) => setCategoryTab(tab);
   const handleBottomNavPress = (tab: string) => {
     // TODO: Implement bottom nav navigation
@@ -72,17 +87,17 @@ const AllNewsScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Extend green section color behind the status bar */}
-      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, backgroundColor: theme.colors.Section.Sport, zIndex: 1 }} pointerEvents="none" />
+      {/* Extend section color behind the status bar */}
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, backgroundColor: theme.colors.Section[getSectionColorKey(mainTab)], zIndex: 1 }} pointerEvents="none" />
       <Tabs
         tabs={MAIN_TABS.map(tab => tab.name)}
         activeTab={SECTIONS[mainTab].name}
         onTabPress={tabName => {
           const found = MAIN_TABS.find(tab => tab.name === tabName);
-          if (found) setMainTab(found.key);
+          if (found) setMainTab(found.key as SectionKey);
         }}
         variant="primary"
-        backgroundColor={theme.colors.Section.Sport}
+        backgroundColor={theme.colors.Section[getSectionColorKey(mainTab)]}
         activeTextColor={theme.colors.Text.Inverse}
         inactiveTextColor={theme.colors.Text.Inverse}
         textVariant="subtitle-02"
