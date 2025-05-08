@@ -99,6 +99,7 @@ const AllNewsScreen: React.FC = () => {
         activeTextColor={theme.colors.Text.Inverse}
         inactiveTextColor={theme.colors.Text.Inverse}
         textVariant="subtitle-02"
+        activeTabBackgroundColor={'rgba(255,255,255,0.2)'}
       />
       <Tabs
         tabs={CATEGORY_TABS[mainTab] || []}
@@ -107,6 +108,7 @@ const AllNewsScreen: React.FC = () => {
         variant="secondary"
         backgroundColor={theme.colors.Surface.Primary}
         textVariant="subtitle-02"
+        activeTabBackgroundColor={'rgba(0,0,0,0.1)'}
       />
       {loading ? (
         <SkeletonLoader type="allNews" count={5} />

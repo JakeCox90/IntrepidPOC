@@ -5,6 +5,10 @@ import { useTheme } from '../theme/ThemeProvider';
 import Typography from './Typography';
 import { TabsProps } from '../types/components';
 
+interface TabsWithActiveBgProps extends TabsProps {
+  activeTabBackgroundColor?: string;
+}
+
 const Tabs = ({
   tabs,
   activeTab,
@@ -15,7 +19,8 @@ const Tabs = ({
   inactiveTextColor,
   textVariant = 'overline',
   animated = true,
-}: TabsProps) => {
+  activeTabBackgroundColor,
+}: TabsWithActiveBgProps) => {
   const theme = useTheme();
   const [initialized, setInitialized] = useState(false);
 
@@ -120,11 +125,7 @@ const Tabs = ({
               styles.tabPadding,
               {
                 borderRadius: borderRadius,
-              },
-              activeTab === tab && styles.activeTab,
-              activeTab === tab && {
-                borderColor:
-                  variant === 'primary' ? theme.colors.Text.Inverse : theme.colors.Border.Primary,
+                backgroundColor: activeTab === tab && activeTabBackgroundColor ? activeTabBackgroundColor : undefined,
               },
             ]}
             onPress={() => onTabPress(tab)}
@@ -150,9 +151,6 @@ const Tabs = ({
 };
 
 const styles = StyleSheet.create({
-  activeTab: {
-    borderWidth: 1,
-  },
   activeTabText: {
     fontWeight: '700',
   },
