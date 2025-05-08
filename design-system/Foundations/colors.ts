@@ -72,7 +72,7 @@ export const colors = {
   Section: {
     // Main sections
     News: '#E03A3A',
-    Sport: '#00A54F',
+    Sport: '#208662',
     TV: '#9C27B0',
     Showbiz: '#FF0099',
     Fabulous: '#FF0099',

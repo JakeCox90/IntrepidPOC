@@ -274,7 +274,7 @@ function AllNewsStackScreen() {
         name="AllNewsMain" 
         component={AllNewsScreen}
         options={{
-          title: 'All News',
+          headerShown: false,
         }}
       />
       <AllNewsStack.Screen 
