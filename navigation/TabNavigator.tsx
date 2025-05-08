@@ -81,13 +81,23 @@ type SavedStackParamList = {
   ArticleSwipeScreen: { initialArticleId: string };
 };
 
+// Define valid tab names as a type for type checking
+type ValidTabName = 'Today' | 'ForYou' | 'AllNews' | 'Search';
+
+// Define the valid tab names as a constant to avoid typos and improve type safety
+const TAB_NAMES = {
+  TODAY: 'Today' as const,
+  FOR_YOU: 'ForYou' as const,
+  ALL_NEWS: 'AllNews' as const,
+  SEARCH: 'Search' as const,
+} as const;
+
 // Define tab navigation parameter list
 type TabParamList = {
   Today: undefined;
   ForYou: undefined;
   AllNews: undefined;
   Search: undefined;
-  Saved: undefined;
 };
 
 // Create stack navigators for each tab
@@ -127,23 +137,12 @@ function NavigationErrorFallback({
     </View>
   );
 }
-// Define valid tab names as a type for type checking
-type ValidTabName = 'Today' | 'ForYou' | 'AllNews' | 'Search' | 'Saved';
-
-// Define the valid tab names as a constant to avoid typos and improve type safety
-const TAB_NAMES = {
-  TODAY: 'Today',
-  FOR_YOU: 'ForYou',
-  ALL_NEWS: 'AllNews',
-  SEARCH: 'Search',
-  SAVED: 'Saved',
-};
 
 // Type guard functions to improve navigation safety
 // Type guard to check if a value is a valid tab name
 function isValidTabName(name: unknown): name is ValidTabName {
   if (typeof name !== 'string') return false;
-  return ['Today', 'ForYou', 'AllNews', 'Search', 'Saved'].includes(name);
+  return ['Today', 'ForYou', 'AllNews', 'Search'].includes(name);
 }
 
 // Type guard to check if an object is a valid navigation state
@@ -162,7 +161,11 @@ function isValidNavigationState(state: unknown): state is NavigationState {
 
 // Define a reusable navigation type for consistent usage throughout the file
 interface NavigationType {
-  navigate: (name: string, params?: object) => void;
+  navigate: <RouteName extends string>(
+    ...args: RouteName extends unknown
+      ? [screen: RouteName] | [screen: RouteName, params: object | undefined]
+      : never
+  ) => void;
   reset: (state: { index: number; routes: { name: string; params?: object }[] }) => void;
   emit?: (event: string, ...args: unknown[]) => void;
 }
@@ -190,9 +193,37 @@ function TodayStackScreen() {
 
 // For You Tab Stack
 function ForYouStackScreen() {
+  const theme = useTheme();
+  
   return (
-    <ForYouStack.Navigator screenOptions={{ headerShown: false }}>
-      <ForYouStack.Screen name="ForYouMain" component={ForYouScreen} />
+    <ForYouStack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme.colors.Surface.Secondary,
+        },
+        headerTintColor: theme.colors.Text.Primary,
+        headerTitleStyle: {
+          ...theme.typography.variants['h5'],
+          color: theme.colors.Text.Primary,
+        },
+        headerShadowVisible: false,
+        headerLargeTitle: true,
+        headerLargeTitleStyle: {
+          ...theme.typography.variants['h3'],
+          color: theme.colors.Text.Primary,
+        },
+        statusBarStyle: 'dark',
+        statusBarColor: '#000000',
+      }}
+    >
+      <ForYouStack.Screen 
+        name="ForYouMain" 
+        component={ForYouScreen}
+        options={{
+          title: 'For You',
+        }}
+      />
       <ForYouStack.Screen 
         name="ForYouArticle" 
         component={ArticleScreen as React.ComponentType<any>} 
@@ -215,9 +246,37 @@ function ForYouStackScreen() {
 
 // All News Tab Stack
 function AllNewsStackScreen() {
+  const theme = useTheme();
+  
   return (
-    <AllNewsStack.Navigator screenOptions={{ headerShown: false }}>
-      <AllNewsStack.Screen name="AllNewsMain" component={AllNewsScreen} />
+    <AllNewsStack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme.colors.Surface.Secondary,
+        },
+        headerTintColor: theme.colors.Text.Primary,
+        headerTitleStyle: {
+          ...theme.typography.variants['h5'],
+          color: theme.colors.Text.Primary,
+        },
+        headerShadowVisible: false,
+        headerLargeTitle: true,
+        headerLargeTitleStyle: {
+          ...theme.typography.variants['h3'],
+          color: theme.colors.Text.Primary,
+        },
+        statusBarStyle: 'dark',
+        statusBarColor: '#000000',
+      }}
+    >
+      <AllNewsStack.Screen 
+        name="AllNewsMain" 
+        component={AllNewsScreen}
+        options={{
+          title: 'All News',
+        }}
+      />
       <AllNewsStack.Screen 
         name="AllNewsArticle" 
         component={ArticleScreen as React.ComponentType<any>} 
@@ -236,9 +295,44 @@ function AllNewsStackScreen() {
 
 // Search Tab Stack
 function SearchStackScreen() {
+  const theme = useTheme();
+  
   return (
-    <SearchStack.Navigator screenOptions={{ headerShown: false }}>
-      <SearchStack.Screen name="SearchMain" component={SearchScreen} />
+    <SearchStack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme.colors.Surface.Secondary,
+        },
+        headerTintColor: theme.colors.Text.Primary,
+        headerTitleStyle: {
+          ...theme.typography.variants['h5'],
+          color: theme.colors.Text.Primary,
+        },
+        headerShadowVisible: false,
+        headerLargeTitle: true,
+        headerLargeTitleStyle: {
+          ...theme.typography.variants['h3'],
+          color: theme.colors.Text.Primary,
+        },
+        statusBarStyle: 'dark',
+        statusBarColor: '#000000',
+      }}
+    >
+      <SearchStack.Screen 
+        name="SearchMain" 
+        component={SearchScreen}
+        options={{
+          title: 'Search',
+          headerSearchBarOptions: {
+            placeholder: 'Search for news...',
+            barTintColor: theme.colors.Surface.Secondary,
+            textColor: theme.colors.Text.Primary,
+            tintColor: theme.colors.Text.Primary,
+            hideWhenScrolling: false,
+          },
+        }}
+      />
       <SearchStack.Screen 
         name="SearchArticle" 
         component={ArticleScreen as React.ComponentType<any>} 
@@ -276,38 +370,16 @@ function SavedStackScreen() {
   );
 }
 
+// Main Tab Navigator
 export default function TabNavigator() {
-  // Use a default empty object with the correct shape to avoid null checks
-  const theme = useTheme() || {
-    colors: {
-      Primary: { Resting: '#E03A3A' },
-      Text: { Secondary: '#717171' },
-      Surface: { Primary: '#FFFFFF' },
-    },
-    space: {},
-    typography: { fontFamily: {} },
-  };
-
-  // Enhanced error handler for navigation operations
-  const handleNavigationError = (error: Error) => {
-    console.error('Navigation error:', error.message);
-
-    // You could add additional error logging or reporting here
-    // For example, sending to a monitoring service or analytics
-
-    // Return true to indicate the error was handled
-    return true;
-  };
-  const [activeTab, setActiveTab] = useState('Today');
-  const [tabHistory, setTabHistory] = useState<Record<string, boolean>>({
+  const theme = useTheme();
+  const [activeTab, setActiveTab] = useState<ValidTabName>(TAB_NAMES.TODAY);
+  const [tabHistory, setTabHistory] = useState<Record<ValidTabName, boolean>>({
     Today: false,
     ForYou: false,
     AllNews: false,
     Search: false,
-    Saved: false,
   });
-
-  // Using the TAB_NAMES constant defined outside the component
 
   // Reset tab history when component mounts to ensure clean state
   useEffect(() => {
@@ -316,19 +388,14 @@ export default function TabNavigator() {
       ForYou: false,
       AllNews: false,
       Search: false,
-      Saved: false,
     });
   }, []);
 
   // This function handles tab changes and resets stacks when needed
   const handleTabPress = useCallback(
-    (tabName: string) => {
-      // Validate tab name to prevent errors
-      if (!Object.values(TAB_NAMES).includes(tabName)) {
-        console.warn(`Invalid tab name: ${tabName}`);
-        return;
-      }
-
+    (tabName: string, navigation: BottomTabBarProps['navigation']) => {
+      if (!isValidTabName(tabName)) return;
+      
       // If we're already on this tab, do nothing
       if (tabName === activeTab) return;
 
@@ -340,139 +407,74 @@ export default function TabNavigator() {
 
       // Update the active tab
       setActiveTab(tabName);
+
+      // Navigate to the selected tab
+      navigation.navigate(tabName);
     },
-    [activeTab], // TAB_NAMES is defined outside the component and won't change
+    [activeTab],
   );
 
-  // Separate hook for handling tab reset logic
-  const handleTabReset = useCallback(
-    (tabName: string, navigation: NavigationType) => {
-      if (!isValidTabName(tabName)) {
-        return;
-      }
-
-      // Check if tab has been visited before
-      if (tabHistory[tabName]) {
-        // Reset stack to root screen, using a safer reset configuration
-        try {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: tabName }],
-          });
-        } catch (error) {
-          console.error(
-            'Failed to reset tab navigation:',
-            error instanceof Error ? error.message : String(error),
-          );
-        }
-      }
-    },
-    [tabHistory],
-  );
   return (
     <ErrorBoundary
       FallbackComponent={NavigationErrorFallback}
-      onError={handleNavigationError}
-      onReset={() => {
+      onError={() => {
         // Reset to a clean state when the error boundary resets
-        setActiveTab('Today');
+        setActiveTab(TAB_NAMES.TODAY);
         setTabHistory({
           Today: false,
           ForYou: false,
           AllNews: false,
           Search: false,
-          Saved: false,
         });
       }}
     >
       <Tab.Navigator
-        initialRouteName="Today"
+        tabBar={props => (
+          <BottomNav
+            {...props}
+            activeTab={activeTab}
+            onTabPress={(tabName) => handleTabPress(tabName, props.navigation)}
+          />
+        )}
         screenOptions={{
           headerShown: false,
-        }}
-        tabBar={props => {
-          try {
-            // Guard against null or invalid props
-            if (!props) {
-              return null;
-            }
-
-            // Safely extract the current route name
-            const currentRoute = props.state.routes[props.state.index].name;
-            if (!isValidTabName(currentRoute)) {
-              console.warn(`Invalid route name found in state: ${currentRoute}`);
-              return null;
-            }
-
-            // Check if we're in a stack navigator and the current screen is ArticleSwipeScreen
-            const currentStackState = props.state.routes[props.state.index].state;
-            if (currentStackState && currentStackState.routes) {
-              const currentScreen = currentStackState.routes[currentStackState.index || 0]?.name;
-              if (currentScreen === 'ArticleSwipeScreen') {
-                return null; // Hide tab bar when ArticleSwipeScreen is active
-              }
-            }
-
-            return (
-              <BottomNav
-                activeTab={currentRoute}
-                onTabPress={(tabName: string) => {
-                  try {
-                    // Validate the tab name to prevent errors
-                    if (!isValidTabName(tabName)) {
-                      console.warn(`Invalid tab name requested: ${tabName}`);
-                      return;
-                    }
-
-                    // Update our internal tab tracking
-                    handleTabPress(tabName);
-
-                    // Navigate to the selected tab
-                    props.navigation.navigate(tabName);
-                  } catch (error) {
-                    console.error('Tab navigation error:', error);
-                  }
-                }}
-                isLoading={false}
-              />
-            );
-          } catch (error) {
-            console.error('Error rendering tab bar:', error);
-            return null;
-          }
-        }}
-        screenListeners={({
-          navigation,
-          route,
-        }: {
-          navigation: NavigationType;
-          route: RouteProp<ParamListBase, string>;
-        }) => ({
-          focus: (e: { target?: string; type?: string; data?: Record<string, unknown> }) => {
-            try {
-              // Simple validation of key elements
-              if (!e?.target || !route?.name) {
-                return;
-              }
-
-              const tabName = route.name;
-
-              // Call the tab reset handler
-              handleTabReset(tabName, navigation);
-            } catch (error) {
-              console.error(
-                'Error in tab focus handler:',
-                error instanceof Error ? error.message : String(error),
-              );
-            }
+          tabBarStyle: {
+            display: 'none',
           },
-        })}
+        }}
       >
-        <Tab.Screen name="Today" component={TodayStackScreen} />
-        <Tab.Screen name="ForYou" component={ForYouStackScreen} />
-        <Tab.Screen name="AllNews" component={AllNewsStackScreen} />
-        <Tab.Screen name="Search" component={SearchStackScreen} />
-        <Tab.Screen name="Saved" component={SavedStackScreen} />
+        <Tab.Screen
+          name="Today"
+          component={TodayStackScreen}
+          options={{
+            tabBarLabel: 'Today',
+            tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="ForYou"
+          component={ForYouStackScreen}
+          options={{
+            tabBarLabel: 'For You',
+            tabBarIcon: ({ color }) => <Feather name="heart" size={24} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="AllNews"
+          component={AllNewsStackScreen}
+          options={{
+            tabBarLabel: 'All News',
+            tabBarIcon: ({ color }) => <Feather name="list" size={24} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="Search"
+          component={SearchStackScreen}
+          options={{
+            tabBarLabel: 'Search',
+            tabBarIcon: ({ color }) => <Feather name="search" size={24} color={color} />,
+          }}
+        />
       </Tab.Navigator>
     </ErrorBoundary>
   );

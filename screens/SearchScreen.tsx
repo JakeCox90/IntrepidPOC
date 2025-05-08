@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, FlatList, StatusBar } from 'react-native';
+import { useState, useCallback, useMemo } from 'react';
+import { View, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Typography from '../components/Typography';
 import { useTheme } from '../theme/ThemeProvider';
-import TopNav from '../components/TopNav';
 import CardHorizontal from '../components/CardHorizontal';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { searchArticles } from '../services/sunNewsService';
@@ -32,10 +31,10 @@ const SearchScreen = ({ navigation }: Props) => {
   const theme = useTheme();
 
   // Create dynamic styles with theme
-  const dynamicStyles = createDynamicStyles(theme);
+  const dynamicStyles = useMemo(() => createDynamicStyles(theme), [theme]);
 
   // Define trending topics with their corresponding section colors
-  const trendingTopics = [
+  const trendingTopics = useMemo(() => [
     { name: 'Breaking News', color: theme.colors.Section.News },
     { name: 'Sports', color: theme.colors.Section.Sport },
     { name: 'Technology', color: theme.colors.Section.Tech },
@@ -44,12 +43,12 @@ const SearchScreen = ({ navigation }: Props) => {
     { name: 'Health', color: theme.colors.Section.Health },
     { name: 'Money', color: theme.colors.Section.Money },
     { name: 'Travel', color: theme.colors.Section.Travel },
-  ];
+  ], [theme.colors.Section]);
 
   /**
    * Execute search query and fetch results
    */
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (searchQuery.trim()) {
       try {
         setIsSearching(true);
@@ -63,51 +62,42 @@ const SearchScreen = ({ navigation }: Props) => {
         setIsSearching(false);
       }
     }
-  };
+  }, [searchQuery]);
 
   /**
    * Clear search query and results
    */
-  const handleClearSearch = () => {
+  const handleClearSearch = useCallback(() => {
     setSearchQuery('');
     setSearchResults([]);
     setError(null);
-  };
+  }, []);
 
   /**
    * Navigate to article detail screen
-   * @param article The article to display
    */
-  const handleArticlePress = (article: Article) => {
+  const handleArticlePress = useCallback((article: Article) => {
     navigation.navigate('SearchArticle', { article });
-  };
+  }, [navigation]);
 
   /**
    * Handle bookmarking an article
-   * @param id ID of the article to bookmark
    */
-  const handleBookmark = (id: string) => {
+  const handleBookmark = useCallback((id: string) => {
     console.log('Bookmark article:', id);
-  };
+  }, []);
 
   /**
    * Handle sharing an article
-   * @param id ID of the article to share
    */
-  const handleShare = (id: string) => {
+  const handleShare = useCallback((id: string) => {
     console.log('Share article:', id);
-  };
-
-  const handleProfilePress = () => {
-    console.log('Profile pressed');
-  };
+  }, []);
 
   /**
    * Render a trending search item
-   * @param param0 Item to render
-   * @returns Rendered component
    */
-  const renderTrendingItem = ({ item }: { item: { name: string; color: string } }) => (
+  const renderTrendingItem = useCallback(({ item }: { item: { name: string; color: string } }) => (
     <TouchableOpacity
       style={[
         styles.trendingItem,
@@ -138,25 +128,10 @@ const SearchScreen = ({ navigation }: Props) => {
         {item.name}
       </Typography>
     </TouchableOpacity>
-  );
+  ), [theme.colors.Text.Inverse, handleSearch]);
 
   return (
     <View style={[styles.container, dynamicStyles.container]}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
-
-      <TopNav
-        title="Search"
-        backgroundColor={theme.colors.Surface.Secondary}
-        textColor={theme.colors.Text.Primary}
-        variant="explore"
-        rightButtons={[
-          {
-            label: 'Profile',
-            onPress: handleProfilePress,
-          },
-        ]}
-      />
-
       <View style={[styles.searchContainer, dynamicStyles.searchContainer]}>
         <View
           style={[styles.searchInputContainer, { backgroundColor: theme.colors.Surface.Secondary }]}
@@ -197,12 +172,10 @@ const SearchScreen = ({ navigation }: Props) => {
       </View>
 
       {isSearching ? (
-        // Use SkeletonLoader for loading state
         <View style={styles.searchResults}>
           <SkeletonLoader type="search" count={3} />
         </View>
       ) : error ? (
-        // Error state
         <View style={styles.errorContainer}>
           <Typography variant="body-01" color={theme.colors.Error.Resting} style={styles.errorText}>
             {error}
@@ -216,7 +189,6 @@ const SearchScreen = ({ navigation }: Props) => {
           </Typography>
         </View>
       ) : searchResults.length > 0 ? (
-        // Actual content
         <FlatList
           data={searchResults}
           keyExtractor={item => item.id.toString()}
@@ -236,7 +208,6 @@ const SearchScreen = ({ navigation }: Props) => {
           contentContainerStyle={styles.searchResults}
         />
       ) : (
-        // Trending topics section
         <View style={styles.trendingContainer}>
           <Typography variant="h5" color={theme.colors.Text.Primary} style={styles.trendingTitle}>
             Trending Topics

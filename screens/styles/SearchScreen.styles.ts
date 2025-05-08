@@ -13,12 +13,9 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   errorSubtext: {
-    fontSize: 16,
     textAlign: 'center',
   },
   errorText: {
-    fontSize: 18,
-    fontWeight: '600',
     marginBottom: 8,
   },
   searchButton: {
@@ -28,7 +25,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   searchContainer: {
-    borderBottomWidth: 1,
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -82,10 +78,10 @@ export const createDynamicStyles = (theme: ThemeType) => {
     },
     searchContainer: {
       borderBottomColor: theme.colors.Border.Primary,
-      borderBottomWidth: 1,
+      borderBottomWidth: theme.borderWidth['10'],
       flexDirection: 'row',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: theme.space['40'],
+      paddingVertical: theme.space['30'],
     },
     searchInput: {
       flex: 1,

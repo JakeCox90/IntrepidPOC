@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, StatusBar, RefreshControl, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
 import { useTheme, type ThemeType } from '../theme/ThemeProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CardHorizontal from '../components/CardHorizontal';
 import SkeletonLoader from '../components/SkeletonLoader';
 import TopNav from '../components/TopNav';
@@ -13,6 +14,7 @@ import BundleCard from '../components/BundleCard';
 import { createSharedStyles } from '../utils/sharedStyles';
 import { Article, Bundle } from '../types';
 import { useNavigation } from '@react-navigation/native';
+import { createForYouScreenStyles } from './styles/ForYouScreen.styles';
 
 // Define the ForYouScreenProps interface
 interface ForYouScreenProps {
@@ -47,7 +49,9 @@ const bundles = [
 // ForYou screen with optimized implementation
 const ForYouScreen: React.FC<ForYouScreenProps> = ({ navigation }) => {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const sharedStyles = useMemo(() => createSharedStyles(theme), [theme]);
+  const styles = useMemo(() => createForYouScreenStyles(theme, insets), [theme, insets]);
   const [selectedTab, setSelectedTab] = useState<string>('Top Stories');
   const [news, setNews] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,53 +64,6 @@ const ForYouScreen: React.FC<ForYouScreenProps> = ({ navigation }) => {
   const [page, setPage] = useState(1);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isTabTransitioning, setIsTabTransitioning] = useState(false);
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.Surface.Primary,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: theme.space['40'],
-    },
-    errorText: {
-      ...theme.typography.variants['body-01'],
-      color: theme.colors.Error.Text,
-      textAlign: 'center',
-      margin: theme.space['40'],
-    },
-    tabTransitioning: {
-      opacity: 0.7,
-    },
-    bottomPadding: {
-      height: theme.space['70'],
-    },
-    bundlesStack: {
-      marginBottom: theme.space['40'],
-    },
-    centerContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    horizontalRailContainer: {
-      marginTop: theme.space['40'],
-      paddingBottom: theme.space['40'],
-    },
-    scrollView: {
-      flex: 1,
-    },
-    section: {
-      padding: theme.space['40'],
-      paddingBottom: 0,
-    },
-    sectionTitle: {
-      marginBottom: theme.space['40'],
-    },
-    topStoriesStack: {
-      marginBottom: theme.space['40'],
-    },
-  });
 
   // Extract list components for better performance
   const TopStoriesList = React.memo(({ 
@@ -314,18 +271,13 @@ const ForYouScreen: React.FC<ForYouScreenProps> = ({ navigation }) => {
   }, [hasMore, isLoadingMore]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      
-      {/* Replace custom header with TopNav component */}
-      <TopNav
-        title="For You"
-        variant="explore"
-        backgroundColor={theme.colors.Surface.Secondary}
-        textColor={theme.colors.Text.Primary}
+    <View style={styles.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#000000"
+        translucent={true}
       />
       
-      {/* Replace custom tabs with Tabs component */}
       <Tabs
         tabs={tabs}
         activeTab={selectedTab}
@@ -436,7 +388,7 @@ const ForYouScreen: React.FC<ForYouScreenProps> = ({ navigation }) => {
           </>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -42,6 +42,74 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollViewContent: {
+      paddingTop: Platform.OS === 'ios' ? 120 : 100,
+    },
+    header: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    },
+    headerContent: {
+      paddingHorizontal: 16,
+      paddingBottom: 16,
+    },
+    logo: {
+      width: 85,
+      height: 36,
+    },
+    contentContainer: {
+      flex: 1,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+      paddingTop: 24,
+      marginTop: -16,
+      ...Platform.select({
+        ios: {
+          zIndex: 2,
+        },
+        android: {
+          elevation: 1,
+        },
+      }),
+    },
+    section: {
+      marginBottom: 24,
+      paddingHorizontal: 16,
+    },
+    sectionTitle: {
+      marginBottom: 16,
+    },
+    catchUpScroll: {
+      marginHorizontal: -16,
+    },
+    catchUpScrollContent: {
+      paddingHorizontal: 16,
+    },
+    centerContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 16,
+    },
+    errorText: {
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    bottomPadding: {
+      height: 24,
+    },
+  });
+
   const loadArticles = async (isRefreshing = false) => {
     if (!isRefreshing) {
       setLoading(true);
@@ -294,74 +362,5 @@ const TodayScreen: React.FC<TodayScreenProps> = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    zIndex: 2,
-  },
-  scrollViewContent: {
-    paddingTop: Platform.OS === 'ios' ? 120 : 100,
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-  headerContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  logo: {
-    width: 85,
-    height: 36,
-  },
-  contentContainer: {
-    flex: 1,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingTop: 24,
-    marginTop: -16,
-    ...Platform.select({
-      ios: {
-        zIndex: 2,
-      },
-      android: {
-        elevation: 1,
-      },
-    }),
-  },
-  section: {
-    marginBottom: 24,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-  },
-  catchUpScroll: {
-    marginHorizontal: -16,
-  },
-  catchUpScrollContent: {
-    paddingHorizontal: 16,
-  },
-  centerContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  errorText: {
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  bottomPadding: {
-    height: 24,
-  },
-});
 
 export default TodayScreen;

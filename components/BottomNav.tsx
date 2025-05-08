@@ -17,7 +17,7 @@ import SavedSelected from '../assets/SavedSelected.svg';
 import { baseStyles, getThemedStyles } from './styles/BottomNavStyles';
 
 // Define valid tab names as a type to ensure type safety
-type ValidTabName = 'Today' | 'ForYou' | 'AllNews' | 'Search' | 'Saved';
+type ValidTabName = 'Today' | 'ForYou' | 'AllNews' | 'Search';
 
 // Define tab configuration type
 interface TabConfig {
@@ -53,7 +53,6 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
     { name: 'ForYou', label: 'For You' },
     { name: 'AllNews', label: 'All News' },
     { name: 'Search' },
-    { name: 'Saved' },
   ];
 
   // Function to render the appropriate icon based on tab name
@@ -92,15 +91,6 @@ const BottomNav = ({ activeTab, onTabPress, isLoading = false }: BottomNavProps)
         return (
           <SvgIcon 
             source={isActive ? SearchSelected : SearchResting} 
-            width={24} 
-            height={24} 
-            color={iconColor} 
-          />
-        );
-      case 'Saved':
-        return (
-          <SvgIcon 
-            source={isActive ? SavedSelected : SavedResting} 
             width={24} 
             height={24} 
             color={iconColor} 

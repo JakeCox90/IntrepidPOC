@@ -10,6 +10,17 @@ This document outlines the tasks required to move inline styles from components 
 
 ## Tasks
 
+### 🔴 ForYouScreen Component
+**File**: `screens/ForYouScreen.tsx`
+- [x] Create new file `screens/styles/ForYouScreen.styles.ts`
+- [x] Move all inline styles to StyleSheet
+- [x] Use theme values for spacing and layout
+- [x] Update component to use new styles
+- [x] Replace custom TopNav with native iOS header
+- [x] Configure large title variant for iOS header
+- [x] Set status bar to black with white text
+- [x] Remove redundant StatusBar component
+
 ### 🔴 AudioPlayerDrawer Component
 **File**: `components/AudioPlayerDrawer.tsx`
 - [x] Create new file `components/styles/AudioPlayerDrawer.styles.ts`

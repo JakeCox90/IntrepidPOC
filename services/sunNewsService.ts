@@ -797,6 +797,7 @@ export const getSubsections = async (category: string): Promise<string[]> => {
 };
 
 // Alias for getArticlesByCategory to maintain compatibility with existing code
+export { mockArticles };
 export const fetchNewsByCategory = async (category: string): Promise<Article[]> => {
   // Handle the mismatch between UI subcategories and mock data subcategories
   // Map UI subcategories to mock data subcategories
