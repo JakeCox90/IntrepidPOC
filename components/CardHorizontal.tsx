@@ -170,27 +170,10 @@ const CardHorizontal = ({
           </View>
 
           {TitleComponent}
-        </View>
-      </View>
 
-      {/* Footer with read time and actions */}
-      <View style={styles.footer}>
-        <View style={styles.readTimeContainer}>
-          <ReadTime readTime={readTime || '3 min read'} />
-        </View>
-
-        <View style={styles.actionsContainer}>
-          {onBookmark && (
-            <TouchableOpacity onPress={handleBookmark} style={styles.actionButton}>
-              <Feather name="bookmark" size={20} color={theme.colors.Text.Secondary} />
-            </TouchableOpacity>
-          )}
-
-          {onShare && (
-            <TouchableOpacity onPress={handleShare} style={styles.actionButton}>
-              <Feather name="share" size={20} color={theme.colors.Text.Secondary} />
-            </TouchableOpacity>
-          )}
+          <View style={styles.readTimeContainer}>
+            <ReadTime readTime={readTime || '3 min read'} />
+          </View>
         </View>
       </View>
     </Card>

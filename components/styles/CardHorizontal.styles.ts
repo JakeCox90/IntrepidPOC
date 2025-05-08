@@ -17,31 +17,16 @@ import type { ThemeType } from '../../theme/ThemeProvider';
 export const createCardHorizontalStyles = (theme: ThemeType) => {
   return StyleSheet.create({
     // Group: Container and layout styles
-    actionButton: {
-      marginLeft: 16,
-      padding: 4,
-    },
-    actionsContainer: {
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    categoryText: {
-      marginBottom: 0,
-    },
     container: {
-      backgroundColor: theme.colors.Surface.Primary,
-      borderColor: theme.colors.Border.Primary,
-      borderRadius: theme.radius['radius-default'],
-      borderWidth: theme.borderWidth['10'],
-      marginBottom: 16,
-      paddingBottom: 0,
-      paddingTop: 16,
+      backgroundColor: 'transparent',
+      borderWidth: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.Border.Primary,
+      paddingBottom: 12,
+      marginBottom: 12,
     },
     contentContainer: {
       flexDirection: 'row',
-      paddingBottom: 16,
-      paddingHorizontal: 16,
-      paddingTop: 0,
     },
 
     // Group: Text and content styles
@@ -50,15 +35,14 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       alignItems: 'center',
       marginBottom: 4,
     },
-    footer: {
-      alignItems: 'center',
-      borderTopColor: theme.colors.Border.Primary,
-      borderTopWidth: 1,
+    textContent: {
+      flex: 1,
+      justifyContent: 'flex-start',
+    },
+    title: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingBottom: 8,
-      paddingHorizontal: 16,
-      paddingTop: 8,
+      flexWrap: 'wrap',
+      marginBottom: 4,
     },
 
     // Group: Image styles
@@ -79,21 +63,10 @@ export const createCardHorizontalStyles = (theme: ThemeType) => {
       width: 100,
     },
 
-    // Group: Footer and metadata styles
+    // Group: Read time styles
     readTimeContainer: {
       alignItems: 'center',
       flexDirection: 'row',
-    },
-    readTimeText: {
-      marginLeft: 6,
-    },
-    textContent: {
-      flex: 1,
-      justifyContent: 'flex-start',
-    },
-    title: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
     },
   });
 };

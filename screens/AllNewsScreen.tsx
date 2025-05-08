@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, SafeAreaView, ScrollView } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import TopNav from '../components/TopNav';
 import Tabs from '../components/Tabs';
 import CardHero from '../components/CardHero';
 import CardHorizontal from '../components/CardHorizontal';
@@ -82,8 +81,7 @@ const AllNewsScreen: React.FC = () => {
 
   // Split articles for hero and horizontal cards
   const heroArticle = articles[0];
-  const horizontalArticles = articles.slice(1, 3);
-  const restArticles = articles.slice(3);
+  const horizontalArticles = articles.slice(1);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -119,26 +117,24 @@ const AllNewsScreen: React.FC = () => {
           </Typography>
         </View>
       ) : (
-        <FlatList
-          ListHeaderComponent={
-            <>
-              {heroArticle && (
-                <CardHero
-                  title={heroArticle.title}
-                  subtitle={heroArticle.subheading}
-                  imageUrl={heroArticle.imageUrl}
-                  category={heroArticle.category}
-                  flag={heroArticle.flag}
-                  readTime={heroArticle.readTime}
-                  onPress={() => handleArticlePress(heroArticle)}
-                  onBookmark={() => handleBookmark(heroArticle.id)}
-                  onShare={() => handleShare(heroArticle.id)}
-                />
-              )}
-              <View style={{ flexDirection: 'row', gap: theme.space['40'], marginVertical: theme.space['40'], paddingHorizontal: theme.space['40'] }}>
-                {horizontalArticles.map((item) => (
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          <View style={styles.newsList}>
+            {heroArticle && (
+              <CardHero
+                title={heroArticle.title}
+                subtitle={heroArticle.subheading}
+                imageUrl={heroArticle.imageUrl}
+                category={heroArticle.category}
+                flag={heroArticle.flag}
+                readTime={heroArticle.readTime}
+                onPress={() => handleArticlePress(heroArticle)}
+              />
+            )}
+            <View style={styles.horizontalCardsContainer}>
+              {horizontalArticles.map((item) => (
+                <View key={item.id} style={styles.horizontalCardWrapper}>
                   <CardHorizontal
-                    key={item.id}
+                    id={item.id}
                     title={item.title}
                     imageUrl={item.imageUrl}
                     category={item.category}
@@ -148,27 +144,11 @@ const AllNewsScreen: React.FC = () => {
                     onBookmark={() => handleBookmark(item.id)}
                     onShare={() => handleShare(item.id)}
                   />
-                ))}
-              </View>
-            </>
-          }
-          data={restArticles}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <CardHorizontal
-              key={item.id}
-              title={item.title}
-              imageUrl={item.imageUrl}
-              category={item.category}
-              flag={item.flag}
-              readTime={item.readTime}
-              onPress={() => handleArticlePress(item)}
-              onBookmark={() => handleBookmark(item.id)}
-              onShare={() => handleShare(item.id)}
-            />
-          )}
-          contentContainerStyle={styles.newsList}
-        />
+                </View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
       )}
       <BottomNav activeTab="AllNews" onTabPress={handleBottomNavPress} />
     </SafeAreaView>

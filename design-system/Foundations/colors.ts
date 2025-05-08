@@ -71,11 +71,11 @@ export const colors = {
   // Updated section colors to match The Sun website exactly
   Section: {
     // Main sections
-    News: '#E03A3A',
+    News: '#3A79BB',
     Sport: '#208662',
-    TV: '#9C27B0',
+    TV: '#8A69A9',
     Showbiz: '#FF0099',
-    Fabulous: '#FF0099',
+    Fabulous: '#B840CC',
     Money: '#00A54F',
     Travel: '#FF9500',
     Tech: '#00BCD4',

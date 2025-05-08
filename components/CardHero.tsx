@@ -1,6 +1,6 @@
 'use client';
 import React, { useMemo, useCallback } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 import Flag from './Flag';
 import Typography from './Typography';
@@ -9,7 +9,6 @@ import Card from './Card';
 import ReadTime from './ReadTime';
 import { createCardHeroStyles } from './styles/CardHero.styles';
 import { getCategoryColor } from '../utils/categoryColors';
-import { Feather } from '@expo/vector-icons';
 import type { CardHeroProps } from '../types/components';
 import { renderColoredText } from '../utils/textColouring';
 import { withPerformanceTracking } from '../utils/performance';
@@ -38,8 +37,6 @@ const CardHero = ({
   flag,
   readTime,
   onPress,
-  onBookmark,
-  onShare,
   style,
 }: CardHeroProps) => {
   const theme = useTheme();
@@ -51,18 +48,6 @@ const CardHero = ({
     flag && COMMON_FLAGS.includes(flag.toUpperCase() as typeof COMMON_FLAGS[number]),
     [flag]
   );
-
-  const handleBookmark = useCallback(() => {
-    if (onBookmark) {
-      onBookmark();
-    }
-  }, [onBookmark]);
-
-  const handleShare = useCallback(() => {
-    if (onShare) {
-      onShare();
-    }
-  }, [onShare]);
 
   const flagColor = useMemo(() => 
     flag?.toUpperCase() === 'BREAKING' ? theme.colors.Status.Breaking : 
@@ -133,10 +118,8 @@ const CardHero = ({
   return (
     <Card
       onPress={onPress}
-      onBookmark={onBookmark}
-      onShare={onShare}
-      readTime={readTime}
       style={styles.container}
+      renderFooter={false}
     >
       {ImageComponent}
 
@@ -148,26 +131,9 @@ const CardHero = ({
 
         {TitleComponent}
         {SubtitleComponent}
-      </View>
-
-      {/* Footer with read time and actions - moved outside of heroContent */}
-      <View style={styles.footer}>
+        
         <View style={styles.readTimeContainer}>
           <ReadTime readTime={readTime || '3 min read'} />
-        </View>
-
-        <View style={styles.actionsContainer}>
-          {onBookmark && (
-            <TouchableOpacity onPress={handleBookmark} style={styles.actionButton}>
-              <Feather name="bookmark" size={20} color={theme.colors.Text.Secondary} />
-            </TouchableOpacity>
-          )}
-
-          {onShare && (
-            <TouchableOpacity onPress={handleShare} style={styles.actionButton}>
-              <Feather name="share" size={20} color={theme.colors.Text.Secondary} />
-            </TouchableOpacity>
-          )}
         </View>
       </View>
     </Card>

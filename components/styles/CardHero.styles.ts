@@ -10,8 +10,8 @@ export const createCardHeroStyles = (theme: ThemeType) => {
     container: {
       ...cardStyles.container,
       ...cardStyles.heroContainer,
-      borderColor: theme.colors.Border.Primary,
-      borderWidth: theme.borderWidth['10'],
+      backgroundColor: 'transparent',
+      borderWidth: 0,
     },
     flag: {
       marginRight: 8,
@@ -21,10 +21,12 @@ export const createCardHeroStyles = (theme: ThemeType) => {
       marginBottom: 8,
     },
     heroContent: {
-      padding: 16,
+      paddingHorizontal: 0,
+      paddingVertical: 12,
     },
     image: {
       ...cardStyles.heroImage,
+      borderRadius: theme.radius['radius-default'],
     },
     subtitle: {
       marginBottom: 12,
@@ -50,6 +52,7 @@ export const createCardHeroStyles = (theme: ThemeType) => {
     readTimeContainer: {
       alignItems: 'center',
       flexDirection: 'row',
+      marginTop: 8,
     },
     readTimeText: {
       marginLeft: 6,
